@@ -14,7 +14,7 @@
   ],
   "rules": {
     "quotes": ["warn", "single"],
-    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "indent": ["warn", 4, { "SwitchCase": 1 }],
     "semi": ["off"],
     "comma-dangle": ["warn", "always-multiline"],
     "dot-notation": "off",
@@ -22,7 +22,6 @@
     "curly": ["warn", "all"],
     "brace-style": ["warn"],
     "prefer-arrow-callback": ["warn"],
-    "max-len": ["warn", 140],
     "no-console": ["warn"], // use the provided Homebridge log method instead
     "no-non-null-assertion": ["off"],
     "comma-spacing": ["error"],

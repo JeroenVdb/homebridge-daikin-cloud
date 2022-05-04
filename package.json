@@ -1,16 +1,17 @@
 {
   "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
+  "displayName": "Daikin Cloud",
+  "platformname": "daikincloud",
+  "name": "homebridge-daikin-cloud",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Integrate with the Daikin Cloud to controle your Daikin Airconditioning via the cloud",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git://github.com/jeroenvdb/homebridge-daikin-cloud.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/jeroenvdb/homebridge-daikin-cloud/issues"
   },
   "engines": {
     "node": ">=14.18.1",
@@ -26,7 +27,9 @@
   "keywords": [
     "homebridge-plugin"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "daikin-controller-cloud": "github:Apollon77/daikin-controller-cloud"
+  },
   "devDependencies": {
     "@types/node": "^16.10.9",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
