@@ -1,5 +1,4 @@
 {
-  "private": true,
   "displayName": "Daikin Cloud",
   "platformname": "daikincloud",
   "name": "homebridge-daikin-cloud",
