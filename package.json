@@ -27,7 +27,7 @@
     "homebridge-plugin"
   ],
   "dependencies": {
-    "daikin-controller-cloud": "github:Apollon77/daikin-controller-cloud"
+    "daikin-controller-cloud": "0.2.1"
   },
   "devDependencies": {
     "@types/node": "^16.10.9",
