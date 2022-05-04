@@ -1,6 +1,6 @@
 # Homebridge Daikin Cloud plugin
 
-This Homebrige plugin connects to the Daikin Cloud and loads all your devices.
+This Homebrige plugin connects to the Daikin Cloud and loads all your devices to be controled via Homebridge and Homekit.
 
 The plugin supports some very basic airco manipulations:
 - Current room temperature
