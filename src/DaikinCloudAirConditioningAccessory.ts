@@ -36,10 +36,13 @@ export class DaikinCloudAirConditioningAccessory {
         this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
             .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
             .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
+    }
 
-        setInterval(async () => {
-            await this.accessory.context.device.updateData();
-        }, 10000);
+    async handleStateGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        const state = await this.accessory.context.device.getData('climateControl', 'onOffMode').value;
+        this.platform.log.debug('Characteristic getOn, state ->', state);
+        return state === 'on';
     }
 
     async handleStateSet(value: CharacteristicValue) {
@@ -49,19 +52,15 @@ export class DaikinCloudAirConditioningAccessory {
         await this.accessory.context.device.updateData();
     }
 
-    async handleStateGet(): Promise<CharacteristicValue> {
-        const state = await this.accessory.context.device.getData('climateControl', 'onOffMode').value;
-        this.platform.log.debug('Characteristic getOn, state ->', state);
-        return state === 'on';
-    }
-
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
         const temperature = await this.accessory.context.device.getData('climateControl', 'sensoryData', '/roomTemperature').value;
         this.platform.log.debug('Characteristic handleCurrentTemperatureGet, temperature ->', temperature);
         return temperature;
     }
 
     async handleCoolingThresholdTemperatureGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
         const temperature = await this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').value;
         this.platform.log.debug('Characteristic handleCoolingThresholdTemperatureGet, temperature ->', temperature);
         return temperature;
@@ -75,6 +74,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
         const temperature = await this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').value;
         this.platform.log.debug('Characteristic handleHeatingThresholdTemperatureGet, temperature ->', temperature);
         return temperature;
@@ -88,6 +88,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
         const operationMode = await this.accessory.context.device.getData('climateControl', 'operationMode').value;
         this.platform.log.debug('Characteristic handleTargetHeaterCoolerStateGet, operationMode ->', operationMode);
 
