@@ -1,4 +1,4 @@
-# homebridge Daikin Cloud plugin
+# Homebridge Daikin Cloud plugin
 
 This Homebrige plugin connects to the Daikin Cloud and loads all your devices.
 
