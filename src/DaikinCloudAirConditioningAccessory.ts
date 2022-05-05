@@ -3,24 +3,26 @@ import {DaikinCloudPlatform} from './platform';
 
 export class DaikinCloudAirConditioningAccessory {
     private service: Service;
+    private readonly name: string;
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
         private readonly accessory: PlatformAccessory,
     ) {
+        this.name = accessory.context.device.getData('climateControl', 'name').value;
 
         this.accessory.getService(this.platform.Service.AccessoryInformation)!
-            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Default-Manufacturer')
-            .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
-            .setCharacteristic(this.platform.Characteristic.SerialNumber, 'Default-Serial');
+            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Daikin')
+            .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.getData('gateway', 'modelInfo').value)
+            .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
 
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
 
-        this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.getData('climateControl', 'name').value);
+        this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
 
         this.service.getCharacteristic(this.platform.Characteristic.Active)
-            .onSet(this.handleStateSet.bind(this))
-            .onGet(this.handleStateGet.bind(this));
+            .onSet(this.handleActiveStateSet.bind(this))
+            .onGet(this.handleActiveStateGet.bind(this));
 
         this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
             .onGet(this.handleCurrentTemperatureGet.bind(this));
@@ -57,15 +59,15 @@ export class DaikinCloudAirConditioningAccessory {
             .onSet(this.handleRotationSpeedSet.bind(this));
     }
 
-    async handleStateGet(): Promise<CharacteristicValue> {
+    async handleActiveStateGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const state = this.accessory.context.device.getData('climateControl', 'onOffMode').value;
-        this.platform.log.debug('Characteristic getOn, state ->', state);
+        this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}`);
         return state === 'on';
     }
 
-    async handleStateSet(value: CharacteristicValue) {
-        this.platform.log.debug('Characteristic handleStateSet, value', value);
+    async handleActiveStateSet(value: CharacteristicValue) {
+        this.platform.log.debug(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
         await this.accessory.context.device.setData('climateControl', 'onOffMode', state ? 'on' : 'off');
         await this.accessory.context.device.updateData();
@@ -74,20 +76,20 @@ export class DaikinCloudAirConditioningAccessory {
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const temperature = this.accessory.context.device.getData('climateControl', 'sensoryData', '/roomTemperature').value;
-        this.platform.log.debug('Characteristic handleCurrentTemperatureGet, temperature ->', temperature);
+        this.platform.log.debug(`[${this.name}] GET CurrentTemperature, temperature: ${temperature}`);
         return temperature;
     }
 
     async handleCoolingThresholdTemperatureGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const temperature = this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').value;
-        this.platform.log.debug('Characteristic handleCoolingThresholdTemperatureGet, temperature ->', temperature);
+        this.platform.log.debug(`[${this.name}] GET CoolingThresholdTemperature, temperature: ${temperature}`);
         return temperature;
     }
 
     async handleCoolingThresholdTemperatureSet(value: CharacteristicValue) {
         const temperature = value as number;
-        this.platform.log.debug('Characteristic handleCoolingThresholdTemperatureSet, temperature ->', temperature);
+        this.platform.log.debug(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
         await this.accessory.context.device.updateData();
     }
@@ -95,13 +97,13 @@ export class DaikinCloudAirConditioningAccessory {
     async handleRotationSpeedGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const speed = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).value;
-        this.platform.log.debug('Characteristic handleRotationSpeedGet, speed ->', speed);
+        this.platform.log.debug(`[${this.name}] GET RotationSpeed, speed: ${speed}`);
         return speed;
     }
 
     async handleRotationSpeedSet(value: CharacteristicValue) {
         const speed = value as number;
-        this.platform.log.debug('Characteristic handleRotationSpeedSet, speed ->', speed);
+        this.platform.log.debug(`[${this.name}] SET RotationSpeed, speed to: ${speed}`);
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
         await this.accessory.context.device.updateData();
     }
@@ -109,13 +111,13 @@ export class DaikinCloudAirConditioningAccessory {
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const temperature = this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').value;
-        this.platform.log.debug('Characteristic handleHeatingThresholdTemperatureGet, temperature ->', temperature);
+        this.platform.log.debug(`[${this.name}] GET HeatingThresholdTemperature, temperature: ${temperature}`);
         return temperature;
     }
 
     async handleHeatingThresholdTemperatureSet(value: CharacteristicValue) {
         const temperature = value as number;
-        this.platform.log.debug('Characteristic handleHeatingThresholdTemperatureSet, temperature ->', temperature);
+        this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', temperature);
         await this.accessory.context.device.updateData();
     }
@@ -123,7 +125,7 @@ export class DaikinCloudAirConditioningAccessory {
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const operationMode = this.accessory.context.device.getData('climateControl', 'operationMode').value;
-        this.platform.log.debug('Characteristic handleTargetHeaterCoolerStateGet, operationMode ->', operationMode);
+        this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}`);
 
         switch (operationMode) {
             case 'cooling':
@@ -137,7 +139,7 @@ export class DaikinCloudAirConditioningAccessory {
 
     async handleTargetHeaterCoolerStateSet(value: CharacteristicValue) {
         const operationMode = value as number;
-        this.platform.log.debug('Characteristic handleTargetHeaterCoolerStateSet, OperationMode ->', value);
+        this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, OperationMode to: ${value}`);
         let daikinOperationMode = 'cooling';
 
         switch (operationMode) {
@@ -153,7 +155,7 @@ export class DaikinCloudAirConditioningAccessory {
 
         }
 
-        this.platform.log.debug('Characteristic handleTargetHeaterCoolerStateSet, daikinOperationMode ->', daikinOperationMode);
+        this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode);
         await this.accessory.context.device.updateData();
     }
