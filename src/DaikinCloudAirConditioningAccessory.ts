@@ -46,6 +46,15 @@ export class DaikinCloudAirConditioningAccessory {
             })
             .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
             .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
+
+        this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
+            .setProps({
+                minStep: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').minStep,
+                minValue: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').minValue,
+                maxValue: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').maxValue,
+            })
+            .onGet(this.handleRotationSpeedGet.bind(this))
+            .onSet(this.handleRotationSpeedSet.bind(this));
     }
 
     async handleStateGet(): Promise<CharacteristicValue> {
@@ -80,6 +89,20 @@ export class DaikinCloudAirConditioningAccessory {
         const temperature = value as number;
         this.platform.log.debug('Characteristic handleCoolingThresholdTemperatureSet, temperature ->', temperature);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
+        await this.accessory.context.device.updateData();
+    }
+
+    async handleRotationSpeedGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        const speed = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').value;
+        this.platform.log.debug('Characteristic handleRotationSpeedGet, speed ->', speed);
+        return speed;
+    }
+
+    async handleRotationSpeedSet(value: CharacteristicValue) {
+        const speed = value as number;
+        this.platform.log.debug('Characteristic handleRotationSpeedSet, speed ->', speed);
+        await this.accessory.context.device.setData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed', speed);
         await this.accessory.context.device.updateData();
     }
 
