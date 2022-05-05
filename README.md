@@ -5,6 +5,7 @@ This Homebrige plugin connects to the Daikin Cloud and loads all your devices to
 The plugin supports some very basic airco manipulations:
 - Current room temperature
 - Set airco to cooling, heating or auto + the required temperature
+- Set the fan speed
 
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
