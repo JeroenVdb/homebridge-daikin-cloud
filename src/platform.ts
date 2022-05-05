@@ -1,7 +1,7 @@
 import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {DaikinCloudAirConditioningAccessory} from './DaikinCloudAirConditioningAccessory';
+import {DaikinCloudAirConditioningAccessory} from './accessory';
 
 import DaikinCloudController from 'daikin-controller-cloud';
 import path from 'path';
