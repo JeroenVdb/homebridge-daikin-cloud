@@ -94,7 +94,7 @@ export class DaikinCloudAirConditioningAccessory {
 
     async handleRotationSpeedGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
-        const speed = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').value;
+        const speed = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).value;
         this.platform.log.debug('Characteristic handleRotationSpeedGet, speed ->', speed);
         return speed;
     }
@@ -102,7 +102,7 @@ export class DaikinCloudAirConditioningAccessory {
     async handleRotationSpeedSet(value: CharacteristicValue) {
         const speed = value as number;
         this.platform.log.debug('Characteristic handleRotationSpeedSet, speed ->', speed);
-        await this.accessory.context.device.setData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed', speed);
+        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
         await this.accessory.context.device.updateData();
     }
 
@@ -156,5 +156,9 @@ export class DaikinCloudAirConditioningAccessory {
         this.platform.log.debug('Characteristic handleTargetHeaterCoolerStateSet, daikinOperationMode ->', daikinOperationMode);
         await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode);
         await this.accessory.context.device.updateData();
+    }
+
+    getCurrentOperationMode() {
+        return this.accessory.context.device.getData('climateControl', 'operationMode').value;
     }
 }
