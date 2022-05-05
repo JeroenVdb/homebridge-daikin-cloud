@@ -39,6 +39,11 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         const daikinCloud = await this.initiateDaikinCloudController(username, password);
         const devices = await daikinCloud.getCloudDevices();
 
+        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
+        this.log.debug('CloudDeviceDetails -----------------------------------');
+        this.log.debug(JSON.stringify(cloudDetails));
+        this.log.debug('------------------------------------------------------');
+
         if (devices.length === 0) {
             this.log.info('No devices found');
         }
