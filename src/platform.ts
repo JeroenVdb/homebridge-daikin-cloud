@@ -39,14 +39,14 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         const daikinCloud = await this.initiateDaikinCloudController(username, password);
         const devices = await daikinCloud.getCloudDevices();
 
-        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
-        this.log.info('CloudDeviceDetails for debugging reasons -------------');
-        this.log.info(JSON.stringify(cloudDetails));
-        this.log.info('------------------------------------------------------');
-
         if (devices.length === 0) {
             this.log.info('No devices found');
+            return;
         }
+
+        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
+        this.log.info('---------- Daikin info for debugging reasons --------------------');
+        this.log.info(JSON.stringify(cloudDetails));
 
         devices.forEach(device => {
             this.log.info('Device found with id: ' + device.getId() + ' Data:');
@@ -70,6 +70,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
             }
         });
+
+        this.log.info('---------- End Daikin info for debugging reasons ---------------');
     }
 
     async initiateDaikinCloudController(username, password) {
