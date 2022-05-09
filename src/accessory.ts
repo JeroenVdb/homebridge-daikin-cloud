@@ -104,6 +104,7 @@ export class DaikinCloudAirConditioningAccessory {
     async handleRotationSpeedSet(value: CharacteristicValue) {
         const speed = value as number;
         this.platform.log.info(`[${this.name}] SET RotationSpeed, speed to: ${speed}`);
+        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
         await this.accessory.context.device.updateData();
     }
