@@ -158,6 +158,7 @@ export class DaikinCloudAirConditioningAccessory {
         this.platform.log.info(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode);
         await this.accessory.context.device.updateData();
+        await this.handleActiveStateSet('on')
     }
 
     getCurrentOperationMode() {
