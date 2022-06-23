@@ -3,6 +3,8 @@ import {DaikinCloudPlatform} from './platform';
 
 export class DaikinCloudAirConditioningAccessory {
     private service: Service;
+    private switchService: Service;
+    private switchServiceTwo: Service;
     private readonly name: string;
 
     constructor(
@@ -17,6 +19,11 @@ export class DaikinCloudAirConditioningAccessory {
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
 
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
+        this.switchService = this.accessory.getService('power mode') || this.accessory.addService(this.platform.Service.Switch, 'power mode', 'YSHJIHFDJKSHFJKDLSQHF1');
+        this.switchServiceTwo = this.accessory.getService('quite mode') || this.accessory.addService(this.platform.Service.Switch, 'quite mode', 'NDJKSQFHJKDSQHFKJDLQSHFJKDLSQHFJKLSDQH2');
+
+        this.switchService.setCharacteristic(this.platform.Characteristic.Name, 'power mode 2');
+        this.switchServiceTwo.setCharacteristic(this.platform.Characteristic.Name, 'quite mode 2');
 
         this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
 
