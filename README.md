@@ -25,6 +25,9 @@ If your Daikin device support it you can enable swing mode from the accessory se
 
 If your device supports vertical and horizontal swing both will be started and stopped. Via the Daikin app you can also have a silent swing, this is not yet supported because you can't select this from the Home app.
 
+![IMG_8954](https://user-images.githubusercontent.com/657797/175316496-a5338659-ecc1-4023-8a4b-2ec6b0adaf9b.PNG)
+
+
 ## Install
 
 Install from NPM: https://www.npmjs.com/package/homebridge-daikin-cloud
