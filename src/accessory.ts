@@ -72,7 +72,7 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
-            this.switchServicePowerfulMode = this.accessory.getService('Powerful mode') || this.accessory.addService(this.platform.Service.Switch, 'Powerful mode');
+            this.switchServicePowerfulMode = this.accessory.getService('Powerful mode') || this.accessory.addService(this.platform.Service.Switch, 'Powerful mode', 'powerful_mode');
             this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, 'Powerful mode');
 
             this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
@@ -84,7 +84,7 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has EconoMode, add Switch Service`);
 
-            this.switchServiceEconoMode = this.accessory.getService('Econo mode') || this.accessory.addService(this.platform.Service.Switch, 'Econo mode');
+            this.switchServiceEconoMode = this.accessory.getService('Econo mode') || this.accessory.addService(this.platform.Service.Switch, 'Econo mode', 'econo_mode');
             this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, 'Econo mode');
 
             this.switchServiceEconoMode.getCharacteristic(this.platform.Characteristic.On)
@@ -96,7 +96,7 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceStreamerMode = this.accessory.getService('Streamer mode') || this.accessory.addService(this.platform.Service.Switch, 'Streamer mode');
+            this.switchServiceStreamerMode = this.accessory.getService('Streamer mode') || this.accessory.addService(this.platform.Service.Switch, 'Streamer mode', 'streamer_mode');
             this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, 'Streamer mode');
 
             this.switchServiceStreamerMode.getCharacteristic(this.platform.Characteristic.On)
@@ -108,7 +108,7 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceOutdoorSilentMode = this.accessory.getService('Outdoor silent mode') || this.accessory.addService(this.platform.Service.Switch, 'Outdoor silent mode');
+            this.switchServiceOutdoorSilentMode = this.accessory.getService('Outdoor silent mode') || this.accessory.addService(this.platform.Service.Switch, 'Outdoor silent mode', 'outdoor_silent_mode');
             this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, 'Outdoor silent mode');
 
             this.switchServiceOutdoorSilentMode.getCharacteristic(this.platform.Characteristic.On)
