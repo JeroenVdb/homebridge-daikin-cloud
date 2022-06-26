@@ -245,6 +245,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handlePowerfulModeGet() {
+        this.platform.log.info(`[${this.name}] GET PowerfulMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'powerfulMode').value === 'on';
@@ -257,6 +258,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleEconoModeGet() {
+        this.platform.log.info(`[${this.name}] GET EconoMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'econoMode').value === 'on';
@@ -269,6 +271,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleStreamerModeGet() {
+        this.platform.log.info(`[${this.name}] GET StreamerMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'streamerMode').value === 'on';
@@ -281,6 +284,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleOutdoorSilentModeGet() {
+        this.platform.log.info(`[${this.name}] GET OutdoorSilentMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'outdoorSilentMode').value === 'on';
