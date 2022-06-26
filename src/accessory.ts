@@ -5,6 +5,9 @@ export class DaikinCloudAirConditioningAccessory {
     private readonly name: string;
     private service: Service;
     private switchServicePowerfulMode: Service | undefined;
+    private switchServiceEconoMode: Service | undefined;
+    private switchServiceStreamerMode: Service | undefined;
+    private switchServiceOutdoorSilentMode: Service | undefined;
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
@@ -66,7 +69,7 @@ export class DaikinCloudAirConditioningAccessory {
                 .onSet(this.handleSwingModeSet.bind(this));
         }
 
-        if (this.hasPowerfulModeFeature()) {
+        if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
             this.switchServicePowerfulMode = this.accessory.getService('Powerful mode') || this.accessory.addService(this.platform.Service.Switch, 'Powerful mode');
@@ -75,6 +78,42 @@ export class DaikinCloudAirConditioningAccessory {
             this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handlePowerfulModeGet.bind(this))
                 .onSet(this.handlePowerfulModeSet.bind(this));
+
+        }
+
+        if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.info(`[${this.name}] Device has EconoMode, add Switch Service`);
+
+            this.switchServiceEconoMode = this.accessory.getService('Econo mode') || this.accessory.addService(this.platform.Service.Switch, 'Econo mode');
+            this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, 'Econo mode');
+
+            this.switchServiceEconoMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handleEconoModeGet.bind(this))
+                .onSet(this.handleEconoModeSet.bind(this));
+
+        }
+
+        if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
+
+            this.switchServiceStreamerMode = this.accessory.getService('Streamer mode') || this.accessory.addService(this.platform.Service.Switch, 'Streamer mode');
+            this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, 'Streamer mode');
+
+            this.switchServiceStreamerMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handleStreamerModeGet.bind(this))
+                .onSet(this.handleStreamerModeSet.bind(this));
+
+        }
+
+        if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
+
+            this.switchServiceOutdoorSilentMode = this.accessory.getService('Outdoor silent mode') || this.accessory.addService(this.platform.Service.Switch, 'Outdoor silent mode');
+            this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, 'Outdoor silent mode');
+
+            this.switchServiceOutdoorSilentMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handleOutdoorSilentModeGet.bind(this))
+                .onSet(this.handleOutdoorSilentModeSet.bind(this));
 
         }
     }
@@ -208,13 +247,49 @@ export class DaikinCloudAirConditioningAccessory {
     async handlePowerfulModeGet() {
         await this.accessory.context.device.updateData();
 
-        return this.accessory.context.device.getData('climateControl', 'operationMode').value;
+        return this.accessory.context.device.getData('climateControl', 'powerfulMode').value === 'on';
     }
 
     async handlePowerfulModeSet(value: CharacteristicValue) {
         this.platform.log.info(`[${this.name}] SET PowerfulMode to: ${value}`);
         const daikinPowerfulMode = value as boolean ? 'on' : 'off';
         await this.accessory.context.device.setData('climateControl', 'powerfulMode', daikinPowerfulMode);
+    }
+
+    async handleEconoModeGet() {
+        await this.accessory.context.device.updateData();
+
+        return this.accessory.context.device.getData('climateControl', 'econoMode').value === 'on';
+    }
+
+    async handleEconoModeSet(value: CharacteristicValue) {
+        this.platform.log.info(`[${this.name}] SET EconoMode to: ${value}`);
+        const daikinEconoMode = value as boolean ? 'on' : 'off';
+        await this.accessory.context.device.setData('climateControl', 'econoMode', daikinEconoMode);
+    }
+
+    async handleStreamerModeGet() {
+        await this.accessory.context.device.updateData();
+
+        return this.accessory.context.device.getData('climateControl', 'streamerMode').value === 'on';
+    }
+
+    async handleStreamerModeSet(value: CharacteristicValue) {
+        this.platform.log.info(`[${this.name}] SET streamerMode to: ${value}`);
+        const daikinStreamerMode = value as boolean ? 'on' : 'off';
+        await this.accessory.context.device.setData('climateControl', 'streamerMode', daikinStreamerMode);
+    }
+
+    async handleOutdoorSilentModeGet() {
+        await this.accessory.context.device.updateData();
+
+        return this.accessory.context.device.getData('climateControl', 'outdoorSilentMode').value === 'on';
+    }
+
+    async handleOutdoorSilentModeSet(value: CharacteristicValue) {
+        this.platform.log.info(`[${this.name}] SET outdoorSilentMode to: ${value}`);
+        const daikinOutdoorSilentMode = value as boolean ? 'on' : 'off';
+        await this.accessory.context.device.setData('climateControl', 'outdoorSilentMode', daikinOutdoorSilentMode);
     }
 
     getCurrentOperationMode() {
@@ -233,5 +308,23 @@ export class DaikinCloudAirConditioningAccessory {
         const powerfulMode = this.accessory.context.device.getData('climateControl', 'powerfulMode');
         this.platform.log.info(`[${this.name}] hasPowerfulModeFeature, powerfulMode: ${Boolean(powerfulMode)}`);
         return Boolean(powerfulMode);
+    }
+
+    hasEconoModeFeature() {
+        const econoMode = this.accessory.context.device.getData('climateControl', 'econoMode');
+        this.platform.log.info(`[${this.name}] hasEconoModeFeature, econoMode: ${Boolean(econoMode)}`);
+        return Boolean(econoMode);
+    }
+
+    hasStreamerModeFeature() {
+        const streamerMode = this.accessory.context.device.getData('climateControl', 'streamerMode');
+        this.platform.log.info(`[${this.name}] hasStreamerModeFeature, streamerMode: ${Boolean(streamerMode)}`);
+        return Boolean(streamerMode);
+    }
+
+    hasOutdoorSilentModeFeature() {
+        const OutdoorSilentMode = this.accessory.context.device.getData('climateControl', 'outdoorSilentMode');
+        this.platform.log.info(`[${this.name}] hasOutdoorSilentModeFeature, outdoorSilentMode: ${Boolean(OutdoorSilentMode)}`);
+        return Boolean(OutdoorSilentMode);
     }
 }
