@@ -2,10 +2,9 @@ import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
 import {DaikinCloudPlatform} from './platform';
 
 export class DaikinCloudAirConditioningAccessory {
-    private service: Service;
-    private switchService: Service;
-    private switchServiceTwo: Service;
     private readonly name: string;
+    private service: Service;
+    private switchServicePowerfulMode: Service | undefined;
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
@@ -19,11 +18,6 @@ export class DaikinCloudAirConditioningAccessory {
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
 
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
-        this.switchService = this.accessory.getService('power mode') || this.accessory.addService(this.platform.Service.Switch, 'power mode', 'YSHJIHFDJKSHFJKDLSQHF1');
-        this.switchServiceTwo = this.accessory.getService('quite mode') || this.accessory.addService(this.platform.Service.Switch, 'quite mode', 'NDJKSQFHJKDSQHFKJDLQSHFJKDLSQHFJKLSDQH2');
-
-        this.switchService.setCharacteristic(this.platform.Characteristic.Name, 'power mode 2');
-        this.switchServiceTwo.setCharacteristic(this.platform.Characteristic.Name, 'quite mode 2');
 
         this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
 
@@ -70,6 +64,18 @@ export class DaikinCloudAirConditioningAccessory {
             this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
                 .onGet(this.handleSwingModeGet.bind(this))
                 .onSet(this.handleSwingModeSet.bind(this));
+        }
+
+        if (this.hasPowerfulModeFeature()) {
+            this.platform.log.info(`[${this.name}] Device has PowerfulMode, add Switch Service`);
+
+            this.switchServicePowerfulMode = this.accessory.getService('Powerful mode') || this.accessory.addService(this.platform.Service.Switch, 'Powerful mode');
+            this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, 'Powerful mode');
+
+            this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handlePowerfulModeGet.bind(this))
+                .onSet(this.handlePowerfulModeSet.bind(this));
+
         }
     }
 
@@ -199,6 +205,18 @@ export class DaikinCloudAirConditioningAccessory {
         return this.platform.Characteristic.SwingMode.SWING_ENABLED;
     }
 
+    async handlePowerfulModeGet() {
+        await this.accessory.context.device.updateData();
+
+        return this.accessory.context.device.getData('climateControl', 'operationMode').value;
+    }
+
+    async handlePowerfulModeSet(value: CharacteristicValue) {
+        this.platform.log.info(`[${this.name}] SET PowerfulMode to: ${value}`);
+        const daikinPowerfulMode = value as boolean ? 'on' : 'off';
+        await this.accessory.context.device.setData('climateControl', 'powerfulMode', daikinPowerfulMode);
+    }
+
     getCurrentOperationMode() {
         return this.accessory.context.device.getData('climateControl', 'operationMode').value;
     }
@@ -209,5 +227,11 @@ export class DaikinCloudAirConditioningAccessory {
         this.platform.log.info(`[${this.name}] hasFanDirectionFeature, verticalFanDirection: ${Boolean(verticalFanDirection)}`);
         this.platform.log.info(`[${this.name}] hasFanDirectionFeature, horizontalFanDirection: ${Boolean(horizontalFanDirection)}`);
         return Boolean(verticalFanDirection || horizontalFanDirection);
+    }
+
+    hasPowerfulModeFeature() {
+        const powerfulMode = this.accessory.context.device.getData('climateControl', 'powerfulMode');
+        this.platform.log.info(`[${this.name}] hasPowerfulModeFeature, powerfulMode: ${Boolean(powerfulMode)}`);
+        return Boolean(powerfulMode);
     }
 }
