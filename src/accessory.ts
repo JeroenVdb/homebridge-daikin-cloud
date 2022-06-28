@@ -62,7 +62,7 @@ export class DaikinCloudAirConditioningAccessory {
             .onGet(this.handleRotationSpeedGet.bind(this))
             .onSet(this.handleRotationSpeedSet.bind(this));
 
-        if (this.hasFanDirectionFeature()) {
+        if (this.hasSwingModeFeature()) {
             this.platform.log.info(`[${this.name}] Device has SwingMode, add Characteristic`);
             this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
                 .onGet(this.handleSwingModeGet.bind(this))
@@ -300,12 +300,12 @@ export class DaikinCloudAirConditioningAccessory {
         return this.accessory.context.device.getData('climateControl', 'operationMode').value;
     }
 
-    hasFanDirectionFeature() {
-        const verticalFanDirection = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/vertical/currentMode');
-        const horizontalFanDirection = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode');
-        this.platform.log.info(`[${this.name}] hasFanDirectionFeature, verticalFanDirection: ${Boolean(verticalFanDirection)}`);
-        this.platform.log.info(`[${this.name}] hasFanDirectionFeature, horizontalFanDirection: ${Boolean(horizontalFanDirection)}`);
-        return Boolean(verticalFanDirection || horizontalFanDirection);
+    hasSwingModeFeature() {
+        const verticalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/vertical/currentMode');
+        const horizontalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode');
+        this.platform.log.info(`[${this.name}] hasSwingModeFeature, verticalSwing: ${Boolean(verticalSwing)}`);
+        this.platform.log.info(`[${this.name}] hasSwingModeFeature, horizontalSwing: ${Boolean(horizontalSwing)}`);
+        return Boolean(verticalSwing || horizontalSwing);
     }
 
     hasPowerfulModeFeature() {
