@@ -27,6 +27,16 @@ If your device supports vertical and horizontal swing both will be started and s
 
 ![IMG_8954](https://user-images.githubusercontent.com/657797/175316496-a5338659-ecc1-4023-8a4b-2ec6b0adaf9b.PNG)
 
+## Control extra features (showExtraFeatures: true)
+
+By default this plugin creates a default [HeaterCooler Service](https://developers.homebridge.io/#/service/HeaterCooler) with the above possibilities. If you want you can add `showExtraFeatures: true` to the config. This will create extra switches to enable more special modes of your Daikin (if available).
+
+Supported:
+- Streamer mode
+- Econo mode
+- Powerful mode
+- Outdoor silent mode
+
 
 ## Install
 
@@ -46,7 +56,8 @@ Add config object to the platform array in your Homebridge `config.json`.
         {
             "username": "<username>",
             "password": "<password>",
-            "platform": "DaikinCloud"
+            "platform": "DaikinCloud",
+            "showExtraFeatures": false // or true
         }
     ]
 }
