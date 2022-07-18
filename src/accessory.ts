@@ -57,6 +57,13 @@ export class DaikinCloudAirConditioningAccessory {
             })
             .onGet(this.handleRotationSpeedGet.bind(this))
             .onSet(this.handleRotationSpeedSet.bind(this));
+
+        if (this.hasFanDirectionFeature()) {
+            this.platform.log.info(`[${this.name}] Device has SwingMode, add Characteristic`);
+            this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
+                .onGet(this.handleSwingModeGet.bind(this))
+                .onSet(this.handleSwingModeSet.bind(this));
+        }
     }
 
     async handleActiveStateGet(): Promise<CharacteristicValue> {
@@ -162,7 +169,40 @@ export class DaikinCloudAirConditioningAccessory {
         await this.accessory.context.device.updateData();
     }
 
+    async handleSwingModeSet(value: CharacteristicValue) {
+        const swingMode = value as number;
+        const daikinSwingMode = swingMode === 1 ? 'swing' : 'stop';
+        this.platform.log.info(`[${this.name}] SET SwingMode, swingmode to: ${swingMode}/${daikinSwingMode}`);
+
+        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/horizontal/currentMode`, daikinSwingMode);
+        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`, daikinSwingMode);
+        await this.accessory.context.device.updateData();
+    }
+
+    async handleSwingModeGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+
+        const verticalSwingMode = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`).value;
+        const horizontalSwingMode = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`).value;
+        this.platform.log.info(`[${this.name}] GET SwingMode, verticalSwingMode: ${verticalSwingMode}`);
+        this.platform.log.info(`[${this.name}] GET SwingMode, horizontalSwingMode: ${horizontalSwingMode}`);
+
+        if (horizontalSwingMode === 'stop' || verticalSwingMode === 'stop') {
+            return this.platform.Characteristic.SwingMode.SWING_DISABLED;
+        }
+
+        return this.platform.Characteristic.SwingMode.SWING_ENABLED;
+    }
+
     getCurrentOperationMode() {
         return this.accessory.context.device.getData('climateControl', 'operationMode').value;
+    }
+
+    hasFanDirectionFeature() {
+        const verticalFanDirection = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/vertical/currentMode');
+        const horizontalFanDirection = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode');
+        this.platform.log.info(`[${this.name}] hasFanDirectionFeature, verticalFanDirection: ${Boolean(verticalFanDirection)}`);
+        this.platform.log.info(`[${this.name}] hasFanDirectionFeature, horizontalFanDirection: ${Boolean(horizontalFanDirection)}`);
+        return Boolean(verticalFanDirection || horizontalFanDirection);
     }
 }
