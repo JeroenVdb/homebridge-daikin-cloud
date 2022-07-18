@@ -16,6 +16,13 @@
         "type": "string",
         "required": true,
         "default": ""
+      },
+      "showExtraFeatures": {
+        "title": "Show advanced features",
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Expose extra advanced features as streamer mode, econo mode and powerful mode. They will only appear when they are also supported by your device."
       }
     }
   }
