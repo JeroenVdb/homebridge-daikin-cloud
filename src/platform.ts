@@ -8,6 +8,7 @@ import path from 'path';
 import fs from 'fs';
 
 import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
+import type * as DaikinCloud from './../node_modules/daikin-controller-cloud/index.js';
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -119,7 +120,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             }
         }
 
-        const daikinCloud = new DaikinCloudController(tokenSet, options);
+        const daikinCloud: DaikinCloud = new DaikinCloudController(tokenSet, options);
 
         daikinCloud.on('token_update', tokenSet => {
             this.log.info(`UPDATED Daikin Cloud tokenset, use for future and wrote to ${tokenFile}`);
