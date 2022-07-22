@@ -7,6 +7,8 @@ import DaikinCloudController from 'daikin-controller-cloud';
 import path from 'path';
 import fs from 'fs';
 
+import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
+
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
     public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
@@ -36,7 +38,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     async discoverDevices(username: string, password: string) {
-        let devices: any[] = [];
+        let devices: Device[] = [];
 
         this.log.info('---------- Daikin info for debugging reasons --------------------');
 
@@ -75,9 +77,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.log.info('---------- End Daikin info for debugging reasons ---------------');
     }
 
-    async getCloudDevices(username: string, password: string): Promise<any[]> {
+    async getCloudDevices(username: string, password: string): Promise<Device[]> {
         const daikinCloud = await this.initiateDaikinCloudController(username, password);
-        const devices = await daikinCloud.getCloudDevices();
+        const devices: Device[] = await daikinCloud.getCloudDevices();
 
         this.log.info(`Found ${devices.length} devices in your Daikin Cloud`);
 
