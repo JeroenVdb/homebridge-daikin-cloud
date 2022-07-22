@@ -2,7 +2,7 @@
   "displayName": "Daikin Cloud",
   "platformname": "daikincloud",
   "name": "homebridge-daikin-cloud",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Integrate with the Daikin Cloud to controle your Daikin Airconditioning via the cloud",
   "license": "Apache-2.0",
   "repository": {

@@ -36,17 +36,18 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     async discoverDevices(username: string, password: string) {
-        const daikinCloud = await this.initiateDaikinCloudController(username, password);
-        const devices = await daikinCloud.getCloudDevices();
+        let devices: any[] = [];
 
-        if (devices.length === 0) {
-            this.log.info('No devices found');
-            return;
-        }
-
-        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
         this.log.info('---------- Daikin info for debugging reasons --------------------');
-        this.log.info(JSON.stringify(cloudDetails));
+
+        try {
+            devices = await this.getCloudDevices(username, password);
+        } catch (error) {
+            if (error instanceof Error) {
+                error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
+                this.log.error(error.message);
+            }
+        }
 
         devices.forEach(device => {
             this.log.info('Device found with id: ' + device.getId() + ' Data:');
@@ -72,6 +73,22 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         });
 
         this.log.info('---------- End Daikin info for debugging reasons ---------------');
+    }
+
+    async getCloudDevices(username: string, password: string): Promise<any[]> {
+        const daikinCloud = await this.initiateDaikinCloudController(username, password);
+        const devices = await daikinCloud.getCloudDevices();
+
+        this.log.info(`Found ${devices.length} devices in your Daikin Cloud`);
+
+        if (devices.length === 0) {
+            return devices;
+        }
+
+        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
+        this.log.info(JSON.stringify(cloudDetails));
+
+        return devices;
     }
 
     async initiateDaikinCloudController(username, password) {
@@ -107,7 +124,14 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             fs.writeFileSync(tokenFile, JSON.stringify(tokenSet));
         });
 
-        await daikinCloud.login(username, password);
+        try {
+            await daikinCloud.login(username, password);
+        } catch (error) {
+            if (error instanceof Error) {
+                error.message = `Failed to login to Daikin Cloud with ${username}: ${error.message}`;
+            }
+            throw error;
+        }
 
         return daikinCloud;
     }
