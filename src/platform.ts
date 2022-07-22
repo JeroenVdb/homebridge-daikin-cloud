@@ -92,8 +92,12 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.log.info(`Write/read Daikin Cloud tokenset from ${tokenFile}`);
 
         if (fs.existsSync(tokenFile)) {
-            this.log.debug(`Daikin Cloud tokenset found at ${tokenFile}`);
-            tokenSet = JSON.parse(fs.readFileSync(tokenFile).toString());
+            try {
+                this.log.debug(`Daikin Cloud tokenset found at ${tokenFile}`);
+                tokenSet = JSON.parse(fs.readFileSync(tokenFile).toString());
+            } catch (e) {
+                this.log.debug(`Daikin Cloud could not get tokenset: ${e}`);
+            }
         }
 
         const daikinCloud = new DaikinCloudController(tokenSet, options);
