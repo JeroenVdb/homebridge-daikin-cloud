@@ -2,12 +2,19 @@ import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
 import {DaikinCloudPlatform} from './platform';
 
 export class DaikinCloudAirConditioningAccessory {
+    private extraServices = {
+        POWERFUL_MODE: 'Powerful mode',
+        ECONO_MODE: 'Econo mode',
+        STREAMER_MODE: 'Streamer mode',
+        OUTDOUR_SILENT_MODE: 'Outdoor silent mode',
+    };
+
     private readonly name: string;
     private service: Service;
-    private switchServicePowerfulMode: Service | undefined;
-    private switchServiceEconoMode: Service | undefined;
-    private switchServiceStreamerMode: Service | undefined;
-    private switchServiceOutdoorSilentMode: Service | undefined;
+    private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
+    private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
+    private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
+    private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
@@ -72,49 +79,63 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
-            this.switchServicePowerfulMode = this.accessory.getService('Powerful mode') || this.accessory.addService(this.platform.Service.Switch, 'Powerful mode', 'powerful_mode');
-            this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, 'Powerful mode');
+            this.switchServicePowerfulMode = this.switchServicePowerfulMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
+            this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.POWERFUL_MODE);
 
             this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handlePowerfulModeGet.bind(this))
                 .onSet(this.handlePowerfulModeSet.bind(this));
 
+        } else {
+            if (this.switchServicePowerfulMode) {
+                this.accessory.removeService(this.switchServicePowerfulMode);
+            }
         }
 
         if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has EconoMode, add Switch Service`);
 
-            this.switchServiceEconoMode = this.accessory.getService('Econo mode') || this.accessory.addService(this.platform.Service.Switch, 'Econo mode', 'econo_mode');
-            this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, 'Econo mode');
+            this.switchServiceEconoMode = this.switchServiceEconoMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
+            this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.ECONO_MODE);
 
             this.switchServiceEconoMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleEconoModeGet.bind(this))
                 .onSet(this.handleEconoModeSet.bind(this));
-
+        } else {
+            if (this.switchServiceEconoMode) {
+                this.accessory.removeService(this.switchServiceEconoMode);
+            }
         }
 
         if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceStreamerMode = this.accessory.getService('Streamer mode') || this.accessory.addService(this.platform.Service.Switch, 'Streamer mode', 'streamer_mode');
-            this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, 'Streamer mode');
+            this.switchServiceStreamerMode = this.switchServiceStreamerMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
+            this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.STREAMER_MODE);
 
             this.switchServiceStreamerMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleStreamerModeGet.bind(this))
                 .onSet(this.handleStreamerModeSet.bind(this));
 
+        } else {
+            if (this.switchServiceStreamerMode) {
+                this.accessory.removeService(this.switchServiceStreamerMode);
+            }
         }
 
         if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.info(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceOutdoorSilentMode = this.accessory.getService('Outdoor silent mode') || this.accessory.addService(this.platform.Service.Switch, 'Outdoor silent mode', 'outdoor_silent_mode');
-            this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, 'Outdoor silent mode');
+            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
+            this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.OUTDOUR_SILENT_MODE);
 
             this.switchServiceOutdoorSilentMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleOutdoorSilentModeGet.bind(this))
                 .onSet(this.handleOutdoorSilentModeSet.bind(this));
-
+        } else {
+            if (this.switchServiceOutdoorSilentMode) {
+                this.accessory.removeService(this.switchServiceOutdoorSilentMode);
+            }
         }
     }
 

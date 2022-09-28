@@ -72,6 +72,12 @@ Add config object to the platform array in your Homebridge `config.json`.
 - BRP069C4x
 - BRP069A8x
 
+## Development
+
+For running a local Homebridge setup: https://github.com/oznu/homebridge-config-ui-x#installation-instructions
+
+
+
 ## Credits
 
 Credits for the Daikin Cloud API goes to @Apollon77 for https://github.com/Apollon77/daikin-controller-cloud

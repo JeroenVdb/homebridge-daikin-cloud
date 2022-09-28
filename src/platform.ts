@@ -57,6 +57,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             this.log.info('    name: ' + device.getData('climateControl', 'name').value);
             this.log.info('    last updated: ' + device.getLastUpdated());
             this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
+            this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
 
             const uuid = this.api.hap.uuid.generate(device.getId());
 
