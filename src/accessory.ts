@@ -198,7 +198,7 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleHeatingThresholdTemperatureSet(value: CharacteristicValue) {
-        const temperature = Math.round(value*2)/2;
+        const temperature = Math.round(value as number * 2) / 2;
         // const temperature = value as number;
         this.platform.log.info(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', temperature);
