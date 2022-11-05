@@ -1,0 +1,483 @@
+{
+    "gateway":
+    {
+        "firmwareVersion":
+        {
+            "settable": false,
+            "value": "3.2.4",
+            "maxLength": 8
+        },
+        "ipAddress":
+        {
+            "settable": false,
+            "value": "192.168.0.71",
+            "maxLength": 15
+        },
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 3
+        },
+        "macAddress":
+        {
+            "settable": false,
+            "value": "e8:fb:1c:d0:61:8d",
+            "maxLength": 17
+        },
+        "modelInfo":
+        {
+            "settable": false,
+            "value": "BRP069A78",
+            "maxLength": 9
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "Gateway",
+            "maxLength": 63
+        },
+        "ssid":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "daikin-ap",
+            "maxLength": 9
+        },
+        "serialNumber":
+        {
+            "settable": false,
+            "value": "0184343",
+            "maxLength": 16
+        },
+        "wifiConnectionSSID":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "RedDwarf_2G",
+            "maxLength": 32
+        },
+        "wifiConnectionStrength":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": -85,
+            "maxValue": 0,
+            "minValue": -90,
+            "stepValue": 1
+        }
+    },
+    "climateControlMainZone":
+    {
+        "consumptionData":
+        {},
+        "controlMode":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "leavingWaterTemperature",
+            "values":
+            [
+                "leavingWaterTemperature",
+                "externalRoomTemperature",
+                "roomTemperature"
+            ]
+        },
+        "errorCode":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "",
+            "maxLength": 16
+        },
+        "holidayMode":
+        {},
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 8
+        },
+        "isHolidayModeActive":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInEmergencyState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInErrorState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInInstallerState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInWarningState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "Heating/Aircon",
+            "maxLength": 63
+        },
+        "onOffMode":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "on",
+            "values":
+            [
+                "off",
+                "on"
+            ]
+        },
+        "operationMode":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "heating",
+            "values":
+            [
+                "heating",
+                "cooling",
+                "auto"
+            ]
+        },
+        "sensoryData":
+        {
+            "/outdoorTemperature":
+            {
+                "settable": false,
+                "requiresReboot": false,
+                "value": 8,
+                "maxValue": 127,
+                "minValue": -127,
+                "stepValue": 1
+            },
+            "/leavingWaterTemperature":
+            {
+                "settable": false,
+                "requiresReboot": false,
+                "value": 41,
+                "maxValue": 127,
+                "minValue": -127,
+                "stepValue": 1
+            }
+        },
+        "setpointMode":
+        {
+            "settable": false,
+            "requiresReboot": true,
+            "value": "weatherDependent",
+            "values":
+            [
+                "fixed",
+                "weatherDependentHeatingFixedCooling",
+                "weatherDependent"
+            ]
+        },
+        "temperatureControl":
+        {
+            "/operationModes/auto/setpoints/leavingWaterOffset":
+            {
+                "settable": true,
+                "requiresReboot": false,
+                "value": 0,
+                "maxValue": 10,
+                "minValue": -10,
+                "stepValue": 1
+            },
+            "/operationModes/heating/setpoints/leavingWaterOffset":
+            {
+                "settable": true,
+                "requiresReboot": false,
+                "value": 0,
+                "maxValue": 10,
+                "minValue": -10,
+                "stepValue": 1
+            },
+            "/operationModes/cooling/setpoints/leavingWaterOffset":
+            {
+                "settable": true,
+                "requiresReboot": false,
+                "value": 0,
+                "maxValue": 10,
+                "minValue": -10,
+                "stepValue": 1
+            }
+        }
+    },
+    "domesticHotWaterTank":
+    {
+        "consumptionData":
+        {},
+        "errorCode":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "",
+            "maxLength": 16
+        },
+        "heatupMode":
+        {
+            "settable": false,
+            "requiresReboot": true,
+            "value": "reheatOnly",
+            "values":
+            [
+                "reheatOnly",
+                "reheatSchedule",
+                "scheduleOnly"
+            ]
+        },
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 9
+        },
+        "isHolidayModeActive":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInEmergencyState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInErrorState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInInstallerState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isInWarningState":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "isPowerfulModeActive":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": false
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "Hot water",
+            "maxLength": 63
+        },
+        "onOffMode":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "on",
+            "values":
+            [
+                "off",
+                "on"
+            ]
+        },
+        "operationMode":
+        {
+            "settable": false,
+            "value": "heating",
+            "values":
+            [
+                "heating"
+            ]
+        },
+        "powerfulMode":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "off",
+            "values":
+            [
+                "off",
+                "on"
+            ]
+        },
+        "sensoryData":
+        {
+            "/tankTemperature":
+            {
+                "settable": false,
+                "requiresReboot": false,
+                "value": 44,
+                "maxValue": 127,
+                "minValue": -127,
+                "stepValue": 1
+            }
+        },
+        "setpointMode":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "fixed",
+            "values":
+            [
+                "fixed",
+                "weatherDependent"
+            ]
+        },
+        "temperatureControl":
+        {
+            "/operationModes/heating/setpoints/domesticHotWaterTemperature":
+            {
+                "settable": true,
+                "requiresReboot": false,
+                "value": 50,
+                "maxValue": 60,
+                "minValue": 30,
+                "stepValue": 1
+            }
+        }
+    },
+    "indoorUnitHydro":
+    {
+        "eepromVersion":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "3608729-18",
+            "maxLength": 16
+        },
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 4
+        },
+        "modelInfo":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "EBBX16DF9W",
+            "maxLength": 16
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "Indoor Hydro Unit",
+            "maxLength": 63
+        },
+        "softwareVersion":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "0792",
+            "maxLength": 16
+        }
+    },
+    "outdoorUnit":
+    {
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 5
+        },
+        "modelInfo":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "",
+            "maxLength": 16
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "Outdoor Unit",
+            "maxLength": 63
+        },
+        "softwareVersion":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "802B",
+            "maxLength": 16
+        }
+    },
+    "userInterface":
+    {
+        "dateTime":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "2022-10-12T01:09:38"
+        },
+        "firmwareVersion":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "deprecated": "DEPRECATED",
+            "value": "6.8.0",
+            "maxLength": 16
+        },
+        "iconId":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": 6
+        },
+        "miconId":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "20010E04",
+            "maxLength": 16
+        },
+        "modelInfo":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "EBBX16DF9W",
+            "maxLength": 16
+        },
+        "name":
+        {
+            "settable": true,
+            "requiresReboot": false,
+            "value": "User Interface",
+            "maxLength": 63
+        },
+        "softwareVersion":
+        {
+            "settable": false,
+            "requiresReboot": false,
+            "value": "6.8.0",
+            "maxLength": 16
+        }
+    }
+}

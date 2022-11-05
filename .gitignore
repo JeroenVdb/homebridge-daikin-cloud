@@ -120,3 +120,16 @@ dist
 .pnp.*
 
 /.idea/
+._.DS_Store
+._LICENSE
+accessory.js
+src-backup/accessory.ts
+src-backup/accessory.ts
+src-backup/index.ts
+src-backup/platform.ts
+src-backup/settings.ts
+src-backup/settings.ts
+src/platform.js
+src/platform.ts.backup
+src/platform.ts.backup
+src/settings.js

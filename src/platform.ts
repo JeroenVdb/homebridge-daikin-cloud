@@ -54,7 +54,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         devices.forEach(device => {
             this.log.info('Device found with id: ' + device.getId() + ' Data:');
-            this.log.info('    name: ' + device.getData('climateControl', 'name').value);
+            this.log.info('    name: ' + device.getData('climateControlMainZone', 'name').value);
             this.log.info('    last updated: ' + device.getLastUpdated());
             this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
             this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
@@ -68,8 +68,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 this.api.updatePlatformAccessories([existingAccessory]);
                 new DaikinCloudAirConditioningAccessory(this, existingAccessory);
             } else {
-                this.log.info('Adding new accessory:', device.getData('climateControl', 'name').value);
-                const accessory = new this.api.platformAccessory(device.getData('climateControl', 'name').value, uuid);
+                this.log.info('Adding new accessory:', device.getData('climateControlMainZone', 'name').value);
+                const accessory = new this.api.platformAccessory(device.getData('climateControlMainZone', 'name').value, uuid);
+                //this.log.info("acc info", accessory);
                 accessory.context.device = device;
                 new DaikinCloudAirConditioningAccessory(this, accessory);
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
