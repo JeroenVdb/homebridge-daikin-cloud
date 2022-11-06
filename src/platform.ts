@@ -2,6 +2,7 @@ import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, S
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 import {DaikinCloudAirConditioningAccessory} from './accessory';
+import { DaikinCloudTemperatureAccessory } from './accessory';
 
 import DaikinCloudController from 'daikin-controller-cloud';
 import path from 'path';
@@ -59,9 +60,10 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
             this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
 
-            const uuid = this.api.hap.uuid.generate(device.getId());
+            //we add Heater/Cooler
+            let uuid = this.api.hap.uuid.generate(device.getId());
 
-            const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+            let existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
             if (existingAccessory) {
                 this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                 existingAccessory.context.device = device;
@@ -75,6 +77,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 new DaikinCloudAirConditioningAccessory(this, accessory);
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
             }
+            
             //water tank accessory, if available...
             let uuid2 = this.api.hap.uuid.generate(device.getId()+"2");//we need different but valid uuid
             //let uuid2 = "xx123";
@@ -91,6 +94,24 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 //this.log.info("acc info", accessory);
                 accessory.context.device = device;
                 new DaikinCloudAirConditioningAccessory(this, accessory);
+                this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+            }
+
+            //Outdoor temp
+            let type = "Outdoor Daikin"
+            uuid = this.api.hap.uuid.generate(device.getId() + type);//we need different but valid uuid
+            existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid) || undefined;
+            if (existingAccessory) {
+                this.log.info(`Restoring existing accessory ${type} from cache:`, existingAccessory.displayName);
+                existingAccessory.context.device = device;
+                this.api.updatePlatformAccessories([existingAccessory]);
+                new DaikinCloudTemperatureAccessory(this, existingAccessory);
+            } else {
+                this.log.info(`Adding new accessory: ${type}`);
+                const accessory = new this.api.platformAccessory(type, uuid);
+                //this.log.info("acc info", accessory);
+                accessory.context.device = device;
+                new DaikinCloudTemperatureAccessory(this, accessory);
                 this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
             }
         });

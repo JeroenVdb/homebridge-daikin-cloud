@@ -20,9 +20,9 @@ export class DaikinCloudAirConditioningAccessory {
         private readonly platform: DaikinCloudPlatform,
         private readonly accessory: PlatformAccessory,
     ) {
-        this.platform.log.info("all: ", accessory.context.device.getData())
+        //this.platform.log.info("all: ", accessory.context.device.getData())
         //this.platform.log.info("temp: ", accessory.context.device.getData('climateControlMainZone','consumptionData'))
-        
+        this.platform.log.info(`Registering accessory YYY ${DaikinCloudTemperatureAccessory.name}`)
         this.name = accessory.context.device.getData('climateControlMainZone', 'name').value;
 
         this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -30,6 +30,7 @@ export class DaikinCloudAirConditioningAccessory {
             .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.getData('gateway', 'modelInfo').value)
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
 
+        //we specify here accessory service, in this case "HeaterCooler";
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
 
         this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
@@ -402,4 +403,48 @@ export class DaikinCloudAirConditioningAccessory {
         return Boolean(OutdoorSilentMode);
     }
 */
+}
+
+export class DaikinCloudTemperatureAccessory {
+
+    private readonly name: string;
+    private service: Service;
+    //private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
+    //private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
+    //private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
+    //private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
+
+    constructor(
+        private readonly platform: DaikinCloudPlatform,
+        private readonly accessory: PlatformAccessory,
+    ) {
+        //this.platform.log.info("all: ", accessory.context.device.getData())
+        //this.platform.log.info(`Registering accessory ${DaikinCloudTemperatureAccessory.name}`)
+        //this.platform.log.info("temp: ", accessory.context.device.getData('climateControlMainZone','consumptionData'))
+        
+        //this.name = accessory.context.device.getData('climateControlMainZone', 'name').value;
+        this.name = DaikinCloudTemperatureAccessory.name;
+        this.platform.log.info(`Registering accessory ${this.name}`)
+
+        this.accessory.getService(this.platform.Service.AccessoryInformation)!
+            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Daikin')
+            .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.getData('gateway', 'modelInfo').value)
+            .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
+
+        //we specify here accessory service, in this case "HeaterCooler";
+        this.service = this.accessory.getService(this.platform.Service.TemperatureSensor) || this.accessory.addService(this.platform.Service.TemperatureSensor);
+
+        this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
+        
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
+            .onGet(this.handleCurrentTemperatureGet.bind(this));
+    }
+
+    async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        const temperature = this.accessory.context.device.getData('climateControlMainZone', 'sensoryData', '/outdoorTemperature').value;
+        this.platform.log.debug(`[${this.name}] GET CurrentTemperature, temperature: ${temperature}`);
+        return temperature;
+    }
+
 }
