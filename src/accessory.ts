@@ -643,14 +643,19 @@ export class DaikinCloudWaterTankAccessory {
     }
 
     async handleHotWaterThresholdTemperatureSet(value: CharacteristicValue) {
-        const temperature = Math.round(value as number * 2) / 2;
-        // const temperature = value as number;
+        //this.platform.log.info("Changing hot water threshold!!!")
+        //const temperature = Math.round(value as number * 2) / 2;
+        const temperature = Math.round(value as number);//we want int - minstep
+        //const temperature = value as number;
+        this.platform.Characteristic.TargetHeaterCoolerState.HEAT;//we may have this added, or it gent unresponsive
         this.platform.log.info(`[${this.name}] SET HotWaterThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature', temperature);
         await this.accessory.context.device.updateData();
     }
 
     async handleTargetHotWaterStateGet(): Promise<CharacteristicValue> {
+        return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
+        //we have only hreating, there is no need to check anything else,.,.
         await this.accessory.context.device.updateData();
         const operationMode = this.accessory.context.device.getData('domesticHotWaterTank', 'operationMode').value;
         this.platform.log.info(`[${this.name}] GET TargetHotWaterState, operationMode: ${operationMode}`);
@@ -668,8 +673,9 @@ export class DaikinCloudWaterTankAccessory {
     async handleTargetHotWaterStateSet(value: CharacteristicValue) {
         const operationMode = value as number;
         this.platform.log.info(`[${this.name}] SET TargetHotWaterState, OperationMode to: ${value}`);
-        let daikinOperationMode = 'heating';
-
+       //we manually set it to heating, because hot water tank can't do anything else...
+       let daikinOperationMode = 'heating';//we may have this added, or it gent unresponsive
+       //this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
         //switch (operationMode) {
         //    case this.platform.Characteristic.TargetHeaterCoolerState.COOL:
         //        daikinOperationMode = 'cooling';
@@ -682,8 +688,7 @@ export class DaikinCloudWaterTankAccessory {
         //        break;
         //}
 
-        this.platform.log.info(`[${this.name}] SET TargetHotWaterState, daikinOperationMode to: ${daikinOperationMode}`);
-        await this.accessory.context.device.setData('domesticHotWaterTank', 'operationMode', daikinOperationMode);
+        //this.platform.log.info(`[${this.name}] SET TargetHotWaterState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', 'on');
         await this.accessory.context.device.updateData();
     }
