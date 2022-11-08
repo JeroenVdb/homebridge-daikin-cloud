@@ -17,12 +17,21 @@
         "required": true,
         "default": ""
       },
-      "showExtraFeatures": {
-        "title": "Show advanced features",
+      "HotWaterTank": {
+        "title": "Show Hot water tank information",
         "type": "boolean",
         "required": false,
-        "default": false,
-        "description": "Expose extra advanced features as streamer mode, econo mode and powerful mode. They will only appear when they are also supported by your device."
+        "default": true,
+        "description": "Add a Hot water tank accessory, if you you use Daikin heatpump also to warm up domestic water."
+      
+      },
+      "OutdoorTemperature": {
+        "title": "Show Outdoor temperature",
+        "type": "boolean",
+        "required": false,
+        "default": true,
+        "description": "Add a Temperature accessory, that get the information from your outdoor unit, if your unit supports it."
+      
       }
     }
   }
