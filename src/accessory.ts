@@ -39,8 +39,10 @@ export class DaikinCloudAirConditioningAccessory {
             .onSet(this.handleActiveStateSet.bind(this))
             .onGet(this.handleActiveStateGet.bind(this));
 
+        //current temperature = leaving water temperature
         this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-            .onGet(this.handleCurrentTemperatureGet.bind(this));
+            .setProps({ minStep: 1, minValue: 0, maxValue: 70 })
+            .onGet(this.handlePumpLeavingWaterTemperatureGet.bind(this));
 
         //leaving water temp - we use TargetTemp for this purpose
         //this.service.getCharacteristic(this.platform.Characteristic.TargetTemperature)
@@ -77,13 +79,16 @@ export class DaikinCloudAirConditioningAccessory {
         //    .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
 
         //we use this for leaving water temp while heating
+        this.platform.log.info("7");
         this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
-            .setProps({ minStep: 1, minValue: 0, maxValue: 50 })
-            .onGet(this.handlePumpLeavingWaterTemperatureGet.bind(this));
+            .setProps({ minStep: 1, minValue: -10, maxValue: 10 })
+            .onGet(this.handlePumpHeatingOffsetGet.bind(this))
+            .onSet(this.handlePumpHeatingOffsetSet.bind(this));
 
+        this.platform.log.info("8");
         this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
-            .setProps({ minStep: 1, minValue: 0, maxValue: 50 })
-            .onGet(this.handlePumpLeavingWaterTemperatureGet.bind(this));
+            .setProps({ minStep: 1, minValue: -10, maxValue: 10 })
+            .onGet(this.handlePumpCoolingOffsetGet.bind(this));
         
 
         //this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
@@ -194,6 +199,54 @@ export class DaikinCloudAirConditioningAccessory {
         this.platform.log.info(`[${this.name}] GET Leaving water Temperature, temperature: ${temperature}`);
         return temperature;
     }
+    //handlePumpHeatingOffsetGet
+    async handlePumpHeatingOffsetGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        this.platform.log.info("9");
+        //this.platform.log.info("XXX", this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value);
+        this.platform.log.info("XXX", this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/heating/setpoints/leavingWaterOffset').value);
+        //const offset = this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value;   
+        const offset = this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/heating/setpoints/leavingWaterOffset').value;   
+        this.platform.log.info(`[${this.name}] GET CurrentPumpHeatingOffsetGet, offset: ${offset}`);
+        this.platform.log.info("9");
+        return offset;
+    }
+
+        async handlePumpHeatingOffsetSet(value: CharacteristicValue) {
+        //this.platform.log.info("Changing hot water threshold!!!")
+        //const temperature = Math.round(value as number * 2) / 2;
+        const temperature = Math.round(value as number);//we want int - minstep
+        //const temperature = value as number;
+        //this.platform.Characteristic.TargetHeaterCoolerState.HEAT;//we may have this added, or it gent unresponsive
+        this.platform.log.info(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);        
+        await this.accessory.context.device.setData('climateControlMainZone', 'temperatureControl', '/operationModes/heating/setpoints/leavingWaterOffset', temperature);
+        await this.accessory.context.device.updateData();
+    }
+
+       //handlePumpHeatingOffsetGet
+    async handlePumpCoolingOffsetGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        this.platform.log.info("9");
+        //this.platform.log.info("XXX", this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value);
+        this.platform.log.info("XXX", this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/cooling/setpoints/leavingWaterOffset').value);
+        //const offset = this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value;   
+        const offset = this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/cooling/setpoints/leavingWaterOffset').value;   
+        this.platform.log.info(`[${this.name}] GET CurrentPumpCoolingOffsetGet, offset: ${offset}`);
+        this.platform.log.info("9");
+        return offset;
+    }
+
+        async handlePumpCoolingOffsetSet(value: CharacteristicValue) {
+        //this.platform.log.info("Changing hot water threshold!!!")
+        //const temperature = Math.round(value as number * 2) / 2;
+        const temperature = Math.round(value as number);//we want int - minstep
+        //const temperature = value as number;
+        //this.platform.Characteristic.TargetHeaterCoolerState.HEAT;//we may have this added, or it gent unresponsive
+        this.platform.log.info(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);        
+        await this.accessory.context.device.setData('climateControlMainZone', 'temperatureControl', '/operationModes/Cooling/setpoints/leavingWaterOffset', temperature);
+        await this.accessory.context.device.updateData();
+    }
+
     //leavingWaterTemperature
     //async handleCurrentLeavingTemperatureGet(): Promise<CharacteristicValue> {
     //    await this.accessory.context.device.updateData();
@@ -468,15 +521,17 @@ export class DaikinCloudWaterTankAccessory {
         //    .onGet(this.handleCoolingThresholdTemperatureGet.bind(this))
         //    .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
+        //if (this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature')){
 
         this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
             .setProps({
                 minStep: this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minStep,
                 minValue: this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minValue,
-                maxValue: this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').maxValue,
+                maxValue: this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').maxValue
             })
             .onGet(this.handleHotWaterThresholdTemperatureGet.bind(this))
             .onSet(this.handleHotWaterThresholdTemperatureSet.bind(this));
+
 
         //we use this for leaving water temp while heating
         //this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
@@ -637,7 +692,7 @@ export class DaikinCloudWaterTankAccessory {
 
     async handleHotWaterThresholdTemperatureGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
-        const temperature = this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').value;
+        let temperature = this.accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').value;
         this.platform.log.info(`[${this.name}] GET HotWaterThresholdTemperature, temperature: ${temperature}`);
         return temperature;
     }
@@ -648,7 +703,7 @@ export class DaikinCloudWaterTankAccessory {
         const temperature = Math.round(value as number);//we want int - minstep
         //const temperature = value as number;
         this.platform.Characteristic.TargetHeaterCoolerState.HEAT;//we may have this added, or it gent unresponsive
-        this.platform.log.info(`[${this.name}] SET HotWaterThresholdTemperature, temperature to: ${temperature}`);
+        this.platform.log.info(`[${this.name}] SET HotWaterThresholdTemperature, temperature to: ${temperature}`);        
         await this.accessory.context.device.setData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature', temperature);
         await this.accessory.context.device.updateData();
     }
