@@ -1,9 +1,9 @@
 /**
  * This is the name of the platform that users will use to register the plugin in the Homebridge config.json
  */
-export const PLATFORM_NAME = 'DaikinCloud';
+export const PLATFORM_NAME = 'DaikinHeatpumpCloud';
 
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-daikin-cloud';
+export const PLUGIN_NAME = 'homebridge-daikin-heatpump-cloud';

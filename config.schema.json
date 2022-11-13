@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "DaikinCloud",
+  "pluginAlias": "DaikinHeatpumpCloud",
   "pluginType": "platform",
   "singular": true,
   "schema": {

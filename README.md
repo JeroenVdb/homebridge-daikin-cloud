@@ -1,3 +1,6 @@
+TBD!!!
+
+
 # Homebridge Daikin Cloud plugin
 
 This Homebrige plugin connects to the Daikin Cloud and loads all your devices to be controled via Homebridge and Homekit.
@@ -60,8 +63,9 @@ Add config object to the platform array in your Homebridge `config.json`.
         {
             "username": "<username>",
             "password": "<password>",
-            "platform": "DaikinCloud",
-            "showExtraFeatures": false // true or false (boolean), default: false
+            "platform": "DaikinHeatpumpCloud",
+            "HotWaterTank": false, // true or false (boolean), default: false
+            "OutdoorTemperature": true // true or false (boolean), default: true
         }
     ]
 }

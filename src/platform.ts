@@ -76,7 +76,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 new DaikinCloudAirConditioningAccessory(this, existingAccessory);
             } else {
                 this.log.info('Adding new accessory:', device.getData('climateControlMainZone', 'name').value);
-                const accessory = new this.api.platformAccessory(device.getData('climateControlMainZone', 'name').value || "Heatimg/Aircon", uuid);
+                const accessory = new this.api.platformAccessory(device.getData('climateControlMainZone', 'name').value || 'Heatimg/Aircon', uuid);
                 //this.log.info("acc info", accessory);
                 accessory.context.device = device;
                 new DaikinCloudAirConditioningAccessory(this, accessory);
@@ -84,8 +84,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             }
 
             //water tank accessory, if available...
-           
-            uuid = this.api.hap.uuid.generate(device.getId()+"2");//we need different but valid uuid
+
+            uuid = this.api.hap.uuid.generate(device.getId()+'2');//we need different but valid uuid
             //let uuid2 = "xx123";
             //let uuid2 = uuid + "2";
             existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid) || undefined;
@@ -96,8 +96,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.api.updatePlatformAccessories([existingAccessory]);
                     new DaikinCloudWaterTankAccessory(this, existingAccessory);
                 } else {
-                    this.log.info('Adding new accessory:', device.getData('domesticHotWaterTank', 'name').value || "Hot Water");
-                    const accessory = new this.api.platformAccessory(device.getData('domesticHotWaterTank', 'name').value || "Hot Water", uuid);
+                    this.log.info('Adding new accessory:', device.getData('domesticHotWaterTank', 'name').value || 'Hot Water');
+                    const accessory = new this.api.platformAccessory(device.getData('domesticHotWaterTank', 'name').value || 'Hot Water', uuid);
                     //this.log.info("acc info", accessory);
                     accessory.context.device = device;
                     new DaikinCloudWaterTankAccessory(this, accessory);
@@ -111,7 +111,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             }
 
             //Outdoor temp
-            let type = "Outdoor Daikin"
+            const type = 'Outdoor Daikin';
             uuid = this.api.hap.uuid.generate(device.getId() + type);//we need different but valid uuid
             existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid) || undefined;
             if (this.config.OutdoorTemperature){
@@ -129,7 +129,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             } else if (existingAccessory){
-                 //we remove already added accessory
+                //we remove already added accessory
                 this.log.info('Removing accessory:', existingAccessory.displayName);
                 this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
             }
@@ -149,7 +149,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             return devices;
         }
 
-        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
+        //const cloudDetails = await daikinCloud.getCloudDeviceDetails();
         //this.log.info(JSON.stringify(cloudDetails));
 
         return devices;
