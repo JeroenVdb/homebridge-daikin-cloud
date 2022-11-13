@@ -61,8 +61,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             this.log.info('    last updated: ' + device.getLastUpdated());
             this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
             //this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
-            this.log.info('    config.HotWaterTank: ' + this.config.HotWaterTank);
-            this.log.info('    config.OutdoorTemperature: ' + this.config.OutdoorTemperature);
+            this.log.info('    show Hot Water Tank: ' + this.config.HotWaterTank);
+            this.log.info('    show Outdoor Temperature: ' + this.config.OutdoorTemperature);
+            this.log.info('    disabled On/Off switch: ' + this.config.DisableOnOff);
 
 
             //we add Heater/Cooler

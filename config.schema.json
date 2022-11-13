@@ -32,6 +32,13 @@
         "default": true,
         "description": "Add a Temperature accessory, that get the information from your outdoor unit, if your unit supports it."
       
+      },
+      "DisableOnOff": {
+        "title": "Disable on/off switching",
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "If you don't want to be able to turn your devices on/off by homekit, set this to true."    
       }
     }
   }

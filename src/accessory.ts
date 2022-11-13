@@ -2,24 +2,24 @@ import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
 import {DaikinCloudPlatform} from './platform';
 
 export class DaikinCloudAirConditioningAccessory {
-    private extraServices = {
+    /*private extraServices = {
         POWERFUL_MODE: 'Powerful mode',
         ECONO_MODE: 'Econo mode',
         STREAMER_MODE: 'Streamer mode',
         OUTDOUR_SILENT_MODE: 'Outdoor silent mode',
     };
-
+*/
     private readonly name: string;
     private service: Service;
-    private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
-    private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
-    private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
-    private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
-
+    private bypass: boolean = false;//we set this to true if we want to bypass on/off disable
+    //private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
+    //private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
+    //private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
+    //private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
     constructor(
         private readonly platform: DaikinCloudPlatform,
         private readonly accessory: PlatformAccessory,
-    ) {
+    ) { 
         //this.platform.log.info("all: ", accessory.context.device.getData())
         //this.platform.log.info("temp: ", accessory.context.device.getData('climateControlMainZone','consumptionData'))
         this.platform.log.info(`Registering accessory YYY ${DaikinCloudTemperatureAccessory.name}`);
@@ -179,10 +179,19 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleActiveStateSet(value: CharacteristicValue) {
+        if (this.platform.config.DisableOnOff && !this.bypass){
+            //do not switch on/off if this feature is disabled in settings...
+            await this.platform.log.info(`Switching on/off disabled for[${this.name}]!.`);
+            value = !value;
+        }
         this.platform.log.info(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
         await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', state ? 'on' : 'off');
         await this.accessory.context.device.updateData();
+        //we wait a bit and update homekit state. This is necessary if switchin on/off is disabled
+        setTimeout(() => {
+            this.service.updateCharacteristic(this.platform.Characteristic.Active, state);
+        },50);
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
@@ -332,11 +341,12 @@ export class DaikinCloudAirConditioningAccessory {
                 daikinOperationMode = 'auto';
                 break;
         }
-
+        this.bypass = true;
         this.platform.log.info(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData('climateControlMainZone', 'operationMode', daikinOperationMode);
         await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', 'on');
         await this.accessory.context.device.updateData();
+        this.bypass = false;
     }
 
     /*    async handleSwingModeSet(value: CharacteristicValue) {
@@ -632,10 +642,19 @@ export class DaikinCloudWaterTankAccessory {
     }
 
     async handleActiveStateSet(value: CharacteristicValue) {
+        if (this.platform.config.DisableOnOff){
+            //do not switch on/off if this feature is disabled in settings...
+            await this.platform.log.info(`Switching on/off disabled for[${this.name}]!.`);
+            value = !value;
+        }
         this.platform.log.info(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
         await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', state ? 'on' : 'off');
         await this.accessory.context.device.updateData();
+        //we wait a bit and update homekit state. This is necessary if switchin on/off is disabled
+        setTimeout(() => {
+            this.service.updateCharacteristic(this.platform.Characteristic.Active, state);
+        },50);
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
