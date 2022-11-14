@@ -60,6 +60,9 @@ export class DaikinCloudAirConditioningAccessory {
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
+            .onGet(this.handleCurrentHeaterCoolerStateGet.bind(this));
+
         //this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
         //    .setProps({
         //        minStep: this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minStep,
@@ -349,6 +352,21 @@ export class DaikinCloudAirConditioningAccessory {
         this.bypass = false;
     }
 
+        async handleCurrentHeaterCoolerStateGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        const operationMode = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').value;
+        this.platform.log.info(`[${this.name}] GET CurrentHeaterCoolerState, operationMode: ${operationMode}`);
+
+        switch (operationMode) {
+            case 'cooling':
+                return this.platform.Characteristic.CurrentHeaterCoolerState.COOLING;
+            case 'heating':
+                return this.platform.Characteristic.CurrentHeaterCoolerState.HEATING;
+            default:
+                return this.platform.Characteristic.CurrentHeaterCoolerState.IDLE;
+        }
+    }
+
     /*    async handleSwingModeSet(value: CharacteristicValue) {
         const swingMode = value as number;
         const daikinSwingMode = swingMode === 1 ? 'swing' : 'stop';
@@ -522,6 +540,10 @@ export class DaikinCloudWaterTankAccessory {
             })
             .onGet(this.handleTargetHotWaterStateGet.bind(this))
             .onSet(this.handleTargetHotWaterStateSet.bind(this));
+
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
+            .onGet(this.handleCurrentHotWaterStateGet.bind(this));
+            
 
         //this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
         //    .setProps({
@@ -731,6 +753,21 @@ export class DaikinCloudWaterTankAccessory {
     async handleTargetHotWaterStateGet(): Promise<CharacteristicValue> {
         return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
         //we have only hreating, there is no need to check anything else,.,.
+    }
+
+    async handleCurrentHotWaterStateGet(): Promise<CharacteristicValue> {
+        await this.accessory.context.device.updateData();
+        const operationMode = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').value;
+        this.platform.log.info(`[${this.name}] GET CurrentHeaterCoolerState, operationMode: ${operationMode}`);
+
+        switch (operationMode) {
+            case 'cooling':
+                return this.platform.Characteristic.CurrentHeaterCoolerState.COOLING;
+            case 'heating':
+                return this.platform.Characteristic.CurrentHeaterCoolerState.HEATING;
+            default:
+                return this.platform.Characteristic.CurrentHeaterCoolerState.IDLE;
+        }
     }
 
     async handleTargetHotWaterStateSet(value: CharacteristicValue) {
