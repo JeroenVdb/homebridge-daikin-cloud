@@ -1,9 +1,7 @@
 TBD!!!
+# Homebridge Daikin Heat Pump Cloud plugin
 
-
-# Homebridge Daikin Cloud plugin
-
-This Homebrige plugin connects to the Daikin Cloud and loads all your devices to be controled via Homebridge and Homekit.
+This Homebrige plugin connects to the Daikin Cloud and loads your Heat Pump devices to be controled via Homebridge and Homekit. 
 
 The plugin supports some basic Daikin airco settings:
 - Current room temperature
@@ -47,7 +45,7 @@ Extra info and example: https://github.com/JeroenVdb/homebridge-daikin-cloud/iss
 
 ## Install
 
-Install from NPM: https://www.npmjs.com/package/homebridge-daikin-cloud
+Install from NPM: https://www.npmjs.com/package/homebridge-daikin-heatpump-cloud
 
 ## Config
 
@@ -65,7 +63,8 @@ Add config object to the platform array in your Homebridge `config.json`.
             "password": "<password>",
             "platform": "DaikinHeatpumpCloud",
             "HotWaterTank": false, // true or false (boolean), default: false
-            "OutdoorTemperature": true // true or false (boolean), default: true
+            "OutdoorTemperature": true, // true or false (boolean), default: true
+            "DisableOnOff": false //  true or false (boolean), default false
         }
     ]
 }
@@ -73,8 +72,8 @@ Add config object to the platform array in your Homebridge `config.json`.
 
 ## Tested with devices
 
-- BRP069C4x
-- BRP069A8x
+- EBBX16DF9W (BRP069A78 wifi modul)
+
 
 ## Development
 
@@ -82,5 +81,7 @@ For running a local Homebridge setup: https://github.com/oznu/homebridge-config-
 
 
 ## Credits
+
+This project is forked from https://github.com/JeroenVdb/homebridge-daikin-cloud, so special credits goes to @JeroenVdb
 
 Credits for the Daikin Cloud API goes to @Apollon77 for https://github.com/Apollon77/daikin-controller-cloud
