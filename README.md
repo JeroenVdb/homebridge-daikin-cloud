@@ -3,14 +3,25 @@ TBD!!!
 
 This Homebrige plugin connects to the Daikin Cloud and loads your Heat Pump devices to be controled via Homebridge and Homekit. 
 
-The plugin supports some basic Daikin airco settings:
-- Current room temperature
-- Set airco to cooling, heating or auto + the required temperature
-- Set the fan speed
-- Swing mode (if supported by your device)
-- Extra modes (if supported by your device and enabled in config): powerful mode, econo mode, streamer mode and outdoor silent mode
+## This plugin will:
+- create a heat pump accesory, that will show current leaving water temperature, heating/cooling mode, offset
+- create a temperature accessory that will show current outdoor temperature measured by outdoor heatpump device
+- create a water tank accessory, that will show target temperature & current water tank temperature
+
+## You will be able to:
+- turn on/off heat pump or water tank
+- change Heat Pump mode (heating/cooling)
+- set temperature offset for heating/cooling
+- set temperature offset for hot watwer tank
 
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
+
+## Limitations
+Daikin doesn't provide target Heater/Cooler temperature. So the temperature shown in this accessory is current leaving water temperature & target temperature is offset.
+
+Current acessory state doesnt reflect if your device is idle/heating/cooling, because daikin doesn't provide this information (we only know the target state).
+
+Even if you set "Disable on/off switch", you are still able to switch devices on/off in homebridge accessory page (it works fine in ios home).
 
 ## Fan speed
 
