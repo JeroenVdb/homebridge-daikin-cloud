@@ -11,7 +11,7 @@ export class DaikinCloudAirConditioningAccessory {
 */
     private readonly name: string;
     private service: Service;
-    private bypass: boolean = false;//we set this to true if we want to bypass on/off disable
+    private bypass = false;//we set this to true if we want to bypass on/off disable
     //private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
     //private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
     //private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
@@ -19,10 +19,10 @@ export class DaikinCloudAirConditioningAccessory {
     constructor(
         private readonly platform: DaikinCloudPlatform,
         private readonly accessory: PlatformAccessory,
-    ) { 
+    ) {
         //this.platform.log.info("all: ", accessory.context.device.getData())
         //this.platform.log.info("temp: ", accessory.context.device.getData('climateControlMainZone','consumptionData'))
-        this.platform.log.info(`Registering accessory YYY ${DaikinCloudTemperatureAccessory.name}`);
+        this.platform.log.info(`Registering accessory  ${DaikinCloudTemperatureAccessory.name}`);
         this.name = accessory.context.device.getData('climateControlMainZone', 'name').value;
 
         this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -82,13 +82,11 @@ export class DaikinCloudAirConditioningAccessory {
         //    .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
 
         //we use this for leaving water temp while heating
-        this.platform.log.info('7');
         this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
             .setProps({ minStep: 1, minValue: -10, maxValue: 10 })
             .onGet(this.handlePumpHeatingOffsetGet.bind(this))
             .onSet(this.handlePumpHeatingOffsetSet.bind(this));
 
-        this.platform.log.info('8');
         this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
             .setProps({ minStep: 1, minValue: -10, maxValue: 10 })
             .onGet(this.handlePumpCoolingOffsetGet.bind(this));
@@ -194,7 +192,7 @@ export class DaikinCloudAirConditioningAccessory {
         //we wait a bit and update homekit state. This is necessary if switchin on/off is disabled
         setTimeout(() => {
             this.service.updateCharacteristic(this.platform.Characteristic.Active, state);
-        },50);
+        }, 50);
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
@@ -215,18 +213,13 @@ export class DaikinCloudAirConditioningAccessory {
     //handlePumpHeatingOffsetGet
     async handlePumpHeatingOffsetGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
-        this.platform.log.info('9');
-        //this.platform.log.info("XXX", this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value);
-        this.platform.log.info('XXX', this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/heating/setpoints/leavingWaterOffset').value);
         //const offset = this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value;
         const offset = this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/heating/setpoints/leavingWaterOffset').value;
         this.platform.log.info(`[${this.name}] GET CurrentPumpHeatingOffsetGet, offset: ${offset}`);
-        this.platform.log.info('9');
         return offset;
     }
 
     async handlePumpHeatingOffsetSet(value: CharacteristicValue) {
-        //this.platform.log.info("Changing hot water threshold!!!")
         //const temperature = Math.round(value as number * 2) / 2;
         const temperature = Math.round(value as number);//we want int - minstep
         //const temperature = value as number;
@@ -239,13 +232,8 @@ export class DaikinCloudAirConditioningAccessory {
     //handlePumpHeatingOffsetGet
     async handlePumpCoolingOffsetGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
-        this.platform.log.info('9');
-        //this.platform.log.info("XXX", this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value);
-        this.platform.log.info('XXX', this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/cooling/setpoints/leavingWaterOffset').value);
-        //const offset = this.accessory.context.device.dev.getData('climateControlMainZone', 'temperatureControl', '/operationModes', 'heating', 'setpoints').heating.setpoints.leavingWaterOffset.value;
         const offset = this.accessory.context.device.getData('climateControlMainZone', 'temperatureControl', '/operationModes/cooling/setpoints/leavingWaterOffset').value;
         this.platform.log.info(`[${this.name}] GET CurrentPumpCoolingOffsetGet, offset: ${offset}`);
-        this.platform.log.info('9');
         return offset;
     }
 
@@ -352,7 +340,7 @@ export class DaikinCloudAirConditioningAccessory {
         this.bypass = false;
     }
 
-        async handleCurrentHeaterCoolerStateGet(): Promise<CharacteristicValue> {
+    async handleCurrentHeaterCoolerStateGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
         const operationMode = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').value;
         this.platform.log.info(`[${this.name}] GET CurrentHeaterCoolerState, operationMode: ${operationMode}`);
@@ -543,7 +531,6 @@ export class DaikinCloudWaterTankAccessory {
 
         this.service.getCharacteristic(this.platform.Characteristic.CurrentHeaterCoolerState)
             .onGet(this.handleCurrentHotWaterStateGet.bind(this));
-            
 
         //this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
         //    .setProps({
@@ -676,7 +663,7 @@ export class DaikinCloudWaterTankAccessory {
         //we wait a bit and update homekit state. This is necessary if switchin on/off is disabled
         setTimeout(() => {
             this.service.updateCharacteristic(this.platform.Characteristic.Active, state);
-        },50);
+        }, 50);
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
@@ -752,7 +739,7 @@ export class DaikinCloudWaterTankAccessory {
 
     async handleTargetHotWaterStateGet(): Promise<CharacteristicValue> {
         return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
-        //we have only hreating, there is no need to check anything else,.,.
+        //we have only heeating, there is no need to check anything else,.,.
     }
 
     async handleCurrentHotWaterStateGet(): Promise<CharacteristicValue> {

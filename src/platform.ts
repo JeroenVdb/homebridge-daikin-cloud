@@ -64,6 +64,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             this.log.info('    show Hot Water Tank: ' + this.config.HotWaterTank);
             this.log.info('    show Outdoor Temperature: ' + this.config.OutdoorTemperature);
             this.log.info('    disabled On/Off switch: ' + this.config.DisableOnOff);
+            this.log.info('\n');
 
 
             //we add Heater/Cooler
