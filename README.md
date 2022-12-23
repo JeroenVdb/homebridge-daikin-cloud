@@ -76,6 +76,11 @@ Add config object to the platform array in your Homebridge `config.json`.
 
 For running a local Homebridge setup: https://github.com/oznu/homebridge-config-ui-x#installation-instructions
 
+```
+sudo hb-service start
+sudo hb-service stop
+```
+
 
 ## Credits
 
