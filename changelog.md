@@ -14,6 +14,18 @@ TBD
 
 ### Fixed
 
+## [1.5.0] - 2023-02-28
+
+Labels are back!
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Labels now have the correct label again. Restarting Homebridge and Home should bring back the labels (https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/27)
+
 ## [1.4.0] - 2022-09-28
 
 Here we would have the update steps for 1.2.4 for people to follow.

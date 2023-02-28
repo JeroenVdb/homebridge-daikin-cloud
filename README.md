@@ -81,6 +81,8 @@ sudo hb-service start
 sudo hb-service stop
 ```
 
+UI: http://localhost:8581
+
 
 ## Credits
 
