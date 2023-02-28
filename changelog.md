@@ -14,6 +14,18 @@ TBD
 
 ### Fixed
 
+## [1.5.1] - 2023-02-28
+
+Labels are back!
+
+### Added
+
+- Add funding link to https://www.paypal.me/jrnvdb
+
+### Changed
+
+### Fixed
+
 ## [1.5.0] - 2023-02-28
 
 Labels are back!

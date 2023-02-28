@@ -2,7 +2,7 @@
   "displayName": "Daikin Cloud",
   "platformname": "daikincloud",
   "name": "homebridge-daikin-cloud",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Integrate with the Daikin Cloud to control your Daikin air conditioning via the cloud",
   "license": "Apache-2.0",
   "repository": {
@@ -42,5 +42,11 @@
     "rimraf": "^3.0.2",
     "ts-node": "^10.3.0",
     "typescript": "^4.4.4"
-  }
+  },
+  "funding": [
+    {
+      "type" : "paypal",
+      "url" : "https://www.paypal.me/jrnvdb"
+    }
+  ]
 }
