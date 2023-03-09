@@ -14,6 +14,16 @@ TBD
 
 ### Fixed
 
+## [1.5.2] - 2023-03-09
+
+### Added
+
+### Changed
+
+### Fixed
+
+- The plugin crashed when it tries to convert a non-airco device to a HeaterCooler accessory (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/29)
+
 ## [1.5.1] - 2023-02-28
 
 Labels are back!
