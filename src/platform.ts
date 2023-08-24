@@ -41,7 +41,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     async discoverDevices(username: string, password: string) {
         let devices: Device[] = [];
 
-        this.log.info('---------- Daikin info for debugging reasons --------------------');
+        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs ---');
 
         try {
             devices = await this.getCloudDevices(username, password);
@@ -54,11 +54,11 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         devices.forEach(device => {
             try {
-                this.log.info('Device found with id: ' + device.getId() + ' Data:');
-                this.log.info('    name: ' + device.getData('climateControl', 'name').value);
-                this.log.info('    last updated: ' + device.getLastUpdated());
-                this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
-                this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
+                this.log.debug('Device found with id: ' + device.getId() + ' Data:');
+                this.log.debug('    name: ' + device.getData('climateControl', 'name').value);
+                this.log.debug('    last updated: ' + device.getLastUpdated());
+                this.log.debug('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
+                this.log.debug('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
 
                 const uuid = this.api.hap.uuid.generate(device.getId());
 
@@ -77,13 +77,12 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 }
             } catch (error) {
                 if (error instanceof Error) {
-                    error.message = `Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`;
-                    this.log.error(error.message);
+                    this.log.error(`Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
                 }
             }
         });
 
-        this.log.info('---------- End Daikin info for debugging reasons ---------------');
+        this.log.info('--------------- End Daikin info for debugging reasons --------------------');
     }
 
     async getCloudDevices(username: string, password: string): Promise<Device[]> {
@@ -97,7 +96,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         }
 
         const cloudDetails = await daikinCloud.getCloudDeviceDetails();
-        this.log.info(JSON.stringify(cloudDetails));
+        this.log.debug(JSON.stringify(cloudDetails));
 
         return devices;
     }
@@ -117,7 +116,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         };
 
         const tokenFile = path.join(this.storagePath, 'daikincloudtokenset.json');
-        this.log.info(`Write/read Daikin Cloud tokenset from ${tokenFile}`);
+        this.log.debug(`Write/read Daikin Cloud tokenset from ${tokenFile}`);
 
         if (fs.existsSync(tokenFile)) {
             try {
@@ -131,7 +130,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         const daikinCloud: DaikinCloud = new DaikinCloudController(tokenSet, options);
 
         daikinCloud.on('token_update', tokenSet => {
-            this.log.info(`UPDATED Daikin Cloud tokenset, use for future and wrote to ${tokenFile}`);
+            this.log.info('Retrieved new credentials from Daikin Cloud');
             fs.writeFileSync(tokenFile, JSON.stringify(tokenSet));
         });
 
