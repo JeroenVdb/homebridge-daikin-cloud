@@ -14,6 +14,16 @@ TBD
 
 ### Fixed
 
+## [1.5.3] - 2023-08-24
+
+### Added
+
+### Changed
+
+- Moved detailed logging from the info level to debug. Enable Debug Mode to see the logging again (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/34)
+
+### Fixed
+
 ## [1.5.2] - 2023-03-09
 
 ### Added
