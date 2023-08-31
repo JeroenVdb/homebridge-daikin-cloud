@@ -23,6 +23,15 @@
         "required": false,
         "default": false,
         "description": "Expose extra advanced features as streamer mode, econo mode and powerful mode. They will only appear when they are also supported by your device."
+      },
+      "excludedDevicesByDeviceId": {
+        "title": "Exclude specific devices",
+        "type": "array",
+        "items": {
+          "title": "Device id",
+          "type": "string"
+        },
+        "description": "Exclude specific devices by their device id. You can find the device id in the Homebridge logs (debug mode does not have to be on)"
       }
     }
   }

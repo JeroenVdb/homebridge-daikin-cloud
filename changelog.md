@@ -14,6 +14,26 @@ TBD
 
 ### Fixed
 
+## [1.6.0] - 2023-08-31
+
+### Added
+
+- It is now possible, via the config, to exclude specific devices (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/31)
+
+### Changed
+
+### Fixed
+
+## [1.5.5] - 2023-08-31
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Fix crashing plugin because it was published before the final commit (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/38)
+
 ## [1.5.3] - 2023-08-24
 
 ### Added

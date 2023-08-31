@@ -54,15 +54,25 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         devices.forEach(device => {
             try {
-                this.log.debug('Device found with id: ' + device.getId() + ' Data:');
-                this.log.debug('    name: ' + device.getData('climateControl', 'name').value);
-                this.log.debug('    last updated: ' + device.getLastUpdated());
-                this.log.debug('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
-                this.log.debug('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
-
                 const uuid = this.api.hap.uuid.generate(device.getId());
 
+                this.log.info('Device found with id: ' + uuid);
+                this.log.info('    name: ' + device.getData('climateControl', 'name').value);
+                this.log.info('    last updated: ' + device.getLastUpdated());
+                this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
+                this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
+                this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
+
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+
+                if (this.isExcludedDevice(this.config.excludedDevicesByDeviceId, uuid)) {
+                    this.log.info(`Device with id ${uuid} is excluded, don't add accessory`);
+                    if (existingAccessory) {
+                        this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
+                    }
+                    return;
+                }
+
                 if (existingAccessory) {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
@@ -144,5 +154,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         }
 
         return daikinCloud;
+    }
+
+    private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId): boolean {
+        return typeof excludedDevicesByDeviceId !== 'undefined' && excludedDevicesByDeviceId.includes(deviceId);
     }
 }
