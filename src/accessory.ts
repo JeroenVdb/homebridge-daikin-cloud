@@ -7,6 +7,7 @@ export class DaikinCloudAirConditioningAccessory {
         ECONO_MODE: 'Econo mode',
         STREAMER_MODE: 'Streamer mode',
         OUTDOUR_SILENT_MODE: 'Outdoor silent mode',
+        INDOOR_SILENT_MODE: 'Indoor silent mode',
     };
 
     private readonly name: string;
@@ -15,6 +16,7 @@ export class DaikinCloudAirConditioningAccessory {
     private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
     private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
     private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
+    private switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE);
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
