@@ -38,6 +38,7 @@ Supported:
 - Econo mode
 - Powerful mode
 - Outdoor silent mode
+- Indoor silent/quiet mode
 
 Extra info and example: https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/8#issuecomment-1188128335
 

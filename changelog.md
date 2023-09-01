@@ -14,6 +14,16 @@ TBD
 
 ### Fixed
 
+## [1.7.0-beta.0] - 2023-09-01
+
+### Added
+
+- Switch for indoor silent/quiet fan speed mode (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/33)
+
+### Changed
+
+### Fixed
+
 ## [1.6.0] - 2023-08-31
 
 ### Added
