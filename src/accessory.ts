@@ -460,9 +460,9 @@ enum DaikinFanDirectionVerticalModes {
 }
 
 enum DaikinOperationModes {
-    FAN_ONLY = "fanOnly",
-    HEATING = "heating",
-    COOLING = "cooling",
-    AUTO = "auto",
-    DRY = "dry"
+    FAN_ONLY = 'fanOnly',
+    HEATING = 'heating',
+    COOLING = 'cooling',
+    AUTO = 'auto',
+    DRY = 'dry'
 }
