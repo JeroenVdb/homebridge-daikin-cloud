@@ -41,7 +41,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     async discoverDevices(username: string, password: string) {
         let devices: Device[] = [];
 
-        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs ---');
+        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs v1.6.1) ---');
 
         try {
             devices = await this.getCloudDevices(username, password);
@@ -114,7 +114,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     async initiateDaikinCloudController(username, password) {
         let tokenSet;
         const options = {
-            logger: this.log.info,          // optional, logger function used to log details depending on loglevel
+            // eslint-disable-next-line no-console
+            logger: console.log,            // optional, logger function used to log details depending on loglevel
             logLevel: 'info',               // optional, Loglevel of Library, default 'warn' (logs nothing by default)
             proxyOwnIp: '192.168.xxx.xxx',  // required, if proxy needed: provide own IP or hostname to later access the proxy
             proxyPort: 8888,                // required: use this port for the proxy and point your client device to this port
