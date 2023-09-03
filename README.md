@@ -4,10 +4,17 @@ This Homebrige plugin connects to the Daikin Cloud and loads all your devices to
 
 The plugin supports some basic Daikin airco settings:
 - Current room temperature
-- Set airco to cooling, heating or auto + the required temperature
+- Set airco to cooling, heating or auto + the required temperature**
 - Set the fan speed
 - Swing mode (if supported by your device)
-- Extra modes (if supported by your device and enabled in config): powerful mode, econo mode, streamer mode and outdoor silent mode
+- Enable special modes (if supported by your device and enabled in config):
+  - powerful mode
+  - econo mode
+  - streamer mode
+  - outdoor silent mode
+  - indoor silent/quiet mode
+
+** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
@@ -31,7 +38,7 @@ If your device supports vertical and horizontal swing both will be started and s
 
 ## Control extra features (showExtraFeatures: true)
 
-By default this plugin creates a default [HeaterCooler Service](https://developers.homebridge.io/#/service/HeaterCooler) with the above possibilities. If you want you can add `showExtraFeatures: true` to the config. This will create extra switches to enable more special modes of your Daikin (if available).
+By default, this plugin creates a default [HeaterCooler Service](https://developers.homebridge.io/#/service/HeaterCooler) with the above possibilities. If you want you can add `showExtraFeatures: true` to the config. This will create extra switches to enable more special modes of your Daikin (if available).
 
 Supported:
 - Streamer mode
@@ -62,7 +69,8 @@ Add config object to the platform array in your Homebridge `config.json`.
             "username": "<username>",
             "password": "<password>",
             "platform": "DaikinCloud",
-            "showExtraFeatures": false // true or false (boolean), default: false
+            "showExtraFeatures": false, // boolean, default: false
+            "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
         }
     ]
 }
