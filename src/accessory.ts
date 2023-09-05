@@ -366,14 +366,14 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleIndoorSilentModeGet() {
-        this.platform.log.info(`[${this.name}] GET IndoorSilentMode`);
+        this.platform.log.debug(`[${this.name}] GET IndoorSilentMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`).value === DaikinFanSpeedModes.QUIET;
     }
 
     async handleIndoorSilentModeSet(value: CharacteristicValue) {
-        this.platform.log.info(`[${this.name}] SET indoorSilentMode to: ${value}`);
+        this.platform.log.debug(`[${this.name}] SET indoorSilentMode to: ${value}`);
         const daikinFanSpeedMode = value as boolean ? DaikinFanSpeedModes.QUIET : DaikinFanSpeedModes.FIXED;
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, daikinFanSpeedMode);
     }
