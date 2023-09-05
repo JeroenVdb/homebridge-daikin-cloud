@@ -41,7 +41,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     async discoverDevices(username: string, password: string) {
         let devices: Device[] = [];
 
-        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs v1.6.1) ---');
+        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
 
         try {
             devices = await this.getCloudDevices(username, password);
@@ -57,6 +57,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 const uuid = this.api.hap.uuid.generate(device.getId());
 
                 this.log.info('Device found with id: ' + uuid);
+                this.log.info('    id: ' + uuid);
                 this.log.info('    name: ' + device.getData('climateControl', 'name').value);
                 this.log.info('    last updated: ' + device.getLastUpdated());
                 this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
