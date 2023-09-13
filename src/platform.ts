@@ -1,7 +1,7 @@
 import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {DaikinCloudAirConditioningAccessory} from './accessory';
+import {DaikinClimateControlEmbeddedId, DaikinCloudAirConditioningAccessory} from './accessory';
 
 import DaikinCloudController from 'daikin-controller-cloud';
 import path from 'path';
@@ -55,12 +55,14 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         devices.forEach(device => {
             try {
                 const uuid = this.api.hap.uuid.generate(device.getId());
+                const climateControlEmbeddedId: DaikinClimateControlEmbeddedId = device.getDescription().deviceModel === 'Altherma' ? 'climateControlMainZone' : 'climateControl';
 
                 this.log.info('Device found with id: ' + uuid);
                 this.log.info('    id: ' + uuid);
-                this.log.info('    name: ' + device.getData('climateControl', 'name').value);
+                this.log.info('    name: ' + device.getData(climateControlEmbeddedId, 'name').value);
                 this.log.info('    last updated: ' + device.getLastUpdated());
                 this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
+                this.log.info('    deviceModel: ' + device.getDescription().deviceModel);
                 this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
                 this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
 
@@ -78,18 +80,18 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
-                    new DaikinCloudAirConditioningAccessory(this, existingAccessory);
+                    new DaikinCloudAirConditioningAccessory(this, existingAccessory, climateControlEmbeddedId);
                 } else {
-                    this.log.info('Adding new accessory:', device.getData('climateControl', 'name').value);
-                    const accessory = new this.api.platformAccessory(device.getData('climateControl', 'name').value, uuid);
+                    this.log.info('Adding new accessory:', device.getData(climateControlEmbeddedId, 'name').value);
+                    const accessory = new this.api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
                     accessory.context.device = device;
-                    new DaikinCloudAirConditioningAccessory(this, accessory);
+                    new DaikinCloudAirConditioningAccessory(this, accessory, climateControlEmbeddedId);
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             } catch (error) {
                 if (error instanceof Error) {
                     // eslint-disable-next-line no-console
-                    console.log('---- debug 1.8.0-beta.3 ----');
+                    console.log('---- debug 1.8.0-beta.5 ----');
                     // eslint-disable-next-line no-console
                     console.log(error);
                     this.log.error(`Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
