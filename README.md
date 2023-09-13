@@ -80,7 +80,7 @@ Add config object to the platform array in your Homebridge `config.json`.
 
 - BRP069C4x
 - BRP069A8x
-- BRP069A78 [(to be validated)](https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/30)
+- BRP069A78 - Altherma heatpump, we import this as a HeaterCooler [(to be validated)](https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/30)
 
 ## Development
 
