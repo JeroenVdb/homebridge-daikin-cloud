@@ -12,11 +12,11 @@ export class DaikinCloudAirConditioningAccessory {
 
     private readonly name: string;
     private service: Service;
-    private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
-    private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
-    private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
-    private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
-    private switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE);
+    private switchServicePowerfulMode;
+    private switchServiceEconoMode;
+    private switchServiceStreamerMode;
+    private switchServiceOutdoorSilentMode;
+    private switchServiceIndoorSilentMode;
 
     constructor(
         private readonly platform: DaikinCloudPlatform,
@@ -66,14 +66,16 @@ export class DaikinCloudAirConditioningAccessory {
             .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
             .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
 
-        this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
-            .setProps({
-                minStep: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
-                minValue: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
-                maxValue: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
-            })
-            .onGet(this.handleRotationSpeedGet.bind(this))
-            .onSet(this.handleRotationSpeedSet.bind(this));
+        if (this.hasFanControl()) {
+            this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
+                .setProps({
+                    minStep: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
+                    minValue: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
+                    maxValue: this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
+                })
+                .onGet(this.handleRotationSpeedGet.bind(this))
+                .onSet(this.handleRotationSpeedSet.bind(this));
+        }
 
         if (this.hasSwingModeFeature()) {
             this.platform.log.debug(`[${this.name}] Device has SwingMode, add Characteristic`);
@@ -395,6 +397,12 @@ export class DaikinCloudAirConditioningAccessory {
         return operationModes === ['heating'];
     }
 
+    hasFanControl() {
+        const fanControl = this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl');
+        this.platform.log.debug(`[${this.name}] hasFanControl, hasFanControl: ${Boolean(fanControl)}`);
+        return Boolean(fanControl);
+    }
+
     getTargetOperationModes() {
         if (this.hasOnlyHeating()) {
             return {
@@ -444,6 +452,10 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     hasIndoorSilentModeFeature() {
+        if (!this.hasFanControl()) {
+            return false;
+        }
+
         const fanSpeedValues: Array<string> = this.accessory.context.device.getData(this.climateControlEmbeddedId, 'fanControl', '/operationModes/heating/fanSpeed/currentMode').values;
         this.platform.log.debug(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
         return fanSpeedValues.includes(DaikinFanSpeedModes.QUIET);
