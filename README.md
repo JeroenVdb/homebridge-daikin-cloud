@@ -78,6 +78,8 @@ Add config object to the platform array in your Homebridge `config.json`.
 
 ## Tested with devices
 
+Devices supported by Daikin Onecta app: https://www.daikin.eu/en_us/product-group/control-systems/onecta/connectable-units.html
+
 - BRP069C4x
 - BRP069A8x
 - BRP069A78 - Altherma heatpump, we import this as a HeaterCooler [(to be validated)](https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/30)

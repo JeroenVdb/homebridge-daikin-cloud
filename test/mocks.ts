@@ -4,7 +4,7 @@
 import {EventEmitter} from 'events';
 import {createHash} from 'crypto';
 
-export const MockLog = (...args) => console.log(...args);
+export const MockLog = (...args) => jest.fn();
 MockLog.debug = MockLog;
 MockLog.info = MockLog;
 MockLog.warn = MockLog;

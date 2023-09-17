@@ -9,6 +9,7 @@ import fs from 'fs';
 
 import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
 import type * as DaikinCloud from './../node_modules/daikin-controller-cloud/index.js';
+import {DaikinCloudAirThermostatAccessory} from "./daikinThermostatAccessory";
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -56,15 +57,16 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             try {
                 const uuid = this.api.hap.uuid.generate(device.getId());
                 const climateControlEmbeddedId: DaikinClimateControlEmbeddedId = device.getDescription().deviceModel === 'Altherma' ? 'climateControlMainZone' : 'climateControl';
+                const deviceModel: string = device.getDescription().deviceModel;
 
-                this.log.info('Device found with id: ' + uuid);
-                this.log.info('    id: ' + uuid);
-                this.log.info('    name: ' + device.getData(climateControlEmbeddedId, 'name').value);
-                this.log.info('    last updated: ' + device.getLastUpdated());
-                this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
-                this.log.info('    deviceModel: ' + device.getDescription().deviceModel);
-                this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
-                this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
+                // this.log.info('Device found with id: ' + uuid);
+                // this.log.info('    id: ' + uuid);
+                // this.log.info('    name: ' + device.getData(climateControlEmbeddedId, 'name').value);
+                // this.log.info('    last updated: ' + device.getLastUpdated());
+                // this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
+                // this.log.info('    deviceModel: ' + device.getDescription().deviceModel);
+                // this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
+                // this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
@@ -80,23 +82,29 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
-                    new DaikinCloudAirConditioningAccessory(this, existingAccessory, climateControlEmbeddedId);
+                    if (deviceModel === 'Altherma') {
+                        new DaikinCloudAirThermostatAccessory(this, existingAccessory)
+                    } else {
+                        new DaikinCloudAirConditioningAccessory(this, existingAccessory);
+                    }
+
                 } else {
                     this.log.info('Adding new accessory:', device.getData(climateControlEmbeddedId, 'name').value);
                     const accessory = new this.api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
                     accessory.context.device = device;
-                    new DaikinCloudAirConditioningAccessory(this, accessory, climateControlEmbeddedId);
+
+                    if (deviceModel === 'Altherma') {
+                        new DaikinCloudAirThermostatAccessory(this, accessory)
+                    } else {
+                        new DaikinCloudAirConditioningAccessory(this, accessory);
+                    }
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             } catch (error) {
                 if (error instanceof Error) {
                     // eslint-disable-next-line no-console
-                    console.log('---- debug 1.8.0-beta.5 ----');
-                    // eslint-disable-next-line no-console
                     console.log(error);
                     this.log.error(`Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
-                    // eslint-disable-next-line no-console
-                    console.log('---- debug ----');
                 }
             }
         });
