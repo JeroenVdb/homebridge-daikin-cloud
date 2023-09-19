@@ -46,7 +46,12 @@ export class MockPlatformAccessory {
         return ret;
     }
 
-    getService(sClass: typeof MockServiceBase): MockServiceBase | undefined {
+    getService(sClass: typeof MockServiceBase | string): MockServiceBase | undefined {
+        if (typeof sClass === 'string') {
+            return this.services.find(s => s.name === sClass);
+        }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         return this.services.find(s => s instanceof sClass);
     }
 
@@ -163,6 +168,7 @@ export class MockHomebridge {
             FilterMaintenance,
             HeaterCooler,
             Switch,
+            Thermostat,
         },
         Characteristic: {
             Manufacturer,
@@ -173,6 +179,7 @@ export class MockHomebridge {
             CarbonDioxideLevel,
             CarbonDioxideDetected,
             CurrentTemperature,
+            TargetTemperature,
             CurrentRelativeHumidity,
             Active,
             StatusActive,
@@ -183,6 +190,7 @@ export class MockHomebridge {
             FilterLifeLevel,
             CurrentHeaterCoolerState,
             TargetHeaterCoolerState,
+            TargetHeatingCoolingState,
             HeatingThresholdTemperature,
             CoolingThresholdTemperature,
             On,
@@ -240,6 +248,8 @@ class FilterMaintenance extends MockServiceBase {}
 
 class HeaterCooler extends MockServiceBase {}
 
+class Thermostat extends MockServiceBase {}
+
 class Switch extends MockServiceBase {}
 
 // CHARACTERISTICS
@@ -260,6 +270,8 @@ class CarbonDioxideDetected extends MockCharacteristicBase {}
 
 class CurrentTemperature extends MockCharacteristicBase {}
 
+class TargetTemperature extends MockCharacteristicBase {}
+
 class CurrentRelativeHumidity extends MockCharacteristicBase {}
 
 class Active extends MockCharacteristicBase {}
@@ -279,6 +291,8 @@ class FilterLifeLevel extends MockCharacteristicBase {}
 class CurrentHeaterCoolerState extends MockCharacteristicBase {}
 
 class TargetHeaterCoolerState extends MockCharacteristicBase {}
+
+class TargetHeatingCoolingState extends MockCharacteristicBase {}
 
 class HeatingThresholdTemperature extends MockCharacteristicBase {}
 

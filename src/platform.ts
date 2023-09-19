@@ -1,7 +1,7 @@
 import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {DaikinClimateControlEmbeddedId, DaikinCloudAirConditioningAccessory} from './accessory';
+import {DaikinClimateControlEmbeddedId, daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
 
 import DaikinCloudController from 'daikin-controller-cloud';
 import path from 'path';
@@ -9,7 +9,7 @@ import fs from 'fs';
 
 import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
 import type * as DaikinCloud from './../node_modules/daikin-controller-cloud/index.js';
-import {DaikinCloudAirThermostatAccessory} from "./daikinThermostatAccessory";
+import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service = this.api.hap.Service;
@@ -28,9 +28,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         this.storagePath = api.user.storagePath();
 
-        this.api.on('didFinishLaunching', () => {
+        this.api.on('didFinishLaunching', async () => {
             log.debug('Executed didFinishLaunching callback');
-            this.discoverDevices(this.config.username, this.config.password);
+            await this.discoverDevices(this.config.username, this.config.password);
         });
     }
 
@@ -53,20 +53,772 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             }
         }
 
+        // TODO remove, for testing only!!
+        // const alt = new DaikinCloudDevice({
+        //     "_id": "10b029e7-484c-4519-b22e-c14be4b7a71c",
+        //     "deviceModel": "Altherma",
+        //     "type": "heating-wlan",
+        //     "isCloudConnectionUp": {
+        //         "settable": false,
+        //         "value": true
+        //     },
+        //     "managementPoints": [
+        //         {
+        //             "embeddedId": "gateway",
+        //             "managementPointType": "gateway",
+        //             "managementPointCategory": "secondary",
+        //             "firmwareVersion": {
+        //                 "settable": false,
+        //                 "value": "3.2.4",
+        //                 "maxLength": 8
+        //             },
+        //             "ipAddress": {
+        //                 "settable": false,
+        //                 "value": "192.168.1.10",
+        //                 "maxLength": 15
+        //             },
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 3
+        //             },
+        //             "isFirmwareUpdateSupported": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": true
+        //             },
+        //             "macAddress": {
+        //                 "settable": false,
+        //                 "value": "48:e7:da:01:c6:08",
+        //                 "maxLength": 17
+        //             },
+        //             "modelInfo": {
+        //                 "settable": false,
+        //                 "value": "BRP069A78",
+        //                 "maxLength": 9
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "Gateway",
+        //                 "maxLength": 63
+        //             },
+        //             "ssid": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "daikin-ap",
+        //                 "maxLength": 9
+        //             },
+        //             "serialNumber": {
+        //                 "settable": false,
+        //                 "value": "0060691",
+        //                 "maxLength": 16
+        //             },
+        //             "wifiConnectionSSID": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "Proximus-Home-B7B0",
+        //                 "maxLength": 32
+        //             },
+        //             "wifiConnectionStrength": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": -29,
+        //                 "maxValue": 0,
+        //                 "minValue": -90,
+        //                 "stepValue": 1
+        //             }
+        //         },
+        //         {
+        //             "embeddedId": "climateControlMainZone",
+        //             "managementPointType": "climateControl",
+        //             "managementPointCategory": "primary",
+        //             "managementPointSubType": "mainZone",
+        //             "consumptionData": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "ref": "#consumptionData",
+        //                 "value": {
+        //                     "electrical": {
+        //                         "heating": {
+        //                             "d": [
+        //                                 2,
+        //                                 0,
+        //                                 0,
+        //                                 1,
+        //                                 4,
+        //                                 2,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 4,
+        //                                 2,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 4,
+        //                                 2,
+        //                                 1,
+        //                                 0,
+        //                                 0,
+        //                                 1,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ],
+        //                             "w": [
+        //                                 14,
+        //                                 11,
+        //                                 19,
+        //                                 13,
+        //                                 25,
+        //                                 15,
+        //                                 12,
+        //                                 15,
+        //                                 8,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ],
+        //                             "m": [
+        //                                 null,
+        //                                 null,
+        //                                 228,
+        //                                 273,
+        //                                 28,
+        //                                 21,
+        //                                 0,
+        //                                 0,
+        //                                 48,
+        //                                 96,
+        //                                 220,
+        //                                 565,
+        //                                 437,
+        //                                 320,
+        //                                 107,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ]
+        //                         }
+        //                     }
+        //                 }
+        //             },
+        //             "controlMode": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "roomTemperature",
+        //                 "values": [
+        //                     "leavingWaterTemperature",
+        //                     "externalRoomTemperature",
+        //                     "roomTemperature"
+        //                 ]
+        //             },
+        //             "errorCode": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "",
+        //                 "maxLength": 16
+        //             },
+        //             "holidayMode": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "ref": "#holidayMode",
+        //                 "value": {
+        //                     "enabled": false,
+        //                     "startDate": "2017-01-01",
+        //                     "endDate": "2017-01-01"
+        //                 }
+        //             },
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 8
+        //             },
+        //             "isHolidayModeActive": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInEmergencyState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInErrorState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInInstallerState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInWarningState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "Altherma",
+        //                 "maxLength": 63
+        //             },
+        //             "onOffMode": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "on",
+        //                 "values": [
+        //                     "off",
+        //                     "on"
+        //                 ]
+        //             },
+        //             "operationMode": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "heating",
+        //                 "values": [
+        //                     "heating"
+        //                 ]
+        //             },
+        //             "schedule": {
+        //                 "settable": true,
+        //                 "ref": "#schedule",
+        //                 "value": {
+        //                     "currentMode": {
+        //                         "settable": false,
+        //                         "value": "heating",
+        //                         "values": [
+        //                             "heating"
+        //                         ]
+        //                     },
+        //                     "modes": {
+        //                         "heating": {
+        //                             "enabled": {
+        //                                 "settable": true,
+        //                                 "requiresReboot": false,
+        //                                 "value": true
+        //                             },
+        //                             "currentSchedule": {
+        //                                 "settable": true,
+        //                                 "requiresReboot": false,
+        //                                 "value": "scheduleHeatingRT1",
+        //                                 "values": [
+        //                                     "scheduleHeatingRT1",
+        //                                     "scheduleHeatingRT2",
+        //                                     "scheduleHeatingRT3"
+        //                                 ]
+        //                             },
+        //                             "meta": {
+        //                                 "minIntervalBetweenActions": "00:10:00",
+        //                                 "maxSchedules": 3,
+        //                                 "maxActionsPerActionPeriod": 6,
+        //                                 "consecutiveActionsAllowed": true,
+        //                                 "actionTypes": {
+        //                                     "roomTemperature": {
+        //                                         "settable": false,
+        //                                         "maxValue": 30,
+        //                                         "minValue": 12,
+        //                                         "stepValue": 1
+        //                                     }
+        //                                 }
+        //                             },
+        //                             "schedules": {
+        //                                 "scheduleHeatingRT1": {
+        //                                     "settable": true,
+        //                                     "name": {
+        //                                         "settable": true,
+        //                                         "requiresReboot": false,
+        //                                         "value": "User defined 1"
+        //                                     },
+        //                                     "meta": {
+        //                                         "isReadOnly": false,
+        //                                         "actionPeriods": [
+        //                                             "monday",
+        //                                             "tuesday",
+        //                                             "wednesday",
+        //                                             "thursday",
+        //                                             "friday",
+        //                                             "saturday",
+        //                                             "sunday"
+        //                                         ]
+        //                                     },
+        //                                     "actions": {}
+        //                                 },
+        //                                 "scheduleHeatingRT2": {
+        //                                     "settable": true,
+        //                                     "name": {
+        //                                         "settable": true,
+        //                                         "requiresReboot": false,
+        //                                         "value": "User defined 2"
+        //                                     },
+        //                                     "meta": {
+        //                                         "isReadOnly": false,
+        //                                         "actionPeriods": [
+        //                                             "monday",
+        //                                             "tuesday",
+        //                                             "wednesday",
+        //                                             "thursday",
+        //                                             "friday",
+        //                                             "saturday",
+        //                                             "sunday"
+        //                                         ]
+        //                                     },
+        //                                     "actions": {}
+        //                                 },
+        //                                 "scheduleHeatingRT3": {
+        //                                     "settable": true,
+        //                                     "name": {
+        //                                         "settable": true,
+        //                                         "requiresReboot": false,
+        //                                         "value": "User defined 3"
+        //                                     },
+        //                                     "meta": {
+        //                                         "isReadOnly": false,
+        //                                         "actionPeriods": [
+        //                                             "monday",
+        //                                             "tuesday",
+        //                                             "wednesday",
+        //                                             "thursday",
+        //                                             "friday",
+        //                                             "saturday",
+        //                                             "sunday"
+        //                                         ]
+        //                                     },
+        //                                     "actions": {}
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             },
+        //             "sensoryData": {
+        //                 "settable": false,
+        //                 "ref": "#sensoryData",
+        //                 "value": {
+        //                     "roomTemperature": {
+        //                         "settable": false,
+        //                         "requiresReboot": false,
+        //                         "value": 22.4,
+        //                         "maxValue": 127,
+        //                         "minValue": -127,
+        //                         "stepValue": 0.1
+        //                     },
+        //                     "outdoorTemperature": {
+        //                         "settable": false,
+        //                         "requiresReboot": false,
+        //                         "value": 4,
+        //                         "maxValue": 127,
+        //                         "minValue": -127,
+        //                         "stepValue": 1
+        //                     },
+        //                     "leavingWaterTemperature": {
+        //                         "settable": false,
+        //                         "requiresReboot": false,
+        //                         "value": 35,
+        //                         "maxValue": 127,
+        //                         "minValue": -127,
+        //                         "stepValue": 1
+        //                     }
+        //                 }
+        //             },
+        //             "setpointMode": {
+        //                 "settable": false,
+        //                 "requiresReboot": true,
+        //                 "value": "weatherDependent",
+        //                 "values": [
+        //                     "fixed",
+        //                     "weatherDependent"
+        //                 ]
+        //             },
+        //             "temperatureControl": {
+        //                 "settable": true,
+        //                 "ref": "#temperatureControl",
+        //                 "value": {
+        //                     "operationModes": {
+        //                         "auto": {
+        //                             "setpoints": {
+        //                                 "roomTemperature": {
+        //                                     "settable": true,
+        //                                     "requiresReboot": false,
+        //                                     "value": 22,
+        //                                     "maxValue": 30,
+        //                                     "minValue": 12,
+        //                                     "stepValue": 0.5
+        //                                 },
+        //                                 "leavingWaterOffset": {
+        //                                     "settable": true,
+        //                                     "requiresReboot": false,
+        //                                     "value": 0,
+        //                                     "maxValue": 10,
+        //                                     "minValue": -10,
+        //                                     "stepValue": 1
+        //                                 }
+        //                             }
+        //                         },
+        //                         "heating": {
+        //                             "setpoints": {
+        //                                 "roomTemperature": {
+        //                                     "settable": true,
+        //                                     "requiresReboot": false,
+        //                                     "value": 22,
+        //                                     "maxValue": 30,
+        //                                     "minValue": 12,
+        //                                     "stepValue": 0.5
+        //                                 },
+        //                                 "leavingWaterOffset": {
+        //                                     "settable": true,
+        //                                     "requiresReboot": false,
+        //                                     "value": 0,
+        //                                     "maxValue": 10,
+        //                                     "minValue": -10,
+        //                                     "stepValue": 1
+        //                                 }
+        //                             }
+        //                         },
+        //                         "cooling": {
+        //                             "setpoints": {}
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             "embeddedId": "domesticHotWaterTank",
+        //             "managementPointType": "domesticHotWaterTank",
+        //             "managementPointCategory": "primary",
+        //             "consumptionData": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "ref": "#consumptionData",
+        //                 "value": {
+        //                     "electrical": {
+        //                         "heating": {
+        //                             "d": [
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 1,
+        //                                 1,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 0,
+        //                                 1,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ],
+        //                             "w": [
+        //                                 2,
+        //                                 2,
+        //                                 2,
+        //                                 1,
+        //                                 0,
+        //                                 1,
+        //                                 2,
+        //                                 2,
+        //                                 1,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ],
+        //                             "m": [
+        //                                 null,
+        //                                 null,
+        //                                 15,
+        //                                 23,
+        //                                 22,
+        //                                 23,
+        //                                 22,
+        //                                 17,
+        //                                 20,
+        //                                 23,
+        //                                 25,
+        //                                 36,
+        //                                 38,
+        //                                 36,
+        //                                 9,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null,
+        //                                 null
+        //                             ]
+        //                         }
+        //                     }
+        //                 }
+        //             },
+        //             "errorCode": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "",
+        //                 "maxLength": 16
+        //             },
+        //             "heatupMode": {
+        //                 "settable": false,
+        //                 "requiresReboot": true,
+        //                 "value": "reheatOnly",
+        //                 "values": [
+        //                     "reheatOnly",
+        //                     "reheatSchedule",
+        //                     "scheduleOnly"
+        //                 ]
+        //             },
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 9
+        //             },
+        //             "isHolidayModeActive": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInEmergencyState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInErrorState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInInstallerState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isInWarningState": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "isPowerfulModeActive": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": false
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "",
+        //                 "maxLength": 63
+        //             },
+        //             "onOffMode": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "on",
+        //                 "values": [
+        //                     "off",
+        //                     "on"
+        //                 ]
+        //             },
+        //             "operationMode": {
+        //                 "settable": false,
+        //                 "value": "heating",
+        //                 "values": [
+        //                     "heating"
+        //                 ]
+        //             },
+        //             "powerfulMode": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "off",
+        //                 "values": [
+        //                     "off",
+        //                     "on"
+        //                 ]
+        //             },
+        //             "sensoryData": {
+        //                 "settable": false,
+        //                 "ref": "#sensoryData",
+        //                 "value": {
+        //                     "tankTemperature": {
+        //                         "settable": false,
+        //                         "requiresReboot": false,
+        //                         "value": 48,
+        //                         "maxValue": 127,
+        //                         "minValue": -127,
+        //                         "stepValue": 1
+        //                     }
+        //                 }
+        //             },
+        //             "setpointMode": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "fixed",
+        //                 "values": [
+        //                     "fixed",
+        //                     "weatherDependent"
+        //                 ]
+        //             },
+        //             "temperatureControl": {
+        //                 "settable": true,
+        //                 "ref": "#temperatureControl",
+        //                 "value": {
+        //                     "operationModes": {
+        //                         "heating": {
+        //                             "setpoints": {
+        //                                 "domesticHotWaterTemperature": {
+        //                                     "settable": true,
+        //                                     "requiresReboot": false,
+        //                                     "value": 48,
+        //                                     "maxValue": 60,
+        //                                     "minValue": 30,
+        //                                     "stepValue": 1
+        //                                 }
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             "embeddedId": "indoorUnitHydro",
+        //             "managementPointType": "indoorUnitHydro",
+        //             "managementPointCategory": "secondary",
+        //             "eepromVersion": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "3608726-66C",
+        //                 "maxLength": 16
+        //             },
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 4
+        //             },
+        //             "modelInfo": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "EHVH08S23EJ9W",
+        //                 "maxLength": 16
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "Indoor Hydro Unit",
+        //                 "maxLength": 63
+        //             },
+        //             "softwareVersion": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "0222",
+        //                 "maxLength": 16
+        //             }
+        //         },
+        //         {
+        //             "embeddedId": "outdoorUnit",
+        //             "managementPointType": "outdoorUnit",
+        //             "managementPointCategory": "secondary",
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 5
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "Outdoor Unit",
+        //                 "maxLength": 63
+        //             },
+        //             "softwareVersion": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "FFFF",
+        //                 "maxLength": 16
+        //             }
+        //         },
+        //         {
+        //             "embeddedId": "userInterface",
+        //             "managementPointType": "userInterface",
+        //             "managementPointCategory": "secondary",
+        //             "dateTime": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "2023-03-07T18:17:27"
+        //             },
+        //             "firmwareVersion": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "deprecated": "DEPRECATED",
+        //                 "value": "6.9.0",
+        //                 "maxLength": 16
+        //             },
+        //             "iconId": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": 6
+        //             },
+        //             "miconId": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "20010E05",
+        //                 "maxLength": 16
+        //             },
+        //             "modelInfo": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "EHVH08S23EJ9W",
+        //                 "maxLength": 16
+        //             },
+        //             "name": {
+        //                 "settable": true,
+        //                 "requiresReboot": false,
+        //                 "value": "User Interface",
+        //                 "maxLength": 63
+        //             },
+        //             "softwareVersion": {
+        //                 "settable": false,
+        //                 "requiresReboot": false,
+        //                 "value": "6.9.0",
+        //                 "maxLength": 16
+        //             }
+        //         }
+        //     ],
+        //     "embeddedId": "e1bac939-1495-4803-a6a3-ca2f9388c8ad",
+        //     "timestamp": "2023-03-07T19:01:39.983Z",
+        //     "id": "10b029e7-484c-4519-b22e-c14be4b7a71c",
+        //     "lastUpdateReceived": "2023-03-07T19:01:39.983Z"
+        // }, new DaikinCloudController());
+        // devices.push(alt);
+
         devices.forEach(device => {
             try {
                 const uuid = this.api.hap.uuid.generate(device.getId());
                 const climateControlEmbeddedId: DaikinClimateControlEmbeddedId = device.getDescription().deviceModel === 'Altherma' ? 'climateControlMainZone' : 'climateControl';
+                const name: string = device.getData(climateControlEmbeddedId, 'name').value;
                 const deviceModel: string = device.getDescription().deviceModel;
-
-                // this.log.info('Device found with id: ' + uuid);
-                // this.log.info('    id: ' + uuid);
-                // this.log.info('    name: ' + device.getData(climateControlEmbeddedId, 'name').value);
-                // this.log.info('    last updated: ' + device.getLastUpdated());
-                // this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
-                // this.log.info('    deviceModel: ' + device.getDescription().deviceModel);
-                // this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
-                // this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
@@ -82,22 +834,24 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
+
                     if (deviceModel === 'Altherma') {
-                        new DaikinCloudAirThermostatAccessory(this, existingAccessory)
+                        new daikinAlthermaAccessory(this, existingAccessory);
                     } else {
-                        new DaikinCloudAirConditioningAccessory(this, existingAccessory);
+                        new daikinAirConditioningAccessory(this, existingAccessory);
                     }
 
                 } else {
-                    this.log.info('Adding new accessory:', device.getData(climateControlEmbeddedId, 'name').value);
-                    const accessory = new this.api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
+                    this.log.info('Adding new accessory:', name);
+                    const accessory = new this.api.platformAccessory(name, uuid);
                     accessory.context.device = device;
 
                     if (deviceModel === 'Altherma') {
-                        new DaikinCloudAirThermostatAccessory(this, accessory)
+                        new daikinAlthermaAccessory(this, accessory);
                     } else {
-                        new DaikinCloudAirConditioningAccessory(this, accessory);
+                        new daikinAirConditioningAccessory(this, accessory);
                     }
+
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             } catch (error) {

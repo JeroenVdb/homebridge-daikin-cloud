@@ -86,6 +86,16 @@ Devices supported by Daikin Onecta app: https://www.daikin.eu/en_us/product-grou
 
 ## Development
 
+In HomeKit you expose an accessory which has one or more services, available services are:
+- https://developer.apple.com/documentation/homekit/hmservice/accessory_service_types (HomeKit docs)
+- https://developers.homebridge.io/#/service (Homebridge)
+
+Each service has one or more characteristics, check both HomeKit and Homebridge docs to find out which are compatible.
+A service can have multiple child services, for example a HeaterCooler service can also have multiple Switch services. But not all services can be combined. 
+Use HomeKit Accessory Simulator to find out which are compatible or via the HomeKit docs you can also find links from the service to other services.
+
+### Local
+
 For running a local Homebridge setup: https://github.com/oznu/homebridge-config-ui-x#installation-instructions
 
 ```
@@ -94,7 +104,6 @@ sudo hb-service stop
 ```
 
 UI: http://localhost:8581
-
 
 ## Credits
 

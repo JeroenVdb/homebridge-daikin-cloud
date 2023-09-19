@@ -2,11 +2,11 @@ import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
 import DaikinCloudDevice from 'daikin-controller-cloud/lib/device.js';
 import DaikinCloudController from 'daikin-controller-cloud/index.js';
 import {althermaHeatPump, dx23Airco, dx4Airco} from './devices';
-import {DaikinCloudPlatform} from "../src/platform";
-import {API} from "homebridge";
-import {MockHomebridge, MockLog, MockPlatformConfig} from "./mocks";
-import {DaikinCloudAirConditioningAccessory} from "../src/accessory";
-import {DaikinCloudAirThermostatAccessory} from "../src/daikinThermostatAccessory";
+import {DaikinCloudPlatform} from '../src/platform';
+import {API} from 'homebridge';
+import {MockHomebridge, MockLog, MockPlatformConfig} from './mocks';
+import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
+import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],
@@ -27,7 +27,7 @@ test.each<Array<string | string | any>>([
     const accessory = new api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new DaikinCloudAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     expect(homebridgeAccessory).toMatchSnapshot();
 });
@@ -48,7 +48,7 @@ test.each<Array<string | string | any>>([
     const accessory = new api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new DaikinCloudAirThermostatAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     expect(homebridgeAccessory).toMatchSnapshot();
 });

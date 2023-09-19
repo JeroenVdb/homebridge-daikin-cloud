@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Create DaikinCloudAirConditioningAccessory with dx4 device 1`] = `
-DaikinCloudAirConditioningAccessory {
+daikinAirConditioningAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "072872f3604d87ba91827046054eece2",
     "context": {
@@ -2058,6 +2058,7 @@ DaikinCloudAirConditioningAccessory {
       "HumiditySensor": [Function],
       "Switch": [Function],
       "TemperatureSensor": [Function],
+      "Thermostat": [Function],
     },
     "accessories": [],
     "api": MockHomebridge {
@@ -2105,6 +2106,7 @@ DaikinCloudAirConditioningAccessory {
           "HumiditySensor": [Function],
           "Switch": [Function],
           "TemperatureSensor": [Function],
+          "Thermostat": [Function],
         },
         "uuid": {
           "generate": [Function],
@@ -2370,7 +2372,7 @@ DaikinCloudAirConditioningAccessory {
 `;
 
 exports[`Create DaikinCloudAirConditioningAccessory with dx23 device 1`] = `
-DaikinCloudAirConditioningAccessory {
+daikinAirConditioningAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "b8ce91ae326c4b0831744f4edc6e3447",
     "context": {
@@ -3509,6 +3511,7 @@ DaikinCloudAirConditioningAccessory {
       "HumiditySensor": [Function],
       "Switch": [Function],
       "TemperatureSensor": [Function],
+      "Thermostat": [Function],
     },
     "accessories": [],
     "api": MockHomebridge {
@@ -3556,6 +3559,7 @@ DaikinCloudAirConditioningAccessory {
           "HumiditySensor": [Function],
           "Switch": [Function],
           "TemperatureSensor": [Function],
+          "Thermostat": [Function],
         },
         "uuid": {
           "generate": [Function],
@@ -5152,7 +5156,7 @@ DaikinCloudAirThermostatAccessory {
         "name": "Altherma",
         "optionalCharacteristics": [],
       },
-      HeaterCooler {
+      Thermostat {
         "characteristics": [
           Name {
             "events": {},
@@ -5242,6 +5246,7 @@ DaikinCloudAirThermostatAccessory {
       "HumiditySensor": [Function],
       "Switch": [Function],
       "TemperatureSensor": [Function],
+      "Thermostat": [Function],
     },
     "accessories": [],
     "api": MockHomebridge {
@@ -5289,6 +5294,7 @@ DaikinCloudAirThermostatAccessory {
           "HumiditySensor": [Function],
           "Switch": [Function],
           "TemperatureSensor": [Function],
+          "Thermostat": [Function],
         },
         "uuid": {
           "generate": [Function],
@@ -5312,7 +5318,7 @@ DaikinCloudAirThermostatAccessory {
     "log": [Function],
     "storagePath": "storagePath",
   },
-  "service": HeaterCooler {
+  "service": Thermostat {
     "characteristics": [
       Name {
         "events": {},

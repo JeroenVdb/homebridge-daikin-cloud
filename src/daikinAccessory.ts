@@ -1,7 +1,7 @@
 import {PlatformAccessory} from 'homebridge';
 import {DaikinCloudPlatform} from './platform';
 
-export class DaikinCloudAccessory {
+export class daikinAccessory {
     readonly platform: DaikinCloudPlatform;
     readonly accessory: PlatformAccessory;
     constructor(
@@ -28,54 +28,3 @@ export class DaikinCloudAccessory {
         this.platform.log.info('    config.excludedDevicesByDeviceId: ' + excludedDevicesByDeviceId);
     }
 }
-
-export enum DaikinFanSpeedModes {
-    AUTO = 'auto',
-    QUIET = 'quiet',
-    FIXED = 'fixed',
-}
-
-export enum DaikinOutdoorSilentModes {
-    ON = 'on',
-    OFF = 'off',
-}
-
-export enum DaikinOnOffModes {
-    ON = 'on',
-    OFF = 'off',
-}
-
-export enum DaikinStreamerModes {
-    ON = 'on',
-    OFF = 'off',
-}
-
-export enum DaikinEconoModes {
-    ON = 'on',
-    OFF = 'off',
-}
-export enum DaikinPowerfulModes {
-    ON = 'on',
-    OFF = 'off',
-}
-
-export enum DaikinFanDirectionHorizontalModes {
-    STOP = 'stop',
-    SWING = 'swing',
-}
-
-export enum DaikinFanDirectionVerticalModes {
-    STOP = 'stop',
-    SWING = 'swing',
-    WIND_NICE = 'windNice',
-}
-
-export enum DaikinOperationModes {
-    FAN_ONLY = 'fanOnly',
-    HEATING = 'heating',
-    COOLING = 'cooling',
-    AUTO = 'auto',
-    DRY = 'dry'
-}
-
-export type DaikinClimateControlEmbeddedId = 'climateControl' | 'climateControlMainZone';
