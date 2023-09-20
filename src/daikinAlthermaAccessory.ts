@@ -120,7 +120,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
     async handleHotWaterTankCurrentTemperatureGet(): Promise<CharacteristicValue> {
         await this.accessory.context.device.updateData();
-        const temperature = this.accessory.context.device.getData('climateControlMainZone', 'sensoryData', '/tankTemperature').value;
+        const temperature = this.accessory.context.device.getData('domesticHotWaterTank', 'sensoryData', '/tankTemperature').value;
         this.platform.log.debug(`[${this.name}] GET CurrentTemperature for hot water tank, temperature: ${temperature}`);
         return temperature;
     }

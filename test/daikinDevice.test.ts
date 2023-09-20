@@ -20,3 +20,9 @@ it('Get name from device %s', async () => {
     accessory.context.device = new DaikinCloudDevice(althermaHeatPump, new DaikinCloudController());
     expect(accessory.context.device.getData('climateControlMainZone', 'name').value).toEqual('Altherma');
 });
+
+it('Get tankTemperature from device domesticHotWaterTank', async () => {
+    const accessory = new PlatformAccessory('NAME', 'efd08509-2edb-41d0-a9ab-ce913323d811');
+    accessory.context.device = new DaikinCloudDevice(althermaHeatPump, new DaikinCloudController());
+    expect(accessory.context.device.getData('domesticHotWaterTank', 'sensoryData', '/tankTemperature').value).toEqual(48);
+});

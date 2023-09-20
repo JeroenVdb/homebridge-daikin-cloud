@@ -3662,7 +3662,7 @@ daikinAirConditioningAccessory {
 `;
 
 exports[`Create DaikinCloudThermostatAccessory with altherma device 1`] = `
-DaikinCloudAirThermostatAccessory {
+daikinAlthermaAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "dc4a509fac84ed39d21e5747f42d1adf",
     "context": {
@@ -5156,7 +5156,7 @@ DaikinCloudAirThermostatAccessory {
         "name": "Altherma",
         "optionalCharacteristics": [],
       },
-      Thermostat {
+      HeaterCooler {
         "characteristics": [
           Name {
             "events": {},
@@ -5207,6 +5207,114 @@ DaikinCloudAirThermostatAccessory {
         "name": undefined,
         "optionalCharacteristics": [],
       },
+      Thermostat {
+        "characteristics": [
+          Name {
+            "events": {},
+            "props": {},
+            "value": "Hot water tank",
+          },
+          ConfiguredName {
+            "events": {},
+            "props": {},
+            "value": "Hot water tank",
+          },
+          CurrentTemperature {
+            "events": {
+              "get": [Function],
+            },
+            "props": {},
+            "value": "",
+          },
+          TargetTemperature {
+            "events": {
+              "get": [Function],
+              "set": [Function],
+            },
+            "props": {
+              "maxValue": 60,
+              "minStep": 1,
+              "minValue": 30,
+            },
+            "value": "",
+          },
+          TargetHeatingCoolingState {
+            "events": {
+              "get": [Function],
+              "set": [Function],
+            },
+            "props": {
+              "maxValue": 1,
+              "minStep": 1,
+              "minValue": 0,
+            },
+            "value": "",
+          },
+        ],
+        "linkedServices": [],
+        "name": "Hot water tank",
+        "optionalCharacteristics": [
+          ConfiguredName {
+            "events": {},
+            "props": {},
+            "value": "",
+          },
+        ],
+      },
+    ],
+  },
+  "hotWaterTankService": Thermostat {
+    "characteristics": [
+      Name {
+        "events": {},
+        "props": {},
+        "value": "Hot water tank",
+      },
+      ConfiguredName {
+        "events": {},
+        "props": {},
+        "value": "Hot water tank",
+      },
+      CurrentTemperature {
+        "events": {
+          "get": [Function],
+        },
+        "props": {},
+        "value": "",
+      },
+      TargetTemperature {
+        "events": {
+          "get": [Function],
+          "set": [Function],
+        },
+        "props": {
+          "maxValue": 60,
+          "minStep": 1,
+          "minValue": 30,
+        },
+        "value": "",
+      },
+      TargetHeatingCoolingState {
+        "events": {
+          "get": [Function],
+          "set": [Function],
+        },
+        "props": {
+          "maxValue": 1,
+          "minStep": 1,
+          "minValue": 0,
+        },
+        "value": "",
+      },
+    ],
+    "linkedServices": [],
+    "name": "Hot water tank",
+    "optionalCharacteristics": [
+      ConfiguredName {
+        "events": {},
+        "props": {},
+        "value": "",
+      },
     ],
   },
   "name": "Altherma",
@@ -5236,6 +5344,8 @@ DaikinCloudAirThermostatAccessory {
       "SwingMode": [Function],
       "TargetAirPurifierState": [Function],
       "TargetHeaterCoolerState": [Function],
+      "TargetHeatingCoolingState": [Function],
+      "TargetTemperature": [Function],
     },
     "Service": {
       "AccessoryInformation": [Function],
@@ -5284,6 +5394,8 @@ DaikinCloudAirThermostatAccessory {
           "SwingMode": [Function],
           "TargetAirPurifierState": [Function],
           "TargetHeaterCoolerState": [Function],
+          "TargetHeatingCoolingState": [Function],
+          "TargetTemperature": [Function],
         },
         "Service": {
           "AccessoryInformation": [Function],
@@ -5318,7 +5430,7 @@ DaikinCloudAirThermostatAccessory {
     "log": [Function],
     "storagePath": "storagePath",
   },
-  "service": Thermostat {
+  "service": HeaterCooler {
     "characteristics": [
       Name {
         "events": {},
