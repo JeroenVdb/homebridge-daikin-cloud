@@ -2048,6 +2048,8 @@ daikinAirConditioningAccessory {
       "SwingMode": [Function],
       "TargetAirPurifierState": [Function],
       "TargetHeaterCoolerState": [Function],
+      "TargetHeatingCoolingState": [Function],
+      "TargetTemperature": [Function],
     },
     "Service": {
       "AccessoryInformation": [Function],
@@ -2096,6 +2098,8 @@ daikinAirConditioningAccessory {
           "SwingMode": [Function],
           "TargetAirPurifierState": [Function],
           "TargetHeaterCoolerState": [Function],
+          "TargetHeatingCoolingState": [Function],
+          "TargetTemperature": [Function],
         },
         "Service": {
           "AccessoryInformation": [Function],
@@ -3501,6 +3505,8 @@ daikinAirConditioningAccessory {
       "SwingMode": [Function],
       "TargetAirPurifierState": [Function],
       "TargetHeaterCoolerState": [Function],
+      "TargetHeatingCoolingState": [Function],
+      "TargetTemperature": [Function],
     },
     "Service": {
       "AccessoryInformation": [Function],
@@ -3549,6 +3555,8 @@ daikinAirConditioningAccessory {
           "SwingMode": [Function],
           "TargetAirPurifierState": [Function],
           "TargetHeaterCoolerState": [Function],
+          "TargetHeatingCoolingState": [Function],
+          "TargetTemperature": [Function],
         },
         "Service": {
           "AccessoryInformation": [Function],
