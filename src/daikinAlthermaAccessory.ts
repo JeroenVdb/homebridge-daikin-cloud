@@ -37,7 +37,11 @@ export class daikinAlthermaAccessory extends daikinAccessory{
             .onGet(this.handleCurrentTemperatureGet.bind(this));
 
         this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
-            .setProps(this.getTargetOperationModes())
+            .setProps({
+                minStep: 1,
+                minValue: 0,
+                maxValue: 2,
+            })
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
@@ -249,22 +253,6 @@ export class daikinAlthermaAccessory extends daikinAccessory{
         const operationModes: Array<string> = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').values;
         this.platform.log.debug(`[${this.name}] hasOnlyHeating, operationModes: ${operationModes.join(', ')}`);
         return operationModes.length === 1 && operationModes[0] === 'heating';
-    }
-
-    getTargetOperationModes() {
-        if (this.hasOnlyHeating()) {
-            return {
-                minStep: 1,
-                minValue: 1,
-                maxValue: 1,
-            };
-        }
-
-        return {
-            minStep: 1,
-            minValue: 0,
-            maxValue: 2,
-        };
     }
 }
 
