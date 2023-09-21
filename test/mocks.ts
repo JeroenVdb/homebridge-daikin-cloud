@@ -294,7 +294,11 @@ class FilterLifeLevel extends MockCharacteristicBase {}
 
 class CurrentHeaterCoolerState extends MockCharacteristicBase {}
 
-class TargetHeaterCoolerState extends MockCharacteristicBase {}
+class TargetHeaterCoolerState extends MockCharacteristicBase {
+    public static AUTO = 0;
+    public static HEAT = 1;
+    public static COOL = 2;
+}
 
 class TargetHeatingCoolingState extends MockCharacteristicBase {}
 
@@ -302,7 +306,10 @@ class HeatingThresholdTemperature extends MockCharacteristicBase {}
 
 class CoolingThresholdTemperature extends MockCharacteristicBase {}
 
-class SwingMode extends MockCharacteristicBase {}
+class SwingMode extends MockCharacteristicBase {
+    public static SWING_DISABLED = 0;
+    public static SWING_ENABLED = 1;
+}
 
 class ConfiguredName extends MockCharacteristicBase {}
 

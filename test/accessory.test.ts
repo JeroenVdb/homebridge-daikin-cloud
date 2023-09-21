@@ -65,6 +65,75 @@ test.each<Array<string | string | any>>([
     removeServiceSpy.mockReset();
 });
 
+test('DaikinCloudAirConditioningAccessory Getters', async () => {
+    const device = new DaikinCloudDevice(dx4Airco, new DaikinCloudController());
+
+    jest.spyOn(DaikinCloudPlatform.prototype, 'getCloudDevices').mockImplementation(async (username, password) => {
+        return [device];
+    });
+
+    const config = new MockPlatformConfig(false);
+    const api = new MockHomebridge();
+
+    const uuid = api.hap.uuid.generate(device.getId());
+    const accessory = new api.platformAccessory(device.getData('climateControl', 'name').value, uuid);
+    device.updateData = () => jest.fn();
+    accessory.context['device'] = device;
+
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+
+    expect(await homebridgeAccessory.handleActiveStateGet()).toEqual(true);
+    expect(await homebridgeAccessory.handleCurrentTemperatureGet()).toEqual(25);
+    expect(await homebridgeAccessory.handleCoolingThresholdTemperatureGet()).toEqual(25);
+    expect(await homebridgeAccessory.handleRotationSpeedGet()).toEqual(2);
+    expect(await homebridgeAccessory.handleHeatingThresholdTemperatureGet()).toEqual(22);
+    expect(await homebridgeAccessory.handleTargetHeaterCoolerStateGet()).toEqual(1);
+    expect(await homebridgeAccessory.handleSwingModeGet()).toEqual(0);
+});
+
+test('DaikinCloudAirConditioningAccessory Setters', async () => {
+    const device = new DaikinCloudDevice(dx4Airco, new DaikinCloudController());
+
+    jest.spyOn(DaikinCloudPlatform.prototype, 'getCloudDevices').mockImplementation(async (username, password) => {
+        return [device];
+    });
+
+    const setDataSpy = jest.spyOn(DaikinCloudDevice.prototype, 'setData').mockImplementation();
+
+    const config = new MockPlatformConfig(false);
+    const api = new MockHomebridge();
+
+    const uuid = api.hap.uuid.generate(device.getId());
+    const accessory = new api.platformAccessory(device.getData('climateControl', 'name').value, uuid);
+    device.updateData = () => jest.fn();
+    accessory.context['device'] = device;
+
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+
+    await homebridgeAccessory.handleActiveStateSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(1, 'climateControl', 'onOffMode', 'on');
+
+    await homebridgeAccessory.handleActiveStateSet(0);
+    expect(setDataSpy).toHaveBeenNthCalledWith(2, 'climateControl', 'onOffMode', 'off');
+
+    await homebridgeAccessory.handleCoolingThresholdTemperatureSet(21)
+    expect(setDataSpy).toHaveBeenNthCalledWith(3, 'climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', 21);
+
+    await homebridgeAccessory.handleRotationSpeedSet(50)
+    expect(setDataSpy).toHaveBeenNthCalledWith(4, 'climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode', 'fixed');
+    expect(setDataSpy).toHaveBeenNthCalledWith(5, 'climateControl', 'fanControl', '/operationModes/heating/fanSpeed/modes/fixed', 50);
+
+    await homebridgeAccessory.handleHeatingThresholdTemperatureSet(25)
+    expect(setDataSpy).toHaveBeenNthCalledWith(6, 'climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', 25);
+
+    await homebridgeAccessory.handleTargetHeaterCoolerStateSet(1)
+    expect(setDataSpy).toHaveBeenNthCalledWith(7, 'climateControl', 'operationMode', 'heating');
+    expect(setDataSpy).toHaveBeenNthCalledWith(8, 'climateControl', 'onOffMode', 'on');
+
+    await homebridgeAccessory.handleSwingModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(9, 'climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode', 'swing');
+});
+
 test.each<Array<string | string | any>>([
     ['altherma', 'climateControlMainZone', althermaHeatPump],
 ])('Create DaikinCloudThermostatAccessory with %s device', (name, climateControlEmbeddedId, deviceJson) => {
