@@ -33,7 +33,7 @@ test.each<Array<string | string | any>>([
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],
     ['dx23', 'climateControl', dx23Airco],
-])('Create DaikinCloudAirConditioningAccessory with %s device, showExtraFeatures disabled', (name, climateControlEmbeddedId, deviceJson) => {
+])('Create DaikinCloudAirConditioningAccessory with %s device, showExtraFeatures disabled', async (name, climateControlEmbeddedId, deviceJson) => {
     const device = new DaikinCloudDevice(deviceJson, new DaikinCloudController());
 
     jest.spyOn(DaikinCloudPlatform.prototype, 'getCloudDevices').mockImplementation(async (username, password) => {
@@ -89,6 +89,11 @@ test('DaikinCloudAirConditioningAccessory Getters', async () => {
     expect(await homebridgeAccessory.handleHeatingThresholdTemperatureGet()).toEqual(22);
     expect(await homebridgeAccessory.handleTargetHeaterCoolerStateGet()).toEqual(1);
     expect(await homebridgeAccessory.handleSwingModeGet()).toEqual(0);
+    expect(await homebridgeAccessory.handlePowerfulModeGet()).toEqual(false);
+    expect(await homebridgeAccessory.handleEconoModeGet()).toEqual(false);
+    expect(await homebridgeAccessory.handleStreamerModeGet()).toEqual(false);
+    expect(await homebridgeAccessory.handleOutdoorSilentModeGet()).toEqual(false);
+    expect(await homebridgeAccessory.handleIndoorSilentModeGet()).toEqual(false);
 });
 
 test('DaikinCloudAirConditioningAccessory Setters', async () => {
@@ -116,41 +121,36 @@ test('DaikinCloudAirConditioningAccessory Setters', async () => {
     await homebridgeAccessory.handleActiveStateSet(0);
     expect(setDataSpy).toHaveBeenNthCalledWith(2, 'climateControl', 'onOffMode', 'off');
 
-    await homebridgeAccessory.handleCoolingThresholdTemperatureSet(21)
+    await homebridgeAccessory.handleCoolingThresholdTemperatureSet(21);
     expect(setDataSpy).toHaveBeenNthCalledWith(3, 'climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', 21);
 
-    await homebridgeAccessory.handleRotationSpeedSet(50)
+    await homebridgeAccessory.handleRotationSpeedSet(50);
     expect(setDataSpy).toHaveBeenNthCalledWith(4, 'climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode', 'fixed');
     expect(setDataSpy).toHaveBeenNthCalledWith(5, 'climateControl', 'fanControl', '/operationModes/heating/fanSpeed/modes/fixed', 50);
 
-    await homebridgeAccessory.handleHeatingThresholdTemperatureSet(25)
+    await homebridgeAccessory.handleHeatingThresholdTemperatureSet(25);
     expect(setDataSpy).toHaveBeenNthCalledWith(6, 'climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', 25);
 
-    await homebridgeAccessory.handleTargetHeaterCoolerStateSet(1)
+    await homebridgeAccessory.handleTargetHeaterCoolerStateSet(1);
     expect(setDataSpy).toHaveBeenNthCalledWith(7, 'climateControl', 'operationMode', 'heating');
     expect(setDataSpy).toHaveBeenNthCalledWith(8, 'climateControl', 'onOffMode', 'on');
 
     await homebridgeAccessory.handleSwingModeSet(1);
     expect(setDataSpy).toHaveBeenNthCalledWith(9, 'climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode', 'swing');
-});
+    expect(setDataSpy).toHaveBeenNthCalledWith(10, 'climateControl', 'fanControl', '/operationModes/heating/fanDirection/vertical/currentMode', 'swing');
 
-test.each<Array<string | string | any>>([
-    ['altherma', 'climateControlMainZone', althermaHeatPump],
-])('Create DaikinCloudThermostatAccessory with %s device', (name, climateControlEmbeddedId, deviceJson) => {
-    const device = new DaikinCloudDevice(deviceJson, new DaikinCloudController());
+    await homebridgeAccessory.handlePowerfulModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(11, 'climateControl', 'powerfulMode', 'on');
 
-    jest.spyOn(DaikinCloudPlatform.prototype, 'getCloudDevices').mockImplementation(async (username, password) => {
-        return [device];
-    });
+    await homebridgeAccessory.handleEconoModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(12, 'climateControl', 'econoMode', 'on');
 
-    const config = new MockPlatformConfig(true);
-    const api = new MockHomebridge();
+    await homebridgeAccessory.handleStreamerModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(13, 'climateControl', 'streamerMode', 'on');
 
-    const uuid = api.hap.uuid.generate(device.getId());
-    const accessory = new api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
-    accessory.context['device'] = device;
+    await homebridgeAccessory.handleOutdoorSilentModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(14, 'climateControl', 'outdoorSilentMode', 'on');
 
-    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
-
-    expect(homebridgeAccessory).toMatchSnapshot();
+    await homebridgeAccessory.handleIndoorSilentModeSet(1);
+    expect(setDataSpy).toHaveBeenNthCalledWith(15, 'climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode', 'quiet');
 });
