@@ -17,7 +17,6 @@ export class DaikinCloudRepo {
 
                 if (managementPoint.embeddedId === 'domesticHotWaterTank') {
                     if (managementPoint.consumptionData) managementPoint.consumptionData = 'REDACTED';
-                    if (managementPoint.schedule) managementPoint.schedule = 'REDACTED';
                 }
                 return managementPoint;
             });

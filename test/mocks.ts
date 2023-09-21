@@ -55,6 +55,10 @@ export class MockPlatformAccessory {
         return this.services.find(s => s instanceof sClass);
     }
 
+    removeService(sClass) {
+        console.log('remove service : ' + sClass);
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-types,@typescript-eslint/no-empty-function
     on = jest.fn((event: string, callback: () => {}) => {});
 }
@@ -250,7 +254,7 @@ class HeaterCooler extends MockServiceBase {}
 
 class Thermostat extends MockServiceBase {}
 
-class Switch extends MockServiceBase {}
+export class Switch extends MockServiceBase {}
 
 // CHARACTERISTICS
 

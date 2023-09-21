@@ -14,11 +14,11 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     private readonly name: string;
     private service: Service;
 
-    private switchServicePowerfulMode;
-    private switchServiceEconoMode;
-    private switchServiceStreamerMode;
-    private switchServiceOutdoorSilentMode;
-    private switchServiceIndoorSilentMode;
+    private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
+    private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
+    private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
+    private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
+    private switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE);
 
     constructor(
         platform: DaikinCloudPlatform,
@@ -27,16 +27,6 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         super(platform, accessory);
 
         this.name = accessory.displayName;
-
-        this.printDeviceInfo(
-            this.accessory.UUID,
-            this.accessory.displayName,
-            this.accessory.context.device.getLastUpdated(),
-            this.accessory.context.device.getData('gateway', 'modelInfo').value,
-            this.accessory.context.device.getDescription().deviceModel,
-            this.platform.config.showExtraFeatures,
-            this.platform.config.excludedDevicesByDeviceId,
-        );
 
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
 
@@ -97,7 +87,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
-            this.switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE) || accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
+            this.switchServicePowerfulMode = this.switchServicePowerfulMode || accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
             this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.POWERFUL_MODE);
 
             this.switchServicePowerfulMode
@@ -118,7 +108,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has EconoMode, add Switch Service`);
 
-            this.switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE) || accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
+            this.switchServiceEconoMode = this.switchServiceEconoMode || accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
             this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.ECONO_MODE);
 
             this.switchServiceEconoMode
@@ -138,7 +128,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE) || accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
+            this.switchServiceStreamerMode = this.switchServiceStreamerMode || accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
             this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.STREAMER_MODE);
 
             this.switchServiceStreamerMode
@@ -159,7 +149,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE) || accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
+            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
             this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.OUTDOUR_SILENT_MODE);
 
             this.switchServiceOutdoorSilentMode
@@ -179,7 +169,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         if (this.hasIndoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has IndoorSilentMode, add Switch Service`);
 
-            this.switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE) || accessory.addService(this.platform.Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
+            this.switchServiceIndoorSilentMode = this.switchServiceIndoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
             this.switchServiceIndoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.INDOOR_SILENT_MODE);
 
             this.switchServiceIndoorSilentMode

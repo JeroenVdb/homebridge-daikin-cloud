@@ -15,16 +15,6 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
         this.name = this.accessory.displayName;
 
-        this.printDeviceInfo(
-            this.accessory.UUID,
-            this.accessory.displayName,
-            this.accessory.context.device.getLastUpdated(),
-            this.accessory.context.device.getData('gateway', 'modelInfo').value,
-            this.accessory.context.device.getDescription().deviceModel,
-            this.platform.config.showExtraFeatures,
-            this.platform.config.excludedDevicesByDeviceId,
-        );
-
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
 
         this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
