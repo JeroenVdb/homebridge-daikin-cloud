@@ -149,7 +149,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             await daikinCloud.login(username, password);
         } catch (error) {
             if (error instanceof Error) {
-                error.message = `Failed to login to Daikin Cloud with ${username}: ${error.message}`;
+                error.message = `Failed to login to Daikin Cloud with ${username}: ${error.message}\nIf the error is about "Missing required fields for registration" try to logout and log back into the Onecta app. Doing this should require you to fill in the missing fields.`;
             }
             throw error;
         }
