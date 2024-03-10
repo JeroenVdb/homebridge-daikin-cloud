@@ -1,7 +1,8 @@
 import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
 import {DaikinCloudPlatform} from './platform';
+import {daikinAccessory} from './daikinAccessory';
 
-export class DaikinCloudAirConditioningAccessory {
+export class daikinAirConditioningAccessory extends daikinAccessory{
     private extraServices = {
         POWERFUL_MODE: 'Powerful mode',
         ECONO_MODE: 'Econo mode',
@@ -12,6 +13,7 @@ export class DaikinCloudAirConditioningAccessory {
 
     private readonly name: string;
     private service: Service;
+
     private switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
     private switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
     private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
@@ -19,15 +21,12 @@ export class DaikinCloudAirConditioningAccessory {
     private switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE);
 
     constructor(
-        private readonly platform: DaikinCloudPlatform,
-        private readonly accessory: PlatformAccessory,
+        platform: DaikinCloudPlatform,
+        accessory: PlatformAccessory,
     ) {
-        this.name = accessory.context.device.getData('climateControl', 'name').value;
+        super(platform, accessory);
 
-        this.accessory.getService(this.platform.Service.AccessoryInformation)!
-            .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Daikin')
-            .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.getData('gateway', 'modelInfo').value)
-            .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
+        this.name = accessory.displayName;
 
         this.service = this.accessory.getService(this.platform.Service.HeaterCooler) || this.accessory.addService(this.platform.Service.HeaterCooler);
 
@@ -41,32 +40,39 @@ export class DaikinCloudAirConditioningAccessory {
             .onGet(this.handleCurrentTemperatureGet.bind(this));
 
         this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
+            .setProps({
+                minStep: 1,
+                minValue: 0,
+                maxValue: 2,
+            })
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
         this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
             .setProps({
-                minStep: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minStep,
-                minValue: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minValue,
-                maxValue: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').maxValue,
+                minStep: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minStep,
+                minValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minValue,
+                maxValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').maxValue,
             })
             .onGet(this.handleCoolingThresholdTemperatureGet.bind(this))
             .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
+
         this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
             .setProps({
-                minStep: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minStep,
-                minValue: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
-                maxValue: this.accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
+                minStep: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minStep,
+                minValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
+                maxValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
             })
             .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
             .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
 
+
         this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
             .setProps({
-                minStep: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').minStep,
-                minValue: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').minValue,
-                maxValue: this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/cooling/fanSpeed/modes/fixed').maxValue,
+                minStep: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
+                minValue: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
+                maxValue: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
             })
             .onGet(this.handleRotationSpeedGet.bind(this))
             .onSet(this.handleRotationSpeedSet.bind(this));
@@ -81,7 +87,7 @@ export class DaikinCloudAirConditioningAccessory {
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
-            this.switchServicePowerfulMode = this.switchServicePowerfulMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
+            this.switchServicePowerfulMode = this.switchServicePowerfulMode || accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
             this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.POWERFUL_MODE);
 
             this.switchServicePowerfulMode
@@ -95,14 +101,14 @@ export class DaikinCloudAirConditioningAccessory {
 
         } else {
             if (this.switchServicePowerfulMode) {
-                this.accessory.removeService(this.switchServicePowerfulMode);
+                accessory.removeService(this.switchServicePowerfulMode);
             }
         }
 
         if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has EconoMode, add Switch Service`);
 
-            this.switchServiceEconoMode = this.switchServiceEconoMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
+            this.switchServiceEconoMode = this.switchServiceEconoMode || accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
             this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.ECONO_MODE);
 
             this.switchServiceEconoMode
@@ -115,14 +121,14 @@ export class DaikinCloudAirConditioningAccessory {
                 .onSet(this.handleEconoModeSet.bind(this));
         } else {
             if (this.switchServiceEconoMode) {
-                this.accessory.removeService(this.switchServiceEconoMode);
+                accessory.removeService(this.switchServiceEconoMode);
             }
         }
 
         if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceStreamerMode = this.switchServiceStreamerMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
+            this.switchServiceStreamerMode = this.switchServiceStreamerMode || accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
             this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.STREAMER_MODE);
 
             this.switchServiceStreamerMode
@@ -136,14 +142,14 @@ export class DaikinCloudAirConditioningAccessory {
 
         } else {
             if (this.switchServiceStreamerMode) {
-                this.accessory.removeService(this.switchServiceStreamerMode);
+                accessory.removeService(this.switchServiceStreamerMode);
             }
         }
 
         if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
+            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
             this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.OUTDOUR_SILENT_MODE);
 
             this.switchServiceOutdoorSilentMode
@@ -156,14 +162,14 @@ export class DaikinCloudAirConditioningAccessory {
                 .onSet(this.handleOutdoorSilentModeSet.bind(this));
         } else {
             if (this.switchServiceOutdoorSilentMode) {
-                this.accessory.removeService(this.switchServiceOutdoorSilentMode);
+                accessory.removeService(this.switchServiceOutdoorSilentMode);
             }
         }
 
         if (this.hasIndoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
-            this.platform.log.info(`[${this.name}] Device has IndoorSilentMode, add Switch Service`);
+            this.platform.log.debug(`[${this.name}] Device has IndoorSilentMode, add Switch Service`);
 
-            this.switchServiceIndoorSilentMode = this.switchServiceIndoorSilentMode || this.accessory.addService(this.platform.Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
+            this.switchServiceIndoorSilentMode = this.switchServiceIndoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
             this.switchServiceIndoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.INDOOR_SILENT_MODE);
 
             this.switchServiceIndoorSilentMode
@@ -176,7 +182,7 @@ export class DaikinCloudAirConditioningAccessory {
                 .onSet(this.handleIndoorSilentModeSet.bind(this));
         } else {
             if (this.switchServiceIndoorSilentMode) {
-                this.accessory.removeService(this.switchServiceIndoorSilentMode);
+                accessory.removeService(this.switchServiceIndoorSilentMode);
             }
         }
     }
@@ -363,14 +369,14 @@ export class DaikinCloudAirConditioningAccessory {
     }
 
     async handleIndoorSilentModeGet() {
-        this.platform.log.info(`[${this.name}] GET IndoorSilentMode`);
+        this.platform.log.debug(`[${this.name}] GET IndoorSilentMode`);
         await this.accessory.context.device.updateData();
 
         return this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`).value === DaikinFanSpeedModes.QUIET;
     }
 
     async handleIndoorSilentModeSet(value: CharacteristicValue) {
-        this.platform.log.info(`[${this.name}] SET indoorSilentMode to: ${value}`);
+        this.platform.log.debug(`[${this.name}] SET indoorSilentMode to: ${value}`);
         const daikinFanSpeedMode = value as boolean ? DaikinFanSpeedModes.QUIET : DaikinFanSpeedModes.FIXED;
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, daikinFanSpeedMode);
     }
@@ -413,7 +419,7 @@ export class DaikinCloudAirConditioningAccessory {
 
     hasIndoorSilentModeFeature() {
         const fanSpeedValues: Array<string> = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode').values;
-        this.platform.log.info(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
+        this.platform.log.debug(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
         return fanSpeedValues.includes(DaikinFanSpeedModes.QUIET);
     }
 }
@@ -466,3 +472,5 @@ enum DaikinOperationModes {
     AUTO = 'auto',
     DRY = 'dry'
 }
+
+export type DaikinClimateControlEmbeddedId = 'climateControl' | 'climateControlMainZone';
