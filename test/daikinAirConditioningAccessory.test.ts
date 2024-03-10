@@ -1,12 +1,11 @@
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
 import DaikinCloudDevice from 'daikin-controller-cloud/lib/device.js';
 import DaikinCloudController from 'daikin-controller-cloud/index.js';
-import {althermaHeatPump, dx23Airco, dx4Airco} from './devices';
+import {dx23Airco, dx4Airco} from './devices';
 import {DaikinCloudPlatform} from '../src/platform';
 import {API} from 'homebridge';
 import {MockHomebridge, MockLog, MockPlatformAccessory, MockPlatformConfig, Switch} from './mocks';
 import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
-import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],

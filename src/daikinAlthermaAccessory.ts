@@ -69,7 +69,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
         this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
             .setProps({
-                minStep: accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').stepValue,
+                minStep: accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minStep,
                 minValue: accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minValue,
                 maxValue: accessory.context.device.getData('domesticHotWaterTank', 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').maxValue,
             })

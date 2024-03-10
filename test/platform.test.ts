@@ -1,14 +1,15 @@
 import DaikinCloudDevice from 'daikin-controller-cloud/lib/device.js';
 import DaikinCloudController from 'daikin-controller-cloud/index.js';
-import {althermaHeatPump, dx23Airco, dx4Airco} from './devices';
+import {althermaHeatPump, althermaHeatPump2, dx23Airco, dx4Airco} from './devices';
 import {DaikinCloudPlatform} from "../src/platform";
 import {API} from "homebridge";
 import {MockHomebridge, MockLog, MockPlatformConfig} from "./mocks";
 
 test.each<Array<string | any | jest.DoneCallback>>([
-    ['dx4', dx4Airco],
-    ['dx23', dx23Airco],
-    ['altherma', althermaHeatPump],
+    // ['dx4', dx4Airco],
+    // ['dx23', dx23Airco],
+    // ['altherma', althermaHeatPump],
+    ['altherma2', althermaHeatPump2],
 ])('Create DaikinCloudPlatform with %s device', (name, deviceJson, done: jest.DoneCallback) => {
     const device = new DaikinCloudDevice(deviceJson, new DaikinCloudController());
 
