@@ -14,6 +14,12 @@ TBD
 
 ### Fixed
 
+## [1.7.3] - 2024-03-10
+
+### Added
+
+- Warning about why login sometimes will fail (https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/51)
+
 ## [1.7.0] - 2023-09-03
 
 ### Added
