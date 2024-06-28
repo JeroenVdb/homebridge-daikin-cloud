@@ -5,14 +5,26 @@
   "schema": {
     "type": "object",
     "properties": {
-      "username": {
-        "title": "Username",
+      "clientId": {
+        "title": "Client ID",
         "type": "string",
         "required": true,
         "default": ""
       },
-      "password": {
-        "title": "Password",
+      "clientSecret": {
+        "title": "Client Secret",
+        "type": "string",
+        "required": true,
+        "default": ""
+      },
+      "accessToken": {
+        "title": "Access Token",
+        "type": "string",
+        "required": true,
+        "default": ""
+      },
+      "refreshToken": {
+        "title": "Refresh Token",
         "type": "string",
         "required": true,
         "default": ""
