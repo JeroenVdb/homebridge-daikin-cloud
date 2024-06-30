@@ -35,7 +35,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         this.api.on('didFinishLaunching', async () => {
             log.debug('Executed didFinishLaunching callback');
-            await this.discoverDevices(this.config.clientId, this.config.clientSecret, this.config.accessToken, this.config.refreshToken);
+            await this.discoverDevices(this.config.clientId, this.config.clientSecret, this.config.accessToken, this.config.refreshToken, this.config.authenticationToken);
         });
     }
 
@@ -44,13 +44,13 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.accessories.push(accessory);
     }
 
-    async discoverDevices(clientId: string, clientSecret: string, accessToken: string, refreshToken: string) {
+    async discoverDevices(clientId: string, clientSecret: string, accessToken: string, refreshToken: string, authenticationToken: string) {
         let devices: Device[] = [];
 
         this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
 
         try {
-            devices = await this.getCloudDevices(clientId, clientSecret, accessToken, refreshToken);
+            devices = await this.getCloudDevices(clientId, clientSecret, accessToken, refreshToken, authenticationToken);
         } catch (error) {
             if (error instanceof Error) {
                 error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
@@ -112,8 +112,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.log.info('--------------- End Daikin info for debugging reasons --------------------');
     }
 
-    async getCloudDevices(clientId: string, clientSecret: string, accessToken: string, refreshToken: string): Promise<Device[]> {
-        const daikinCloud = await this.initiateDaikinCloudController(clientId, clientSecret, accessToken, refreshToken);
+    async getCloudDevices(clientId: string, clientSecret: string, accessToken: string, refreshToken: string, authenticationToken: string): Promise<Device[]> {
+        const daikinCloud = await this.initiateDaikinCloudController(clientId, clientSecret, accessToken, refreshToken, authenticationToken);
         const devices: Device[] = await daikinCloud.getCloudDevices();
 
         this.log.info(`Found ${devices.length} devices in your Daikin Cloud`);
@@ -126,7 +126,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         return devices;
     }
 
-    async initiateDaikinCloudController(clientId: string, clientSecret: string, accessToken: string, refreshToken: string) {
+    async initiateDaikinCloudController(clientId: string, clientSecret: string, accessToken: string, refreshToken: string, authenticationToken: string) {
         let tokenSet;
 
         const tokenFile = path.join(this.storagePath, 'daikincloudtokenset_onectaapi.json');
@@ -139,12 +139,19 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             } catch (e) {
                 this.log.debug(`Daikin Cloud could not get tokenset: ${e}`);
             }
-        } else {
+        } else if (authenticationToken) {
+            this.log.debug(`Got authenticationToken from config: ${authenticationToken}`);
+            tokenSet = await DaikinCloudController.getAccessTokenFromAuthToken(clientId, clientSecret, authenticationToken, 'https://www.jeroenvdb.be');
+            this.log.debug(`Got new tokenSet from Daikin Cloud: ${JSON.stringify(tokenSet)}`);
+            fs.writeFileSync(tokenFile, JSON.stringify(tokenSet));
+        } else if (accessToken && refreshToken) {
+            this.log.debug('Got accessToken and refreshToken from config');
             tokenSet = {
                 access_token: accessToken,
                 refresh_token: refreshToken,
-            }
-            fs.writeFileSync(tokenFile, JSON.stringify(tokenSet));
+            };
+        } else {
+            throw new Error('Not the right configuration for Daikin Cloud found. Please provide either accessToken and refreshToken or authenticationToken.');
         }
 
         const daikinCloud: DaikinCloud = new DaikinCloudController(clientId, clientSecret, tokenSet, {});

@@ -17,16 +17,22 @@
         "required": true,
         "default": ""
       },
+      "authenticationToken": {
+        "title": "Authentication Token",
+        "type": "string",
+        "required": false,
+        "default": ""
+      },
       "accessToken": {
         "title": "Access Token",
         "type": "string",
-        "required": true,
+        "required": false,
         "default": ""
       },
       "refreshToken": {
         "title": "Refresh Token",
         "type": "string",
-        "required": true,
+        "required": false,
         "default": ""
       },
       "showExtraFeatures": {
