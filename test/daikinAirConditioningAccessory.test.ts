@@ -3,7 +3,7 @@ import DaikinCloudDevice from 'daikin-controller-cloud/lib/device.js';
 import DaikinCloudController from 'daikin-controller-cloud/index.js';
 import {dx23Airco, dx4Airco} from './devices';
 import {DaikinCloudPlatform} from '../src/platform';
-import {API} from 'homebridge';
+import {API, Logger} from 'homebridge';
 import {MockHomebridge, MockLog, MockPlatformAccessory, MockPlatformConfig, Switch} from './mocks';
 import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
 
@@ -24,7 +24,7 @@ test.each<Array<string | string | any>>([
     const accessory = new api.platformAccessory(device.getData(climateControlEmbeddedId, 'name').value, uuid);
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     expect(homebridgeAccessory).toMatchSnapshot();
 });
@@ -53,7 +53,7 @@ test.each<Array<string | string | any>>([
     accessory.addService(Switch, 'Indoor silent mode');
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     expect(homebridgeAccessory).toMatchSnapshot();
     expect(removeServiceSpy).toHaveBeenNthCalledWith(1, new Switch('Powerful mode'));
@@ -79,7 +79,7 @@ test('DaikinCloudAirConditioningAccessory Getters', async () => {
     device.updateData = () => jest.fn();
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     expect(await homebridgeAccessory.handleActiveStateGet()).toEqual(true);
     expect(await homebridgeAccessory.handleCurrentTemperatureGet()).toEqual(25);
@@ -112,7 +112,7 @@ test('DaikinCloudAirConditioningAccessory Setters', async () => {
     device.updateData = () => jest.fn();
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog, config, api as unknown as API), accessory as unknown as PlatformAccessory);
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLog as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory);
 
     await homebridgeAccessory.handleActiveStateSet(1);
     expect(setDataSpy).toHaveBeenNthCalledWith(1, 'climateControl', 'onOffMode', 'on');

@@ -10,8 +10,6 @@ import fs from 'fs';
 import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
 import type * as DaikinCloud from './../node_modules/daikin-controller-cloud/index.js';
 import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
-import {DaikinCloudRepo} from './repository/daikinCloudRepo';
-import DaikinCloudDevice from "daikin-controller-cloud/lib/device.js";
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;

@@ -187,7 +187,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         }
 
         setInterval(() => {
-            console.log('Update Daikin Data');
+            this.platform.log.debug('Update Daikin Data');
             this.accessory.context.device.updateData();
         }, 1000 * 60 * 5);
     }
