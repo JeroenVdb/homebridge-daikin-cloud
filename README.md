@@ -58,6 +58,8 @@ Install from NPM: https://www.npmjs.com/package/homebridge-daikin-cloud
 
 Add config object to the platform array in your Homebridge `config.json`.
 
+Read [config](config.md) for more info on how to get the required parameters.
+
 ```
 {
     "bridge": {
@@ -66,8 +68,10 @@ Add config object to the platform array in your Homebridge `config.json`.
     "accessories": [],
     "platforms": [
         {
-            "username": "<username>",
-            "password": "<password>",
+            "clientId": "<clientId>",
+            "clientSecret": "<clientSecret>",
+            "authenticationToken": "<authenticationToken>",
+            "redirectUri": "<redirectUri>",
             "platform": "DaikinCloud",
             "showExtraFeatures": false, // boolean, default: false
             "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts

@@ -23,14 +23,8 @@
         "required": false,
         "default": ""
       },
-      "accessToken": {
-        "title": "Access Token",
-        "type": "string",
-        "required": false,
-        "default": ""
-      },
-      "refreshToken": {
-        "title": "Refresh Token",
+      "redirectUri": {
+        "title": "Redirect URI",
         "type": "string",
         "required": false,
         "default": ""
