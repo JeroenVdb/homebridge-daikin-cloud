@@ -48,7 +48,7 @@ The following parameters are required:
 - Redirect URI
 - Port
 
-First 3 values you will get when you set up your App in the Daikin Europe Developer Portal.
+First 2 values you will get when you set up your App in the Daikin Europe Developer Portal. The last 2 values are the Redirect URI and port where the Daikin Cloud API will send the tokens to.
 
 #### Create an App in the Daikin Europe Developer Portal
 
