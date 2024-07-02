@@ -7,24 +7,28 @@
     "properties": {
       "clientId": {
         "title": "Client ID",
+        "description": "The client ID of your app you created in the Daikin Developer Portal",
         "type": "string",
         "required": true,
         "default": ""
       },
       "clientSecret": {
         "title": "Client Secret",
+        "description": "The client Secret of your app you created in the Daikin Developer Portal",
         "type": "string",
         "required": true,
         "default": ""
       },
-      "authenticationToken": {
-        "title": "Authentication Token",
+      "redirectUri": {
+        "title": "Redirect URI",
+        "description": "The redirect URI where the authorisation token will be send to. This is most likely your Homebridge instance IP address (Daikin blocks \"localhost\"). This URI should also be set for your app in the Daikin Developer Portal. For example: https://192.168.0.160:8581",
         "type": "string",
         "required": false,
         "default": ""
       },
-      "redirectUri": {
-        "title": "Redirect URI",
+      "port": {
+        "title": "Port",
+        "description": "The port of your Homebridge instance. For example: 8581",
         "type": "string",
         "required": false,
         "default": ""

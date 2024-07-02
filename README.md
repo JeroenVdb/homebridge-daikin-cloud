@@ -16,6 +16,58 @@ The plugin supports some basic Daikin airco settings:
 
 ** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 
+## Config
+
+Add config object to the platform array in your Homebridge `config.json`.
+
+```
+{
+    "bridge": {
+        ...
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "clientId": "<clientId>",
+            "clientSecret": "<clientSecret>",
+            "redirectUri": "<redirectUri>",
+            "port": "<redirectUri>",
+            "platform": "DaikinCloud",
+            "showExtraFeatures": false, // boolean, default: false
+            "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
+        }
+    ]
+}
+```
+
+### Get config parameters
+
+The following parameters are required:
+- Client ID
+- Client Secret
+- Redirect URI
+- Port
+
+First 3 values you will get when you set up your App in the Daikin Europe Developer Portal.
+
+#### Create an App in the Daikin Europe Developer Portal
+
+1. Go to https://developer.cloud.daikineurope.com/
+2. In the upper right corner click your name and select "My Apps"
+3. Click "+ New App"
+4. Fill in your application name, auth strategy (Onecta OIDC) and redirect URI (see "The Redirect URI and port" below)
+5. Click create
+
+You will receive a Client ID and Client Secret (keep it with you, you'll only see it once). The Redirect URI is the one you entered in step 4.
+
+#### The Redirect URI and port
+
+This plugin uses daikin-controller-cloud. This package will set up a small https server where the Authentication flow will finish, so it can get the
+required tokens. Because the server is running in our Homebridge instance this URI and port will match the once of your Homebridge instance.
+
+For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51826`. The
+port will be `51826`
+
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
 ## Fan speed
@@ -53,32 +105,6 @@ Extra info and example: https://github.com/JeroenVdb/homebridge-daikin-cloud/iss
 ## Install
 
 Install from NPM: https://www.npmjs.com/package/homebridge-daikin-cloud
-
-## Config
-
-Add config object to the platform array in your Homebridge `config.json`.
-
-Read [config](config.md) for more info on how to get the required parameters.
-
-```
-{
-    "bridge": {
-        ...
-    },
-    "accessories": [],
-    "platforms": [
-        {
-            "clientId": "<clientId>",
-            "clientSecret": "<clientSecret>",
-            "authenticationToken": "<authenticationToken>",
-            "redirectUri": "<redirectUri>",
-            "platform": "DaikinCloud",
-            "showExtraFeatures": false, // boolean, default: false
-            "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
-        }
-    ]
-}
-```
 
 ## Tested with devices
 

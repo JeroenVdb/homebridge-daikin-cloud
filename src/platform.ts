@@ -3,11 +3,11 @@ import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, S
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 import {DaikinClimateControlEmbeddedId, daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
 
-import {DaikinCloudController} from 'daikin-controller-cloud';
+import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
 
 import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
 import {resolve} from 'node:path';
-import type {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
+import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;
@@ -37,15 +37,15 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 /* OIDC client secret */
                 oidc_client_secret: this.config.clientSecret,
                 /* network interface that the HTTP server should bind to */
-                oidc_callback_server_addr: 'jerrelalalala.be',
+                oidc_callback_server_addr: '0.0.0.0',
                 /* port that the HTTP server should bind to */
-                oidc_callback_server_port: 8581,
+                oidc_callback_server_port: this.config.port,
                 /* OIDC Redirect URI */
-                oidc_callback_server_baseurl: 'https://jerrelalalala.be:8581',
+                oidc_callback_server_baseurl: this.config.redirectUri,
                 /* path of file used to cache the OIDC tokenset */
                 oidc_tokenset_file_path: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
                 /* time to wait for the user to go through the authorization grant flow before giving up (in seconds) */
-                oidc_authorization_timeout: 120,
+                oidc_authorization_timeout: 60 * 5,
             });
 
             controller.on('authorization_request', (url) => {
@@ -74,6 +74,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             if (error instanceof Error) {
                 error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
                 this.log.error(error.message);
+                console.log(error)
             }
         }
 
