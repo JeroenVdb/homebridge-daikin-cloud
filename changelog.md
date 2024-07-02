@@ -14,6 +14,16 @@ TBD
 
 ### Fixed
 
+## [2.1.0-beta.0] - 2024-07-02
+
+### Added
+
+- Switch to using the new Daikin Cloud API. (!) PLEASE READ THE README AND CHANGE YOUR CONFIG
+
+### Changed
+
+### Fixed
+
 ## [1.8.0-beta.0] - 2023-09-05
 
 ### Added
