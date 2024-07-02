@@ -14,6 +14,16 @@ TBD
 
 ### Fixed
 
+## [1.8.0-beta.0] - 2023-09-05
+
+### Added
+
+- Support for Altherma (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/30)
+
+### Changed
+
+### Fixed
+
 ## [1.7.3] - 2024-03-10
 
 ### Added

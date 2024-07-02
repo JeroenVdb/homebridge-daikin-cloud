@@ -16,6 +16,58 @@ The plugin supports some basic Daikin airco settings:
 
 ** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 
+## Config
+
+Add config object to the platform array in your Homebridge `config.json`.
+
+```
+{
+    "bridge": {
+        ...
+    },
+    "accessories": [],
+    "platforms": [
+        {
+            "clientId": "<clientId>",
+            "clientSecret": "<clientSecret>",
+            "redirectUri": "<redirectUri>",
+            "port": "<redirectUri>",
+            "platform": "DaikinCloud",
+            "showExtraFeatures": false, // boolean, default: false
+            "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
+        }
+    ]
+}
+```
+
+### Get config parameters
+
+The following parameters are required:
+- Client ID
+- Client Secret
+- Redirect URI
+- Port
+
+First 2 values you will get when you set up your App in the Daikin Europe Developer Portal. The last 2 values are the Redirect URI and port where the Daikin Cloud API will send the tokens to.
+
+#### Create an App in the Daikin Europe Developer Portal
+
+1. Go to https://developer.cloud.daikineurope.com/
+2. In the upper right corner click your name and select "My Apps"
+3. Click "+ New App"
+4. Fill in your application name, auth strategy (Onecta OIDC) and redirect URI (see "The Redirect URI and port" below)
+5. Click create
+
+You will receive a Client ID and Client Secret (keep it with you, you'll only see it once). The Redirect URI is the one you entered in step 4.
+
+#### The Redirect URI and port
+
+This plugin uses daikin-controller-cloud. This package will set up a small https server where the Authentication flow will finish, so it can get the
+required tokens. Because the server is running in our Homebridge instance this URI and port will match the once of your Homebridge instance.
+
+For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51826`. The
+port will be `51826`
+
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
 ## Fan speed
@@ -54,34 +106,25 @@ Extra info and example: https://github.com/JeroenVdb/homebridge-daikin-cloud/iss
 
 Install from NPM: https://www.npmjs.com/package/homebridge-daikin-cloud
 
-## Config
-
-Add config object to the platform array in your Homebridge `config.json`.
-
-```
-{
-    "bridge": {
-        ...
-    },
-    "accessories": [],
-    "platforms": [
-        {
-            "username": "<username>",
-            "password": "<password>",
-            "platform": "DaikinCloud",
-            "showExtraFeatures": false, // boolean, default: false
-            "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
-        }
-    ]
-}
-```
-
 ## Tested with devices
+
+Devices supported by Daikin Onecta app: https://www.daikin.eu/en_us/product-group/control-systems/onecta/connectable-units.html
 
 - BRP069C4x
 - BRP069A8x
+- BRP069A78 - Altherma heatpump, we import this as a HeaterCooler [(to be validated)](https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/30)
 
 ## Development
+
+In HomeKit you expose an accessory which has one or more services, available services are:
+- https://developer.apple.com/documentation/homekit/hmservice/accessory_service_types (HomeKit docs)
+- https://developers.homebridge.io/#/service (Homebridge)
+
+Each service has one or more characteristics, check both HomeKit and Homebridge docs to find out which are compatible.
+A service can have multiple child services, for example a HeaterCooler service can also have multiple Switch services. But not all services can be combined. 
+Use HomeKit Accessory Simulator to find out which are compatible or via the HomeKit docs you can also find links from the service to other services.
+
+### Local
 
 For running a local Homebridge setup: https://github.com/oznu/homebridge-config-ui-x#installation-instructions
 
@@ -91,7 +134,6 @@ sudo hb-service stop
 ```
 
 UI: http://localhost:8581
-
 
 ## Credits
 

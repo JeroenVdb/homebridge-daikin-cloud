@@ -1,35 +1,59 @@
 import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {DaikinCloudAirConditioningAccessory} from './accessory';
+import {DaikinClimateControlEmbeddedId, daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
 
-import DaikinCloudController from 'daikin-controller-cloud';
-import path from 'path';
-import fs from 'fs';
+import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
 
-import type * as Device from './../node_modules/daikin-controller-cloud/lib/device.js';
-import type * as DaikinCloud from './../node_modules/daikin-controller-cloud/index.js';
+import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
+import {resolve} from 'node:path';
+import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
-    public readonly Service: typeof Service = this.api.hap.Service;
-    public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+    public readonly Service: typeof Service;
+    public readonly Characteristic: typeof Characteristic;
 
     public readonly accessories: PlatformAccessory[] = [];
 
     public readonly storagePath: string = '';
+    public controller: DaikinCloudController | undefined;
 
     constructor(
         public readonly log: Logger,
         public readonly config: PlatformConfig,
         public readonly api: API,
     ) {
+        this.Service = this.api.hap.Service;
+        this.Characteristic = this.api.hap.Characteristic;
+
         this.log.debug('Finished initializing platform:', this.config.name);
 
         this.storagePath = api.user.storagePath();
 
-        this.api.on('didFinishLaunching', () => {
+        this.api.on('didFinishLaunching', async () => {
+            const controller = new DaikinCloudController({
+                /* OIDC client id */
+                oidc_client_id: this.config.clientId,
+                /* OIDC client secret */
+                oidc_client_secret: this.config.clientSecret,
+                /* network interface that the HTTP server should bind to */
+                oidc_callback_server_addr: '0.0.0.0',
+                /* port that the HTTP server should bind to */
+                oidc_callback_server_port: this.config.port,
+                /* OIDC Redirect URI */
+                oidc_callback_server_baseurl: this.config.redirectUri,
+                /* path of file used to cache the OIDC tokenset */
+                oidc_tokenset_file_path: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
+                /* time to wait for the user to go through the authorization grant flow before giving up (in seconds) */
+                oidc_authorization_timeout: 60 * 5,
+            });
+
+            controller.on('authorization_request', (url) => {
+                this.log.warn('Please navigate to %s', url);
+            });
+
             log.debug('Executed didFinishLaunching callback');
-            this.discoverDevices(this.config.username, this.config.password);
+            await this.discoverDevices(controller);
         });
     }
 
@@ -38,30 +62,28 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.accessories.push(accessory);
     }
 
-    async discoverDevices(username: string, password: string) {
-        let devices: Device[] = [];
+    async discoverDevices(controller: DaikinCloudController) {
+        let devices: DaikinCloudDevice[] = [];
 
-        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs v1.6.1) ---');
+        this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
 
         try {
-            devices = await this.getCloudDevices(username, password);
+            devices = await controller.getCloudDevices();
+            console.log('devices', devices)
         } catch (error) {
             if (error instanceof Error) {
                 error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
                 this.log.error(error.message);
+                console.log(error)
             }
         }
 
         devices.forEach(device => {
             try {
                 const uuid = this.api.hap.uuid.generate(device.getId());
-
-                this.log.info('Device found with id: ' + uuid);
-                this.log.info('    name: ' + device.getData('climateControl', 'name').value);
-                this.log.info('    last updated: ' + device.getLastUpdated());
-                this.log.info('    modelInfo: ' + device.getData('gateway', 'modelInfo').value);
-                this.log.info('    config.showExtraFeatures: ' + this.config.showExtraFeatures);
-                this.log.info('    config.excludedDevicesByDeviceId: ' + this.config.excludedDevicesByDeviceId);
+                const climateControlEmbeddedId: DaikinClimateControlEmbeddedId = device.getDescription().deviceModel === 'Altherma' ? 'climateControlMainZone' : 'climateControl';
+                const name: string = device.getData(climateControlEmbeddedId, 'name', undefined).value;
+                const deviceModel: string = device.getDescription().deviceModel;
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
@@ -77,15 +99,30 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
-                    new DaikinCloudAirConditioningAccessory(this, existingAccessory);
+
+                    if (deviceModel === 'Altherma') {
+                        new daikinAlthermaAccessory(this, existingAccessory);
+                    } else {
+                        new daikinAirConditioningAccessory(this, existingAccessory);
+                    }
+
                 } else {
-                    this.log.info('Adding new accessory:', device.getData('climateControl', 'name').value);
-                    const accessory = new this.api.platformAccessory(device.getData('climateControl', 'name').value, uuid);
+                    this.log.info('Adding new accessory:', name);
+                    const accessory = new this.api.platformAccessory(name, uuid);
                     accessory.context.device = device;
-                    new DaikinCloudAirConditioningAccessory(this, accessory);
+
+                    if (deviceModel === 'Altherma') {
+                        new daikinAlthermaAccessory(this, accessory);
+                    } else {
+                        new daikinAirConditioningAccessory(this, accessory);
+                    }
+
                     this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
                 }
             } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error(error);
+
                 if (error instanceof Error) {
                     this.log.error(`Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
                 }
@@ -93,68 +130,6 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         });
 
         this.log.info('--------------- End Daikin info for debugging reasons --------------------');
-    }
-
-    async getCloudDevices(username: string, password: string): Promise<Device[]> {
-        const daikinCloud = await this.initiateDaikinCloudController(username, password);
-        const devices: Device[] = await daikinCloud.getCloudDevices();
-
-        this.log.info(`Found ${devices.length} devices in your Daikin Cloud`);
-
-        if (devices.length === 0) {
-            return devices;
-        }
-
-        const cloudDetails = await daikinCloud.getCloudDeviceDetails();
-        this.log.debug(JSON.stringify(cloudDetails));
-
-        return devices;
-    }
-
-    async initiateDaikinCloudController(username, password) {
-        let tokenSet;
-        const options = {
-            // eslint-disable-next-line no-console
-            logger: console.log,            // optional, logger function used to log details depending on loglevel
-            logLevel: 'info',               // optional, Loglevel of Library, default 'warn' (logs nothing by default)
-            proxyOwnIp: '192.168.xxx.xxx',  // required, if proxy needed: provide own IP or hostname to later access the proxy
-            proxyPort: 8888,                // required: use this port for the proxy and point your client device to this port
-            proxyWebPort: 8889,             // required: use this port for the proxy web interface to get the certificate and start Link for login
-            proxyListenBind: '0.0.0.0',     // optional: set this to bind the proxy to a special IP, default is '0.0.0.0'
-            proxyDataDir: this.storagePath, // Directory to store certificates and other proxy relevant data to
-            communicationTimeout: 10000,    // Amount of ms to wait for request and responses before timeout
-            communicationRetries: 3,        // Amount of retries when connection timed out
-        };
-
-        const tokenFile = path.join(this.storagePath, 'daikincloudtokenset.json');
-        this.log.debug(`Write/read Daikin Cloud tokenset from ${tokenFile}`);
-
-        if (fs.existsSync(tokenFile)) {
-            try {
-                this.log.debug(`Daikin Cloud tokenset found at ${tokenFile}`);
-                tokenSet = JSON.parse(fs.readFileSync(tokenFile).toString());
-            } catch (e) {
-                this.log.debug(`Daikin Cloud could not get tokenset: ${e}`);
-            }
-        }
-
-        const daikinCloud: DaikinCloud = new DaikinCloudController(tokenSet, options);
-
-        daikinCloud.on('token_update', tokenSet => {
-            this.log.info('Retrieved new credentials from Daikin Cloud');
-            fs.writeFileSync(tokenFile, JSON.stringify(tokenSet));
-        });
-
-        try {
-            await daikinCloud.login(username, password);
-        } catch (error) {
-            if (error instanceof Error) {
-                error.message = `Failed to login to Daikin Cloud with ${username}: ${error.message}\nIf the error is about "Missing required fields for registration" try to logout and log back into the Onecta app. Doing this should require you to fill in the missing fields.`;
-            }
-            throw error;
-        }
-
-        return daikinCloud;
     }
 
     private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId): boolean {

@@ -21,7 +21,7 @@ assignees: ''
 **Logs:**
 
 ```
-Show the Homebridge logs here, remove any sensitive information. I'm mainly interested in the part between 
+Show the Homebridge logs here, sensitive information is removed. I'm mainly interested in the part between 
 
 --- Daikin info for debugging reasons (enable Debug Mode for more logs) ---
 and 
