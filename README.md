@@ -65,10 +65,10 @@ You will receive a Client ID and Client Secret (keep it with you, you'll only se
 #### The Redirect URI and port
 
 This plugin uses daikin-controller-cloud. This package will set up a small https server where the Authentication flow will finish, so it can get the
-required tokens. Because the server is running in our Homebridge instance this URI and port will match the once of your Homebridge instance.
+required tokens. Because the server is running in our Homebridge instance this URI domain will match the one of your Homebridge instance, the port is any free port.
 
-For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51826`. The
-port will be `51826`
+For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51827`.
+The port will be `51827` (or any other free port).
 
 
 ## Fan speed
