@@ -16,6 +16,8 @@ The plugin supports some basic Daikin airco settings:
 
 ** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 
+![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
+
 ## Config
 
 Add config object to the platform array in your Homebridge `config.json`.
@@ -68,7 +70,6 @@ required tokens. Because the server is running in our Homebridge instance this U
 For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51826`. The
 port will be `51826`
 
-![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
 ## Fan speed
 
