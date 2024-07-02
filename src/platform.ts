@@ -69,12 +69,10 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         try {
             devices = await controller.getCloudDevices();
-            console.log('devices', devices)
         } catch (error) {
             if (error instanceof Error) {
                 error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
                 this.log.error(error.message);
-                console.log(error)
             }
         }
 
@@ -132,7 +130,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.log.info('--------------- End Daikin info for debugging reasons --------------------');
     }
 
-    private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId): boolean {
+    private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId: string): boolean {
         return typeof excludedDevicesByDeviceId !== 'undefined' && excludedDevicesByDeviceId.includes(deviceId);
     }
 }
