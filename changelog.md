@@ -18,7 +18,7 @@ TBD
 
 ### Added
 
-- Switch to using the new Daikin Cloud API. (!) PLEASE READ THE README AND CHANGE YOUR CONFIG
+- Switch to using the new Daikin Cloud API. (!) PLEASE READ THE README AND CHANGE YOUR CONFIG (!)
 
 ### Changed
 
