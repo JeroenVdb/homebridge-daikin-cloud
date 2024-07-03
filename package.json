@@ -2,7 +2,7 @@
   "displayName": "Daikin Cloud",
   "platformname": "daikincloud",
   "name": "homebridge-daikin-cloud",
-  "version": "2.1.0-beta.4",
+  "version": "2.1.0-beta.5",
   "description": "Integrate with the Daikin Cloud to control your Daikin air conditioning via the cloud",
   "license": "Apache-2.0",
   "repository": {
@@ -31,7 +31,7 @@
     "node-forge": "1.3.1"
   },
   "dependencies": {
-    "daikin-controller-cloud": "2.0.0-alpha.2"
+    "daikin-controller-cloud": "2.0.0-alpha.4"
   },
   "devDependencies": {
     "@types/jest": "^29.5.4",
