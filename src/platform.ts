@@ -43,10 +43,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
             controller.on('authorization_request', (url) => {
                 this.log.warn(`
-                    Please navigate to ${url} to start the authorisation flow.
+                    Please navigate to ${url} to start the authorisation flow. If it is the first time you open this url you will need to accept a security warning.
                     
-                    Make sure your Daikin app Redirect URI is set to: https://${this.config.callbackServerExternalAddress}:${this.config.callbackServerPort}.
-                    And that this url is reachable from the browser where you're going to start the authorisation flow.
+                    Important: Make sure your Daikin app Redirect URI is set to ${url} in the Daikin Developer Portal.
                 `);
             });
 
