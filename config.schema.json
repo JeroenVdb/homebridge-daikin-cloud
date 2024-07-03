@@ -19,16 +19,16 @@
         "required": true,
         "default": ""
       },
-      "redirectUri": {
-        "title": "Redirect URI",
-        "description": "The redirect URI where the authorisation token will be send to. This is most likely your Homebridge instance IP address (Daikin blocks \"localhost\") + a free port. This URI should also be set for your app in the Daikin Developer Portal. For example: https://192.168.0.160:8582",
+      "callbackServerExternalAddress": {
+        "title": "Redirect URI address",
+        "description": "The address where the callback server is reachable. This address should be reachable from the browser you're going to do the authorisation flow. This is most likely your Homebridge instance IP address. Mind that it can't be localhost because Daikin blocks this.",
         "type": "string",
         "required": false,
         "default": ""
       },
-      "port": {
-        "title": "Port",
-        "description": "The port of your Homebridge instance. For example: 8582",
+      "callbackServerPort": {
+        "title": "Redirect URI port",
+        "description": "The port where the callback server is reachable. This port should be reachable from the browser you're going to do the authorisation flow.",
         "type": "string",
         "required": false,
         "default": "8582"

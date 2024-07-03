@@ -32,24 +32,22 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
         this.api.on('didFinishLaunching', async () => {
             const controller = new DaikinCloudController({
-                /* OIDC client id */
-                oidc_client_id: this.config.clientId,
-                /* OIDC client secret */
-                oidc_client_secret: this.config.clientSecret,
-                /* network interface that the HTTP server should bind to */
-                oidc_callback_server_addr: '0.0.0.0',
-                /* port that the HTTP server should bind to */
-                oidc_callback_server_port: this.config.port,
-                /* OIDC Redirect URI */
-                oidc_callback_server_baseurl: this.config.redirectUri,
-                /* path of file used to cache the OIDC tokenset */
-                oidc_tokenset_file_path: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
-                /* time to wait for the user to go through the authorization grant flow before giving up (in seconds) */
-                oidc_authorization_timeout: 60 * 5,
+                oidcClientId: this.config.clientId,
+                oidcClientSecret: this.config.clientSecret,
+                oidcCallbackServerBindAddr: '127.0.0.1',
+                oidcCallbackServerExternalAddress: this.config.callbackServerExternalAddress,
+                oidcCallbackServerPort: this.config.callbackServerPort,
+                oidcTokenSetFilePath: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
+                oidcAuthorizationTimeoutS: 60 * 5,
             });
 
             controller.on('authorization_request', (url) => {
-                this.log.warn('Please navigate to %s', url);
+                this.log.warn(`
+                    Please navigate to ${url} to start the authorisation flow.
+                    
+                    Make sure your Daikin app Redirect URI is set to: https://${this.config.callbackServerExternalAddress}:${this.config.callbackServerPort}.
+                    And that this url is reachable from the browser where you're going to start the authorisation flow.
+                `);
             });
 
             log.debug('Executed didFinishLaunching callback');

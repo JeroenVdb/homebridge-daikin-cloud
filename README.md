@@ -30,11 +30,11 @@ Add config object to the platform array in your Homebridge `config.json`.
     "accessories": [],
     "platforms": [
         {
+            "platform": "DaikinCloud",
             "clientId": "<clientId>",
             "clientSecret": "<clientSecret>",
-            "redirectUri": "<redirectUri>",
-            "port": "<redirectUri>",
-            "platform": "DaikinCloud",
+            "callbackServerExternalAddress": "<redirectUri address>",
+            "callbackServerPort": "<redirectUri port>",
             "showExtraFeatures": false, // boolean, default: false
             "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
         }
@@ -45,30 +45,32 @@ Add config object to the platform array in your Homebridge `config.json`.
 ### Get config parameters
 
 The following parameters are required:
-- Client ID
-- Client Secret
-- Redirect URI
-- Port
+- clientId
+- clientSecret
+- callbackServerExternalAddress
+- callbackServerPort
 
-First 2 values you will get when you set up your App in the Daikin Europe Developer Portal. The last 2 values are the Redirect URI and port where the Daikin Cloud API will send the tokens to.
+First 2 values you will get when you set up your App in the Daikin Europe Developer Portal. The last 2 values make the Redirect URI where the Daikin 
+Cloud API will send the tokens to.
 
 #### Create an App in the Daikin Europe Developer Portal
 
 1. Go to https://developer.cloud.daikineurope.com/
 2. In the upper right corner click your name and select "My Apps"
 3. Click "+ New App"
-4. Fill in your application name, auth strategy (Onecta OIDC) and redirect URI (see "The Redirect URI and port" below)
+4. Fill in your application name, auth strategy (Onecta OIDC) and redirect URI (see "callbackServerExternalAddress and callbackServerPort" below)
 5. Click create
 
 You will receive a Client ID and Client Secret (keep it with you, you'll only see it once). The Redirect URI is the one you entered in step 4.
 
-#### The Redirect URI and port
+#### callbackServerExternalAddress and callbackServerPort
 
 This plugin uses daikin-controller-cloud. This package will set up a small https server where the Authentication flow will finish, so it can get the
-required tokens. Because the server is running in our Homebridge instance this URI domain will match the one of your Homebridge instance, the port is any free port.
+required tokens. Because the server is running in our Homebridge instance the callbackServerExternalAddress will match the one of your Homebridge instance, the port is any free port.
 
-For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the Redirect URI will be `https://192.168.0.160:51827`.
-The port will be `51827` (or any other free port).
+For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the callbackServerExternalAddress will be `192.168.0.160`.
+The callbackServerPort can be `51827` (or any other free port). Once you have both you can also construct the Redirect URI you need to configure your Daikin 
+app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this example: `https://192.168.0.160:51826`
 
 
 ## Fan speed
