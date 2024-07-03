@@ -18,6 +18,13 @@ The plugin supports some basic Daikin airco settings:
 
 ![IMG_7664](https://user-images.githubusercontent.com/657797/166705724-03255e67-252e-480e-9b4f-5cbc33aa9527.jpeg) ![IMG_7665](https://user-images.githubusercontent.com/657797/166705729-748e878a-dfd6-431a-923d-6287ce012bd8.jpeg)
 
+## Important: NEW Daikin API
+
+Since 2.0.0 this plugin uses the new Daikin API, this comes with some challenges. The most important one: you can only do 200 calls per day.
+We'll need to see how this plugin can help prevent hitting this limit and in the same time be accurate.
+
+For the time being your device information will only be updated every 15 minutes.
+
 ## Config
 
 Add config object to the platform array in your Homebridge `config.json`.
