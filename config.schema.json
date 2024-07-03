@@ -33,6 +33,13 @@
         "required": false,
         "default": "8582"
       },
+      "oidcCallbackServerBindAddr": {
+        "title": "Callback Server address listener",
+        "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces!",
+        "type": "string",
+        "required": false,
+        "default": ""
+      },
       "showExtraFeatures": {
         "title": "Show advanced features",
         "type": "boolean",

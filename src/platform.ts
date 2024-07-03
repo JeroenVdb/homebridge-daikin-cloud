@@ -34,7 +34,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             const controller = new DaikinCloudController({
                 oidcClientId: this.config.clientId,
                 oidcClientSecret: this.config.clientSecret,
-                oidcCallbackServerBindAddr: '127.0.0.1',
+                oidcCallbackServerBindAddr: this.config.oidcCallbackServerBindAddr,
                 oidcCallbackServerExternalAddress: this.config.callbackServerExternalAddress,
                 oidcCallbackServerPort: this.config.callbackServerPort,
                 oidcTokenSetFilePath: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
