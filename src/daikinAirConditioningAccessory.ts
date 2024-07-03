@@ -185,11 +185,6 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
                 accessory.removeService(this.switchServiceIndoorSilentMode);
             }
         }
-
-        setInterval(() => {
-            this.platform.log.debug('Update Daikin Data every 15 minutes');
-            this.accessory.context.device.updateData();
-        }, 1000 * 60 * 15);
     }
 
     async handleActiveStateGet(): Promise<CharacteristicValue> {

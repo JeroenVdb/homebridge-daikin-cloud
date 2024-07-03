@@ -17,6 +17,11 @@ export class daikinAccessory {
             .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Daikin')
             .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.getData('gateway', 'modelInfo').value)
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber') ? accessory.context.device.getData('gateway', 'serialNumber').value : 'NOT_AVAILABLE');
+
+        setInterval(() => {
+            this.platform.log.debug('Update Daikin Data every 15 minutes');
+            this.accessory.context.device.updateData();
+        }, 1000 * 60 * 15);
     }
 
     printDeviceInfo() {
