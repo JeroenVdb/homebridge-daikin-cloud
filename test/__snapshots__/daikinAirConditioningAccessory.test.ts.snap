@@ -2362,48 +2362,16 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device, showExtraFe
 daikinAirConditioningAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "072872f3604d87ba91827046054eece2",
+    "_events": {},
+    "_eventsCount": 0,
+    "_maxListeners": undefined,
     "context": {
       "device": DaikinCloudDevice {
-        "cloud": DaikinCloudController {
-          "_events": {},
-          "_eventsCount": 0,
-          "_maxListeners": undefined,
-          "openIdClient": Client {
-            "authorization_signed_response_alg": "RS256",
-            "client_id": "7rk39602f0ds8lk0h076vvijnb",
-            "grant_types": [
-              "authorization_code",
-            ],
-            "id_token_signed_response_alg": "RS256",
-            "redirect_uris": [
-              "daikinunified://login",
-            ],
-            "response_types": [
-              "code",
-            ],
-            "token_endpoint_auth_method": "none",
-            Symbol(): 0,
-          },
-          "openIdClientId": "7rk39602f0ds8lk0h076vvijnb",
-          "openIdIssuer": Issuer {
-            "Client": [Function],
-            "FAPI1Client": [Function],
-            "authorization_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/authorize",
-            "issuer": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7",
-            "token_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            "token_endpoint_auth_methods_supported": [
-              "none",
-            ],
-          },
-          "options": {
-            "communicationRetries": 3,
-            "communicationTimeout": 10000,
-            "logLevel": "info",
-            "logger": null,
-          },
-          "tokenSet": undefined,
-          Symbol(kCapture): false,
+        "_events": {
+          "updated": [Function],
         },
+        "_eventsCount": 1,
+        "_maxListeners": undefined,
         "desc": {
           "_id": "ca043bde-8db6-488b-a69e-f43949a24020",
           "deviceModel": "dx4",
@@ -4105,10 +4073,11 @@ daikinAirConditioningAccessory {
             },
           },
         },
+        Symbol(shapeMode): false,
+        Symbol(kCapture): false,
       },
     },
     "displayName": "Zolder",
-    "on": [MockFunction],
     "services": [
       AccessoryInformation {
         "characteristics": [
@@ -4246,6 +4215,8 @@ daikinAirConditioningAccessory {
         "optionalCharacteristics": [],
       },
     ],
+    Symbol(shapeMode): false,
+    Symbol(kCapture): false,
   },
   "extraServices": {
     "ECONO_MODE": "Econo mode",
@@ -4297,14 +4268,11 @@ daikinAirConditioningAccessory {
     },
     "accessories": [],
     "api": MockHomebridge {
-      "eventEmitter": EventEmitter {
-        "_events": {
-          "didFinishLaunching": [Function],
-        },
-        "_eventsCount": 1,
-        "_maxListeners": undefined,
-        Symbol(kCapture): false,
+      "_events": {
+        "didFinishLaunching": [Function],
       },
+      "_eventsCount": 1,
+      "_maxListeners": undefined,
       "hap": {
         "Characteristic": {
           "Active": [Function],
@@ -4356,16 +4324,31 @@ daikinAirConditioningAccessory {
       "user": {
         "storagePath": [Function],
       },
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
     },
     "config": MockPlatformConfig {
+      "callbackServerExternalAddress": "SERVER_EXTERNAL_ADDRESS",
+      "callbackServerPort": "SERVER_PORT",
+      "clientId": "CLIENT_ID",
+      "clientSecret": "CLIENT_SECRET",
       "name": "Home",
-      "password": "test",
-      "platform": "Home",
+      "oidcCallbackServerBindAddr": "SERVER_BIND_ADDRESS",
+      "platform": "DaikinCloud",
       "showExtraFeatures": false,
-      "username": "test",
     },
+    "controller": DaikinCloudController {
+      "_events": {},
+      "_eventsCount": 0,
+      "_maxListeners": undefined,
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
+    },
+    "forceUpdateTimeout": undefined,
     "log": [Function],
     "storagePath": "storagePath",
+    "updateInterval": undefined,
+    "updateIntervalDelay": 900000,
   },
   "service": HeaterCooler {
     "characteristics": [
@@ -5769,48 +5752,16 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device, showExtraF
 daikinAirConditioningAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "b8ce91ae326c4b0831744f4edc6e3447",
+    "_events": {},
+    "_eventsCount": 0,
+    "_maxListeners": undefined,
     "context": {
       "device": DaikinCloudDevice {
-        "cloud": DaikinCloudController {
-          "_events": {},
-          "_eventsCount": 0,
-          "_maxListeners": undefined,
-          "openIdClient": Client {
-            "authorization_signed_response_alg": "RS256",
-            "client_id": "7rk39602f0ds8lk0h076vvijnb",
-            "grant_types": [
-              "authorization_code",
-            ],
-            "id_token_signed_response_alg": "RS256",
-            "redirect_uris": [
-              "daikinunified://login",
-            ],
-            "response_types": [
-              "code",
-            ],
-            "token_endpoint_auth_method": "none",
-            Symbol(): 0,
-          },
-          "openIdClientId": "7rk39602f0ds8lk0h076vvijnb",
-          "openIdIssuer": Issuer {
-            "Client": [Function],
-            "FAPI1Client": [Function],
-            "authorization_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/authorize",
-            "issuer": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7",
-            "token_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            "token_endpoint_auth_methods_supported": [
-              "none",
-            ],
-          },
-          "options": {
-            "communicationRetries": 3,
-            "communicationTimeout": 10000,
-            "logLevel": "info",
-            "logger": null,
-          },
-          "tokenSet": undefined,
-          Symbol(kCapture): false,
+        "_events": {
+          "updated": [Function],
         },
+        "_eventsCount": 1,
+        "_maxListeners": undefined,
         "desc": {
           "_id": "efd08509-2edb-41d0-a9ab-ce913323d811",
           "deviceModel": "dx23",
@@ -6757,10 +6708,11 @@ daikinAirConditioningAccessory {
             },
           },
         },
+        Symbol(shapeMode): false,
+        Symbol(kCapture): false,
       },
     },
     "displayName": "Keuken",
-    "on": [MockFunction],
     "services": [
       AccessoryInformation {
         "characteristics": [
@@ -6890,6 +6842,8 @@ daikinAirConditioningAccessory {
         "optionalCharacteristics": [],
       },
     ],
+    Symbol(shapeMode): false,
+    Symbol(kCapture): false,
   },
   "extraServices": {
     "ECONO_MODE": "Econo mode",
@@ -6941,14 +6895,11 @@ daikinAirConditioningAccessory {
     },
     "accessories": [],
     "api": MockHomebridge {
-      "eventEmitter": EventEmitter {
-        "_events": {
-          "didFinishLaunching": [Function],
-        },
-        "_eventsCount": 1,
-        "_maxListeners": undefined,
-        Symbol(kCapture): false,
+      "_events": {
+        "didFinishLaunching": [Function],
       },
+      "_eventsCount": 1,
+      "_maxListeners": undefined,
       "hap": {
         "Characteristic": {
           "Active": [Function],
@@ -7000,16 +6951,31 @@ daikinAirConditioningAccessory {
       "user": {
         "storagePath": [Function],
       },
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
     },
     "config": MockPlatformConfig {
+      "callbackServerExternalAddress": "SERVER_EXTERNAL_ADDRESS",
+      "callbackServerPort": "SERVER_PORT",
+      "clientId": "CLIENT_ID",
+      "clientSecret": "CLIENT_SECRET",
       "name": "Home",
-      "password": "test",
-      "platform": "Home",
+      "oidcCallbackServerBindAddr": "SERVER_BIND_ADDRESS",
+      "platform": "DaikinCloud",
       "showExtraFeatures": false,
-      "username": "test",
     },
+    "controller": DaikinCloudController {
+      "_events": {},
+      "_eventsCount": 0,
+      "_maxListeners": undefined,
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
+    },
+    "forceUpdateTimeout": undefined,
     "log": [Function],
     "storagePath": "storagePath",
+    "updateInterval": undefined,
+    "updateIntervalDelay": 900000,
   },
   "service": HeaterCooler {
     "characteristics": [
