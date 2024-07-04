@@ -31,6 +31,11 @@ For this the current polling logic is as follows:
 - We poll for new data every 15 minutes by default (set via `updateIntervalInMinutes` config parameter)
 - When you do an update (for example set the target temperature) we'll do a force update so the new status is represented correctly
 
+### Access token or Refresh token is revoked
+
+If something is wrong with your access of refresh token you will need to authorise again. You can do this by deleting the `.
+daikin-controller-cloud-tokenset` file from your Homebridge storage directory, you can find this path in the Homebridge UI System Information widget.
+
 ## Config
 
 Add config object to the platform array in your Homebridge `config.json`.
