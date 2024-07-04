@@ -9,39 +9,50 @@ import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
 import {resolve} from 'node:path';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 
+const ONE_SECOND = 1000;
+const ONE_MINUTE = ONE_SECOND * 60;
+
+export type DaikinCloudAccessoryContext = {
+    device: DaikinCloudDevice;
+};
+
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;
     public readonly Characteristic: typeof Characteristic;
 
-    public readonly accessories: PlatformAccessory[] = [];
+    public readonly accessories: PlatformAccessory<DaikinCloudAccessoryContext>[] = [];
 
     public readonly storagePath: string = '';
-    public controller: DaikinCloudController | undefined;
+    public controller: DaikinCloudController;
+
+    public readonly updateIntervalDelay = ONE_MINUTE * 15;
+    public updateInterval: NodeJS.Timeout | undefined;
+    public forceUpdateTimeout: NodeJS.Timeout | undefined;
 
     constructor(
         public readonly log: Logger,
         public readonly config: PlatformConfig,
         public readonly api: API,
     ) {
-        this.Service = this.api.hap.Service;
-        this.Characteristic = this.api.hap.Characteristic;
-
         this.log.debug('Finished initializing platform:', this.config.name);
 
+        this.Service = this.api.hap.Service;
+        this.Characteristic = this.api.hap.Characteristic;
         this.storagePath = api.user.storagePath();
+        this.updateIntervalDelay = ONE_MINUTE * (this.config.updateIntervalInMinutes || 15);
+        this.controller = new DaikinCloudController({
+            oidcClientId: this.config.clientId,
+            oidcClientSecret: this.config.clientSecret,
+            oidcCallbackServerBindAddr: this.config.oidcCallbackServerBindAddr,
+            oidcCallbackServerExternalAddress: this.config.callbackServerExternalAddress,
+            oidcCallbackServerPort: this.config.callbackServerPort,
+            oidcTokenSetFilePath: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
+            oidcAuthorizationTimeoutS: 60 * 5,
+        });
+
 
         this.api.on('didFinishLaunching', async () => {
-            const controller = new DaikinCloudController({
-                oidcClientId: this.config.clientId,
-                oidcClientSecret: this.config.clientSecret,
-                oidcCallbackServerBindAddr: this.config.oidcCallbackServerBindAddr,
-                oidcCallbackServerExternalAddress: this.config.callbackServerExternalAddress,
-                oidcCallbackServerPort: this.config.callbackServerPort,
-                oidcTokenSetFilePath: resolve(this.storagePath, '.daikin-controller-cloud-tokenset'),
-                oidcAuthorizationTimeoutS: 60 * 5,
-            });
-
-            controller.on('authorization_request', (url) => {
+            this.controller.on('authorization_request', (url) => {
                 this.log.warn(`
                     Please navigate to ${url} to start the authorisation flow. If it is the first time you open this url you will need to accept a security warning.
                     
@@ -49,17 +60,25 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 `);
             });
 
-            log.debug('Executed didFinishLaunching callback');
-            await this.discoverDevices(controller);
+            this.controller.on('rate_limit_status', (rateLimitStatus) => {
+                if (rateLimitStatus.remainingDay && rateLimitStatus.remainingDay <= 20) {
+                    this.log.warn(`[Rate limit remaining calls] Rate limit almost reached, you only have ${rateLimitStatus.remainingDay} calls left today`);
+                }
+                this.log.debug(`[Rate limit remaining calls] today: ${rateLimitStatus.remainingDay}/${rateLimitStatus.limitDay} -- this minute: ${rateLimitStatus.remainingMinute}/${rateLimitStatus.limitMinute}`);
+            });
+
+            await this.discoverDevices(this.controller);
+            this.startUpdateDevicesInterval();
+
         });
     }
 
-    configureAccessory(accessory: PlatformAccessory) {
+    public configureAccessory(accessory: PlatformAccessory<DaikinCloudAccessoryContext>) {
         this.log.info('Loading accessory from cache:', accessory.displayName);
         this.accessories.push(accessory);
     }
 
-    async discoverDevices(controller: DaikinCloudController) {
+    private async discoverDevices(controller: DaikinCloudController) {
         let devices: DaikinCloudDevice[] = [];
 
         this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
@@ -103,7 +122,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
                 } else {
                     this.log.info('Adding new accessory:', name);
-                    const accessory = new this.api.platformAccessory(name, uuid);
+                    const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(name, uuid);
                     accessory.context.device = device;
 
                     if (deviceModel === 'Altherma') {
@@ -125,6 +144,30 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         });
 
         this.log.info('--------------- End Daikin info for debugging reasons --------------------');
+    }
+
+    private async updateDevices() {
+        this.log.debug('Update devices data');
+        await this.controller.updateAllDeviceData();
+    }
+
+    forceUpdateDevices(delay: number = ONE_SECOND * 60) {
+        this.log.debug(`Force update devices data (delay: ${delay}, update pending: ${this.forceUpdateTimeout})`);
+
+        clearInterval(this.updateInterval);
+        clearTimeout(this.forceUpdateTimeout);
+
+        this.forceUpdateTimeout = setTimeout(async () => {
+            await this.updateDevices();
+            this.startUpdateDevicesInterval();
+        }, delay);
+    }
+
+    private startUpdateDevicesInterval() {
+        this.log.debug(`Starting update devices interval every ${this.updateIntervalDelay / ONE_MINUTE} minutes`);
+        this.updateInterval = setInterval(async () => {
+            await this.updateDevices();
+        }, this.updateIntervalDelay);
     }
 
     private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId: string): boolean {

@@ -23,7 +23,18 @@ The plugin supports some basic Daikin airco settings:
 Since 2.0.0 this plugin uses the new Daikin API, this comes with some challenges. The most important one: you can only do 200 calls per day.
 We'll need to see how this plugin can help prevent hitting this limit and in the same time be accurate.
 
-For the time being your device information will only be updated every 15 minutes.
+### Polling for data
+
+Because of the rate limit we have to be wary with calls to the Daikin API. 
+For this the current polling logic is as follows:
+
+- We poll for new data every 15 minutes by default (set via `updateIntervalInMinutes` config parameter)
+- When you do an update (for example set the target temperature) we'll do a force update so the new status is represented correctly
+
+### Access token or Refresh token is revoked
+
+If something is wrong with your access of refresh token you will need to authorise again. You can do this by deleting the `.
+daikin-controller-cloud-tokenset` file from your Homebridge storage directory, you can find this path in the Homebridge UI System Information widget.
 
 ## Config
 
@@ -40,10 +51,12 @@ Add config object to the platform array in your Homebridge `config.json`.
             "platform": "DaikinCloud",
             "clientId": "<clientId>",
             "clientSecret": "<clientSecret>",
+            "oidcCallbackServerBindAddr": "<127.0.0.1>",
             "callbackServerExternalAddress": "<redirectUri address>",
             "callbackServerPort": "<redirectUri port>",
             "showExtraFeatures": false, // boolean, default: false
             "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
+            "updateIntervalInMinutes": 15, // how fast do you want Daikin to poll for new Device data, default: 15
         }
     ]
 }
@@ -79,6 +92,9 @@ For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.1
 The callbackServerPort can be `51827` (or any other free port). Once you have both you can also construct the Redirect URI you need to configure your Daikin 
 app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this example: `https://192.168.0.160:51826`
 
+#### oidcCallbackServerBindAddr
+
+This is the address the http server binds to, this is often just localhost: `127.0.0.1` or `0.0.0.0`
 
 ## Fan speed
 
