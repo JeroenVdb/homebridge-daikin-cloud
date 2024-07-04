@@ -35,10 +35,10 @@
       },
       "oidcCallbackServerBindAddr": {
         "title": "Callback Server address listener",
-        "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces!",
+        "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces. This often is 127.0.0.1 or 0.0.0.0 or localhost",
         "type": "string",
         "required": false,
-        "default": ""
+        "default": "127.0.0.1"
       },
       "showExtraFeatures": {
         "title": "Show advanced features",
@@ -55,6 +55,13 @@
           "type": "string"
         },
         "description": "Exclude specific devices by their device id. You can find the device id in the Homebridge logs (debug mode does not have to be on)"
+      },
+      "updateIntervalInMinutes": {
+        "title": "Update interval in minutes",
+        "type": "integer",
+        "default": 15,
+        "minimum": 1,
+        "description": "Interval in minutes when we poll the Daikin API. Because of rate limitations we recommend to leave this at 15 minutes. This will result in 96 calls to the API per day ((24 * 60) / 15). The rate limit per day is 200."
       }
     }
   }

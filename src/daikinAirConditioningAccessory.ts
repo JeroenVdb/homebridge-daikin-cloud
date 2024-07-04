@@ -197,6 +197,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
         await this.accessory.context.device.setData('climateControl', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF);
+        this.platform.forceUpdateDevices();
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
@@ -216,6 +217,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
+        this.platform.forceUpdateDevices();
     }
 
     async handleRotationSpeedGet(): Promise<CharacteristicValue> {
@@ -229,6 +231,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET RotationSpeed, speed to: ${speed}`);
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
+        this.platform.forceUpdateDevices();
     }
 
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
@@ -242,6 +245,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', temperature);
+        this.platform.forceUpdateDevices();
     }
 
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
@@ -278,6 +282,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode);
         await this.accessory.context.device.setData('climateControl', 'onOffMode', DaikinOnOffModes.ON);
+        this.platform.forceUpdateDevices();
     }
 
     async handleSwingModeSet(value: CharacteristicValue) {
@@ -287,6 +292,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
 
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/horizontal/currentMode`, daikinSwingMode);
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`, daikinSwingMode);
+        this.platform.forceUpdateDevices();
     }
 
     async handleSwingModeGet(): Promise<CharacteristicValue> {
@@ -313,6 +319,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET PowerfulMode to: ${value}`);
         const daikinPowerfulMode = value as boolean ? DaikinPowerfulModes.ON : DaikinPowerfulModes.OFF;
         await this.accessory.context.device.setData('climateControl', 'powerfulMode', daikinPowerfulMode);
+        this.platform.forceUpdateDevices();
     }
 
     async handleEconoModeGet() {
@@ -325,6 +332,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET EconoMode to: ${value}`);
         const daikinEconoMode = value as boolean ? DaikinEconoModes.ON : DaikinEconoModes.OFF;
         await this.accessory.context.device.setData('climateControl', 'econoMode', daikinEconoMode);
+        this.platform.forceUpdateDevices();
     }
 
     async handleStreamerModeGet() {
@@ -337,6 +345,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET streamerMode to: ${value}`);
         const daikinStreamerMode = value as boolean ? DaikinStreamerModes.ON : DaikinStreamerModes.OFF;
         await this.accessory.context.device.setData('climateControl', 'streamerMode', daikinStreamerMode);
+        this.platform.forceUpdateDevices();
     }
 
     async handleOutdoorSilentModeGet() {
@@ -349,6 +358,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET outdoorSilentMode to: ${value}`);
         const daikinOutdoorSilentMode = value as boolean ? DaikinOutdoorSilentModes.ON : DaikinOutdoorSilentModes.OFF;
         await this.accessory.context.device.setData('climateControl', 'outdoorSilentMode', daikinOutdoorSilentMode);
+        this.platform.forceUpdateDevices();
     }
 
     async handleIndoorSilentModeGet() {
@@ -361,6 +371,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.log.debug(`[${this.name}] SET indoorSilentMode to: ${value}`);
         const daikinFanSpeedMode = value as boolean ? DaikinFanSpeedModes.QUIET : DaikinFanSpeedModes.FIXED;
         await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, daikinFanSpeedMode);
+        this.platform.forceUpdateDevices();
     }
 
     getCurrentOperationMode() {
