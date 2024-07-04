@@ -196,7 +196,11 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     async handleActiveStateSet(value: CharacteristicValue) {
         this.platform.log.debug(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
-        await this.accessory.context.device.setData('climateControl', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF, undefined);
+        try {
+            await this.accessory.context.device.setData('climateControl', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF, undefined);
+        } catch (e) {
+            console.error(e);
+        }
         this.platform.forceUpdateDevices();
     }
 
@@ -216,7 +220,12 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         const temperature = Math.round(value as number * 2) / 2;
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);
-        await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
+        try {
+            await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
+        } catch (e) {
+            console.error(e);
+        }
+
         this.platform.forceUpdateDevices();
     }
 
@@ -229,8 +238,13 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     async handleRotationSpeedSet(value: CharacteristicValue) {
         const speed = value as number;
         this.platform.log.debug(`[${this.name}] SET RotationSpeed, speed to: ${speed}`);
-        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
-        await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
+        try {
+            await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
+            await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
+        } catch (e) {
+            console.error(e);
+        }
+
         this.platform.forceUpdateDevices();
     }
 
