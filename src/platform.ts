@@ -14,7 +14,7 @@ const ONE_MINUTE = ONE_SECOND * 60;
 
 export type DaikinCloudAccessoryContext = {
     device: DaikinCloudDevice;
-}
+};
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;
@@ -122,7 +122,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
                 } else {
                     this.log.info('Adding new accessory:', name);
-                    const accessory = new this.api.platformAccessory(name, uuid);
+                    const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(name, uuid);
                     accessory.context.device = device;
 
                     if (deviceModel === 'Altherma') {
