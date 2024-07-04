@@ -199,7 +199,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         try {
             await this.accessory.context.device.setData('climateControl', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF, undefined);
         } catch (e) {
-            console.error(e);
+            this.platform.log.error('Failed to set', e);
         }
         this.platform.forceUpdateDevices();
     }
@@ -223,7 +223,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         try {
             await this.accessory.context.device.setData('climateControl', 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
         } catch (e) {
-            console.error(e);
+            this.platform.log.error('Failed to set', e);
         }
 
         this.platform.forceUpdateDevices();
@@ -242,7 +242,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
             await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
             await this.accessory.context.device.setData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
         } catch (e) {
-            console.error(e);
+            this.platform.log.error('Failed to set', e);
         }
 
         this.platform.forceUpdateDevices();
