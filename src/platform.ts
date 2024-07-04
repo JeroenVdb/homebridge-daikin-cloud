@@ -9,8 +9,8 @@ import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
 import {resolve} from 'node:path';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 
-const ONE_SECOND: number = 1000;
-const ONE_MINUTE: number = ONE_SECOND * 60;
+const ONE_SECOND = 1000;
+const ONE_MINUTE = ONE_SECOND * 60;
 
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;
@@ -57,7 +57,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             });
 
             await this.discoverDevices(this.controller);
-            this.startUpdateDevicesInterval()
+            this.startUpdateDevicesInterval();
 
         });
     }
@@ -136,11 +136,11 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     async updateDevices() {
-        this.log.debug(`Update devices data`);
-        // await this.controller.updateAllDeviceData();
+        this.log.debug('Update devices data');
+        await this.controller.updateAllDeviceData();
     }
 
-    forceUpdateDevices(delay: number = ONE_SECOND * 10) {
+    forceUpdateDevices(delay: number = ONE_SECOND * 60) {
         this.log.debug(`Force update devices data (delay: ${delay}, update pending: ${this.forceUpdateTimeout})`);
 
         clearInterval(this.updateInterval);
@@ -155,7 +155,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     startUpdateDevicesInterval() {
         this.log.debug(`Starting update devices interval every ${this.updateIntervalDelay / ONE_MINUTE} minutes`);
         this.updateInterval = setInterval(async () => {
-            await this.updateDevices()
+            await this.updateDevices();
         }, this.updateIntervalDelay);
     }
 
