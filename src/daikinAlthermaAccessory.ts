@@ -1,5 +1,5 @@
 import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
-import {DaikinCloudPlatform} from './platform';
+import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {daikinAccessory} from './daikinAccessory';
 
 export class daikinAlthermaAccessory extends daikinAccessory{
@@ -9,7 +9,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
     constructor(
         platform: DaikinCloudPlatform,
-        accessory: PlatformAccessory,
+        accessory: PlatformAccessory<DaikinCloudAccessoryContext>,
     ) {
         super(platform, accessory);
 
@@ -89,7 +89,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
     async handleActiveStateGet(): Promise<CharacteristicValue> {
 
-        const state = this.accessory.context.device.getData('climateControlMainZone', 'onOffMode').value;
+        const state = this.accessory.context.device.getData('climateControlMainZone', 'onOffMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}`);
         return state === DaikinOnOffModes.ON;
     }
@@ -97,7 +97,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
     async handleActiveStateSet(value: CharacteristicValue) {
         this.platform.log.debug(`[${this.name}] SET ActiveState, state: ${value}`);
         const state = value as boolean;
-        await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF);
+        await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF, undefined);
         this.platform.forceUpdateDevices();
     }
 
@@ -115,7 +115,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
 
-        const operationMode: DaikinOperationModes = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').value;
+        const operationMode: DaikinOperationModes = this.accessory.context.device.getData('climateControlMainZone', 'operationMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}`);
 
         switch (operationMode) {
@@ -146,8 +146,8 @@ export class daikinAlthermaAccessory extends daikinAccessory{
         }
 
         this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
-        await this.accessory.context.device.setData('climateControlMainZone', 'operationMode', daikinOperationMode);
-        await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', DaikinOnOffModes.ON);
+        await this.accessory.context.device.setData('climateControlMainZone', 'operationMode', daikinOperationMode, undefined);
+        await this.accessory.context.device.setData('climateControlMainZone', 'onOffMode', DaikinOnOffModes.ON, undefined);
         this.platform.forceUpdateDevices();
 
     }
@@ -192,7 +192,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
     }
 
     async handleHotWaterTankTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
-        const operationMode: DaikinOperationModes = this.accessory.context.device.getData('domesticHotWaterTank', 'operationMode').value;
+        const operationMode: DaikinOperationModes = this.accessory.context.device.getData('domesticHotWaterTank', 'operationMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}`);
 
         switch (operationMode) {
@@ -211,7 +211,7 @@ export class daikinAlthermaAccessory extends daikinAccessory{
         let daikinOperationMode: DaikinOperationModes = DaikinOperationModes.COOLING;
 
         if (operationMode === this.platform.Characteristic.TargetHeatingCoolingState.OFF) {
-            await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', DaikinOnOffModes.OFF);
+            await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', DaikinOnOffModes.OFF, undefined);
 
             return;
         }
@@ -229,13 +229,13 @@ export class daikinAlthermaAccessory extends daikinAccessory{
         }
 
         this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
-        await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', DaikinOnOffModes.ON);
-        await this.accessory.context.device.setData('domesticHotWaterTank', 'operationMode', daikinOperationMode);
+        await this.accessory.context.device.setData('domesticHotWaterTank', 'onOffMode', DaikinOnOffModes.ON, undefined);
+        await this.accessory.context.device.setData('domesticHotWaterTank', 'operationMode', daikinOperationMode, undefined);
         this.platform.forceUpdateDevices();
     }
 
     hasOnlyHeating() {
-        const operationModes: Array<string> = this.accessory.context.device.getData('climateControlMainZone', 'operationMode').values;
+        const operationModes: Array<string> = this.accessory.context.device.getData('climateControlMainZone', 'operationMode', undefined).values;
         this.platform.log.debug(`[${this.name}] hasOnlyHeating, operationModes: ${operationModes.join(', ')}`);
         return operationModes.length === 1 && operationModes[0] === 'heating';
     }

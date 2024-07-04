@@ -12,11 +12,15 @@ import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
 
+export type DaikinCloudAccessoryContext = {
+    device: DaikinCloudDevice;
+}
+
 export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public readonly Service: typeof Service;
     public readonly Characteristic: typeof Characteristic;
 
-    public readonly accessories: PlatformAccessory[] = [];
+    public readonly accessories: PlatformAccessory<DaikinCloudAccessoryContext>[] = [];
 
     public readonly storagePath: string = '';
     public controller: DaikinCloudController;
@@ -69,7 +73,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         });
     }
 
-    configureAccessory(accessory: PlatformAccessory) {
+    configureAccessory(accessory: PlatformAccessory<DaikinCloudAccessoryContext>) {
         this.log.info('Loading accessory from cache:', accessory.displayName);
         this.accessories.push(accessory);
     }
