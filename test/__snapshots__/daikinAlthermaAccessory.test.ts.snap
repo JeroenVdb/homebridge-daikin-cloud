@@ -4,48 +4,16 @@ exports[`Create DaikinCloudThermostatAccessory with altherma device 1`] = `
 daikinAlthermaAccessory {
   "accessory": MockPlatformAccessory {
     "UUID": "dc4a509fac84ed39d21e5747f42d1adf",
+    "_events": {},
+    "_eventsCount": 0,
+    "_maxListeners": undefined,
     "context": {
       "device": DaikinCloudDevice {
-        "cloud": DaikinCloudController {
-          "_events": {},
-          "_eventsCount": 0,
-          "_maxListeners": undefined,
-          "openIdClient": Client {
-            "authorization_signed_response_alg": "RS256",
-            "client_id": "7rk39602f0ds8lk0h076vvijnb",
-            "grant_types": [
-              "authorization_code",
-            ],
-            "id_token_signed_response_alg": "RS256",
-            "redirect_uris": [
-              "daikinunified://login",
-            ],
-            "response_types": [
-              "code",
-            ],
-            "token_endpoint_auth_method": "none",
-            Symbol(): 0,
-          },
-          "openIdClientId": "7rk39602f0ds8lk0h076vvijnb",
-          "openIdIssuer": Issuer {
-            "Client": [Function],
-            "FAPI1Client": [Function],
-            "authorization_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/authorize",
-            "issuer": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_SLI9qJpc7",
-            "token_endpoint": "https://daikin-unicloud-prod.auth.eu-west-1.amazoncognito.com/oauth2/token",
-            "token_endpoint_auth_methods_supported": [
-              "none",
-            ],
-          },
-          "options": {
-            "communicationRetries": 3,
-            "communicationTimeout": 10000,
-            "logLevel": "info",
-            "logger": null,
-          },
-          "tokenSet": undefined,
-          Symbol(kCapture): false,
+        "_events": {
+          "updated": [Function],
         },
+        "_eventsCount": 1,
+        "_maxListeners": undefined,
         "desc": {
           "_id": "10b029e7-484c-4519-b22e-c14be4b7a71c",
           "deviceModel": "Altherma",
@@ -1468,10 +1436,11 @@ daikinAlthermaAccessory {
             },
           },
         },
+        Symbol(shapeMode): false,
+        Symbol(kCapture): false,
       },
     },
     "displayName": "Altherma",
-    "on": [MockFunction],
     "services": [
       AccessoryInformation {
         "characteristics": [
@@ -1572,7 +1541,7 @@ daikinAlthermaAccessory {
             },
             "props": {
               "maxValue": 60,
-              "minStep": 1,
+              "minStep": undefined,
               "minValue": 30,
             },
             "value": "",
@@ -1601,6 +1570,8 @@ daikinAlthermaAccessory {
         ],
       },
     ],
+    Symbol(shapeMode): false,
+    Symbol(kCapture): false,
   },
   "hotWaterTankService": Thermostat {
     "characteristics": [
@@ -1628,7 +1599,7 @@ daikinAlthermaAccessory {
         },
         "props": {
           "maxValue": 60,
-          "minStep": 1,
+          "minStep": undefined,
           "minValue": 30,
         },
         "value": "",
@@ -1699,14 +1670,11 @@ daikinAlthermaAccessory {
     },
     "accessories": [],
     "api": MockHomebridge {
-      "eventEmitter": EventEmitter {
-        "_events": {
-          "didFinishLaunching": [Function],
-        },
-        "_eventsCount": 1,
-        "_maxListeners": undefined,
-        Symbol(kCapture): false,
+      "_events": {
+        "didFinishLaunching": [Function],
       },
+      "_eventsCount": 1,
+      "_maxListeners": undefined,
       "hap": {
         "Characteristic": {
           "Active": [Function],
@@ -1758,16 +1726,31 @@ daikinAlthermaAccessory {
       "user": {
         "storagePath": [Function],
       },
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
     },
     "config": MockPlatformConfig {
+      "callbackServerExternalAddress": "SERVER_EXTERNAL_ADDRESS",
+      "callbackServerPort": "SERVER_PORT",
+      "clientId": "CLIENT_ID",
+      "clientSecret": "CLIENT_SECRET",
       "name": "Home",
-      "password": "test",
-      "platform": "Home",
+      "oidcCallbackServerBindAddr": "SERVER_BIND_ADDRESS",
+      "platform": "DaikinCloud",
       "showExtraFeatures": true,
-      "username": "test",
     },
+    "controller": DaikinCloudController {
+      "_events": {},
+      "_eventsCount": 0,
+      "_maxListeners": undefined,
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
+    },
+    "forceUpdateTimeout": undefined,
     "log": [Function],
     "storagePath": "storagePath",
+    "updateInterval": undefined,
+    "updateIntervalDelay": 900000,
   },
   "service": HeaterCooler {
     "characteristics": [

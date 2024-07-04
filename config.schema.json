@@ -23,7 +23,7 @@
         "title": "Redirect URI address",
         "description": "The address where the callback server is reachable. This address should be reachable from the browser you're going to do the authorisation flow. This is most likely your Homebridge instance IP address. Mind that it can't be localhost because Daikin blocks this.",
         "type": "string",
-        "required": false,
+        "required": true,
         "default": ""
       },
       "callbackServerPort": {

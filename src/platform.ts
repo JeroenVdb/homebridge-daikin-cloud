@@ -73,12 +73,12 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         });
     }
 
-    configureAccessory(accessory: PlatformAccessory<DaikinCloudAccessoryContext>) {
+    public configureAccessory(accessory: PlatformAccessory<DaikinCloudAccessoryContext>) {
         this.log.info('Loading accessory from cache:', accessory.displayName);
         this.accessories.push(accessory);
     }
 
-    async discoverDevices(controller: DaikinCloudController) {
+    private async discoverDevices(controller: DaikinCloudController) {
         let devices: DaikinCloudDevice[] = [];
 
         this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
@@ -146,7 +146,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         this.log.info('--------------- End Daikin info for debugging reasons --------------------');
     }
 
-    async updateDevices() {
+    private async updateDevices() {
         this.log.debug('Update devices data');
         await this.controller.updateAllDeviceData();
     }
@@ -163,7 +163,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         }, delay);
     }
 
-    startUpdateDevicesInterval() {
+    private startUpdateDevicesInterval() {
         this.log.debug(`Starting update devices interval every ${this.updateIntervalDelay / ONE_MINUTE} minutes`);
         this.updateInterval = setInterval(async () => {
             await this.updateDevices();
