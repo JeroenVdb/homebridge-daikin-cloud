@@ -1,0 +1,732 @@
+[
+  {
+    "timestamp": "2018-11-13T20:20:39.000Z",
+    "managementPoints": [
+      {
+        "managementPointCategory": "secondary",
+        "ipAddress": {
+          "value": "192.168.0.3",
+          "settable": false
+        },
+        "macAddress": {
+          "value": "9c:50:d1:bf:22:5c",
+          "settable": false
+        },
+        "firmwareVersion": {
+          "value": "1_30_0",
+          "settable": false
+        },
+        "modelInfo": {
+          "value": "BRP069C4x",
+          "settable": false
+        },
+        "isFirmwareUpdateSupported": {
+          "value": true,
+          "settable": false
+        },
+        "embeddedId": "gateway",
+        "managementPointType": "gateway",
+        "name": {
+          "value": "Gateway",
+          "maxLength": 64,
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "primary",
+        "holidayMode": {
+          "value": {
+            "enabled": false
+          },
+          "ref": "#holidayMode",
+          "settable": true
+        },
+        "schedule": {
+          "value": {
+            "modes": {
+              "any": {
+                "schedules": {
+                  "0": {
+                    "name": {
+                      "value": "",
+                      "settable": false
+                    },
+                    "actions": {
+                      "tuesday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "wednesday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "thursday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "friday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "saturday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "sunday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      },
+                      "monday": {
+                        "07:00:00": {
+                          "humidityControl": {
+                            "currentMode": "humidification",
+                            "modes": {
+                              "humidification": "low"
+                            }
+                          },
+                          "airPurificationMode": "econo"
+                        },
+                        "22:00:00": {
+                          "airPurificationMode": "off"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": false
+                    },
+                    "settable": false
+                  },
+                  "2": {
+                    "name": {
+                      "value": "",
+                      "settable": false
+                    },
+                    "actions": {},
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": false
+                    },
+                    "settable": false
+                  },
+                  "1": {
+                    "name": {
+                      "value": "",
+                      "settable": false
+                    },
+                    "actions": {},
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": false
+                    },
+                    "settable": false
+                  }
+                },
+                "currentSchedule": {
+                  "value": "0",
+                  "values": [
+                    "0",
+                    "1",
+                    "2"
+                  ],
+                  "settable": true
+                },
+                "enabled": {
+                  "value": true,
+                  "settable": true
+                },
+                "meta": {
+                  "maxSchedules": 3,
+                  "maxActionsPerActionPeriod": 6,
+                  "consecutiveActionsAllowed": true,
+                  "actionTypes": {
+                    "airPurificationMode": {
+                      "values": [
+                        "auto",
+                        "manualFan",
+                        "autoFan",
+                        "econo",
+                        "antiPollen",
+                        "circulator",
+                        "moist",
+                        "off"
+                      ],
+                      "settable": false
+                    },
+                    "fanSpeed": {
+                      "manualFan": {
+                        "currentMode": {
+                          "values": [
+                            "fixed"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "fixed": {
+                            "stepValue": 1,
+                            "minValue": 1,
+                            "maxValue": 4,
+                            "settable": false
+                          }
+                        }
+                      }
+                    },
+                    "humidityControl": {
+                      "manualFan": {
+                        "currentMode": {
+                          "values": [
+                            "off",
+                            "humidification"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "humidification": {
+                            "values": [
+                              "low",
+                              "medium",
+                              "high"
+                            ],
+                            "settable": false
+                          }
+                        }
+                      },
+                      "autoFan": {
+                        "currentMode": {
+                          "values": [
+                            "off",
+                            "humidification"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "humidification": {
+                            "values": [
+                              "low",
+                              "medium",
+                              "high"
+                            ],
+                            "settable": false
+                          }
+                        }
+                      },
+                      "econo": {
+                        "currentMode": {
+                          "values": [
+                            "off",
+                            "humidification"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "humidification": {
+                            "values": [
+                              "low",
+                              "medium",
+                              "high"
+                            ],
+                            "settable": false
+                          }
+                        }
+                      },
+                      "antiPollen": {
+                        "currentMode": {
+                          "values": [
+                            "off",
+                            "humidification"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "humidification": {
+                            "values": [
+                              "low",
+                              "medium",
+                              "high"
+                            ],
+                            "settable": false
+                          }
+                        }
+                      },
+                      "circulator": {
+                        "currentMode": {
+                          "values": [
+                            "off",
+                            "humidification"
+                          ],
+                          "settable": false
+                        },
+                        "modes": {
+                          "humidification": {
+                            "values": [
+                              "low",
+                              "medium",
+                              "high"
+                            ],
+                            "settable": false
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "minIntervalBetweenActions": "00:01:00"
+                }
+              }
+            },
+            "currentMode": {
+              "value": "any",
+              "values": [
+                "any"
+              ],
+              "settable": true
+            },
+            "nextAction": {
+              "startTime": "22:00:00",
+              "airPurificationMode": "off",
+              "actionPeriod": "thursday"
+            }
+          },
+          "ref": "#schedule",
+          "settable": true
+        },
+        "managementPointSubType": "mainZone",
+        "errorCode": {
+          "value": "00",
+          "settable": false
+        },
+        "fanControl": {
+          "value": {
+            "airPurificationModes": {
+              "moist": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "manualFan": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "fixed",
+                    "values": [
+                      "fixed"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "fixed": {
+                      "settable": true,
+                      "value": 1,
+                      "minValue": 1,
+                      "maxValue": 4,
+                      "stepValue": 1
+                    }
+                  }
+                }
+              },
+              "autoFan": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "econo": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "antiPollen": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "circulator": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "auto": {
+                "fanSpeed": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              }
+            }
+          },
+          "ref": "#fanControl",
+          "settable": true
+        },
+        "humidityControl": {
+          "value": {
+            "airPurificationModes": {
+              "moist": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              },
+              "manualFan": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "humidification",
+                    "values": [
+                      "off",
+                      "humidification"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "humidification": {
+                      "value": "high",
+                      "values": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "settable": true
+                    }
+                  }
+                }
+              },
+              "autoFan": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "humidification",
+                    "values": [
+                      "off",
+                      "humidification"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "humidification": {
+                      "value": "high",
+                      "values": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "settable": true
+                    }
+                  }
+                }
+              },
+              "econo": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "humidification",
+                    "values": [
+                      "off",
+                      "humidification"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "humidification": {
+                      "value": "high",
+                      "values": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "settable": true
+                    }
+                  }
+                }
+              },
+              "antiPollen": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "humidification",
+                    "values": [
+                      "off",
+                      "humidification"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "humidification": {
+                      "value": "high",
+                      "values": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "settable": true
+                    }
+                  }
+                }
+              },
+              "circulator": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "humidification",
+                    "values": [
+                      "off",
+                      "humidification"
+                    ],
+                    "settable": true
+                  },
+                  "modes": {
+                    "humidification": {
+                      "value": "high",
+                      "values": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "settable": true
+                    }
+                  }
+                }
+              },
+              "auto": {
+                "humiditySetting": {
+                  "currentMode": {
+                    "value": "auto",
+                    "values": [
+                      "auto"
+                    ],
+                    "settable": true
+                  }
+                }
+              }
+            }
+          },
+          "ref": "#humidityControl",
+          "settable": true
+        },
+        "onOffMode": {
+          "value": "on",
+          "settable": true,
+          "values": [
+            "on",
+            "off"
+          ]
+        },
+        "airPurificationMode": {
+          "value": "econo",
+          "settable": true,
+          "values": [
+            "auto",
+            "manualFan",
+            "autoFan",
+            "econo",
+            "antiPollen",
+            "circulator",
+            "moist"
+          ]
+        },
+        "sensoryData": {
+          "value": {
+            "pm1Concentration": {
+              "stepValue": 1,
+              "settable": false,
+              "value": 1,
+              "minValue": 0,
+              "maxValue": 999,
+              "unit": "µg/m³"
+            },
+            "pm25Concentration": {
+              "stepValue": 1,
+              "settable": false,
+              "value": 1,
+              "minValue": 0,
+              "maxValue": 999,
+              "unit": "µg/m³"
+            },
+            "roomTemperature": {
+              "stepValue": 1,
+              "settable": false,
+              "value": 26,
+              "minValue": -9,
+              "maxValue": 90,
+              "unit": "°C"
+            },
+            "pm10Concentration": {
+              "stepValue": 1,
+              "settable": false,
+              "value": 1,
+              "minValue": 0,
+              "maxValue": 999,
+              "unit": "µg/m³"
+            },
+            "roomHumidity": {
+              "stepValue": 1,
+              "settable": false,
+              "value": 40,
+              "minValue": 20,
+              "maxValue": 90,
+              "unit": "%"
+            }
+          },
+          "ref": "#sensoryData",
+          "settable": false
+        },
+        "managementPointType": "climateControl",
+        "name": {
+          "value": "my mock air purifier",
+          "settable": false,
+          "maxLength": 32
+        },
+        "embeddedId": "climateControl",
+        "isHolidayModeActive": {
+          "value": false,
+          "settable": false
+        },
+        "isInErrorState": {
+          "value": false,
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "secondary",
+        "modelInfo": {
+          "value": "MCK70Z",
+          "settable": false
+        },
+        "softwareVersion": {
+          "value": "22001E02",
+          "settable": false
+        },
+        "embeddedId": "indoorUnit",
+        "managementPointType": "indoorUnit",
+        "name": {
+          "value": "Indoor Unit",
+          "settable": false,
+          "maxLength": 32
+        }
+      }
+    ],
+    "isCloudConnectionUp": {
+      "value": true,
+      "settable": false
+    },
+    "type": "dx4",
+    "_id": "f0d7de82-57d9-42d5-83ee-63680045aaf6",
+    "embeddedId": 408316,
+    "id": "f0d7de82-57d9-42d5-83ee-63680045aaf6",
+    "deviceModel": "air-purifier"
+  }
+]

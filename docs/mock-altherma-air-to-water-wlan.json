@@ -1,0 +1,845 @@
+[
+  {
+    "timestamp": "2018-11-13T20:20:39.000Z",
+    "managementPoints": [
+      {
+        "managementPointCategory": "secondary",
+        "ipAddress": {
+          "value": "192.168.0.1",
+          "settable": false
+        },
+        "macAddress": {
+          "value": "00:23:7e:f8:26:4e",
+          "settable": false
+        },
+        "firmwareVersion": {
+          "value": "436CC038000",
+          "settable": false
+        },
+        "modelInfo": {
+          "value": "BRP069A62",
+          "settable": false
+        },
+        "firmwareUpdateStatus": {
+          "value": "in-progress",
+          "values": [
+            "in-progress",
+            "succeeded"
+          ],
+          "settable": false
+        },
+        "embeddedId": "0",
+        "managementPointType": "gateway",
+        "name": {
+          "value": "My Gateway",
+          "maxLength": 64,
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "primary",
+        "setpointMode": {
+          "value": "weatherDependent",
+          "values": [
+            "weatherDependent",
+            "fixed",
+            "weatherDependentHeatingFixedCooling"
+          ],
+          "settable": false
+        },
+        "schedule": {
+          "value": {
+            "modes": {
+              "heating": {
+                "schedules": {
+                  "0": {
+                    "name": {
+                      "name": "name",
+                      "value": "althermaClimateControl0",
+                      "settable": false
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": false
+                    },
+                    "actions": {
+                      "tuesday": {
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      },
+                      "monday": {
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        },
+                        "10:10:00": {
+                          "roomTemperature": 16
+                        }
+                      }
+                    }
+                  },
+                  "2": {
+                    "name": {
+                      "name": "name",
+                      "value": "althermaClimateControl2",
+                      "settable": false
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": true
+                    },
+                    "actions": {
+                      "friday": {
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      },
+                      "wednesday": {
+                        "10:10:00": {
+                          "roomTemperature": 16
+                        },
+                        "20:40:00": {
+                          "roomTemperature": 16
+                        },
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      },
+                      "thursday": {
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      }
+                    }
+                  },
+                  "1": {
+                    "name": {
+                      "name": "name",
+                      "value": "althermaClimateControl1",
+                      "settable": false
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": false
+                    },
+                    "actions": {
+                      "tuesday": {
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      },
+                      "monday": {
+                        "10:10:00": {
+                          "roomTemperature": 16
+                        },
+                        "20:40:00": {
+                          "roomTemperature": 16
+                        },
+                        "12:10:00": {
+                          "roomTemperature": 16
+                        }
+                      }
+                    }
+                  }
+                },
+                "currentSchedule": {
+                  "name": "currentSchedule",
+                  "values": [
+                    "0",
+                    "1",
+                    "2"
+                  ],
+                  "value": "0",
+                  "settable": true
+                },
+                "enabled": {
+                  "name": "enabled",
+                  "value": false,
+                  "settable": true
+                },
+                "meta": {
+                  "maxSchedules": 3,
+                  "maxActionsPerActionPeriod": 6,
+                  "consecutiveActionsAllowed": true,
+                  "actionTypes": {
+                    "roomTemperature": {
+                      "name": "roomTemperature",
+                      "settable": false,
+                      "stepValue": 1,
+                      "minValue": 20,
+                      "maxValue": 30
+                    }
+                  },
+                  "minIntervalBetweenActions": "00:10:00"
+                }
+              },
+              "cooling": {
+                "schedules": {
+                  "0": {
+                    "name": {
+                      "name": "name",
+                      "value": "althermaClimateControlCooling1",
+                      "settable": false
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": true
+                    },
+                    "actions": {
+                      "tuesday": {
+                        "12:10:00": {
+                          "roomTemperature": 20
+                        }
+                      },
+                      "monday": {
+                        "10:10:00": {
+                          "roomTemperature": 16
+                        },
+                        "20:40:00": {
+                          "roomTemperature": 16
+                        },
+                        "12:10:00": {
+                          "roomTemperature": 14
+                        }
+                      }
+                    }
+                  },
+                  "1": {
+                    "name": {
+                      "name": "name",
+                      "value": "althermaClimateControlCooling2",
+                      "settable": false
+                    },
+                    "meta": {
+                      "actionPeriods": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ],
+                      "isReadOnly": true
+                    },
+                    "actions": {
+                      "tuesday": {
+                        "12:10:00": {
+                          "roomTemperature": 20
+                        }
+                      },
+                      "monday": {
+                        "10:10:00": {
+                          "roomTemperature": 16
+                        },
+                        "20:40:00": {
+                          "roomTemperature": 16
+                        },
+                        "12:10:00": {
+                          "roomTemperature": 14
+                        }
+                      }
+                    }
+                  }
+                },
+                "currentSchedule": {
+                  "name": "currentSchedule",
+                  "values": [
+                    "0",
+                    "1"
+                  ],
+                  "value": "0",
+                  "settable": true
+                },
+                "enabled": {
+                  "name": "enabled",
+                  "value": true,
+                  "settable": false
+                },
+                "meta": {
+                  "maxSchedules": 3,
+                  "maxActionsPerActionPeriod": 6,
+                  "consecutiveActionsAllowed": true,
+                  "actionTypes": {
+                    "roomTemperature": {
+                      "name": "roomTemperature",
+                      "settable": false,
+                      "stepValue": 1,
+                      "minValue": 5,
+                      "maxValue": 30
+                    }
+                  },
+                  "minIntervalBetweenActions": "00:10:00"
+                }
+              }
+            },
+            "currentMode": {
+              "name": "currentMode",
+              "values": [
+                "heating",
+                "cooling"
+              ],
+              "value": "heating",
+              "settable": true
+            },
+            "nextAction": {
+              "operationMode": "cooling",
+              "startTime": "10:10:00",
+              "actionPeriod": "monday",
+              "roomTemperature": 16
+            }
+          },
+          "ref": "#schedule",
+          "settable": true
+        },
+        "consumptionData": {
+          "value": {
+            "electrical": {
+              "heating": {
+                "w": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  100,
+                  30,
+                  130,
+                  null,
+                  null,
+                  null,
+                  null,
+                  100,
+                  30,
+                  130
+                ],
+                "d": [
+                  null,
+                  null,
+                  null,
+                  1,
+                  2,
+                  0,
+                  2,
+                  3,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  2,
+                  1,
+                  1,
+                  2,
+                  3,
+                  1,
+                  5,
+                  7,
+                  1,
+                  2,
+                  null
+                ],
+                "m": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  264
+                ]
+              },
+              "unit": "kWh",
+              "cooling": {
+                "w": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  100,
+                  30,
+                  130,
+                  null,
+                  null,
+                  null,
+                  null,
+                  100,
+                  30,
+                  130
+                ],
+                "d": [
+                  null,
+                  null,
+                  null,
+                  1,
+                  2,
+                  0,
+                  2,
+                  3,
+                  0,
+                  1,
+                  1,
+                  1,
+                  1,
+                  2,
+                  1,
+                  1,
+                  2,
+                  3,
+                  1,
+                  5,
+                  7,
+                  1,
+                  2,
+                  null
+                ],
+                "m": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  264
+                ]
+              }
+            }
+          },
+          "ref": "#consumptionData",
+          "settable": false
+        },
+        "controlMode": {
+          "value": "roomTemperature",
+          "values": [
+            "roomTemperature",
+            "leavingWaterTemperature",
+            "externalRoomTemperature"
+          ],
+          "settable": false
+        },
+        "powerfulMode": {
+          "value": "on",
+          "values": [
+            "on",
+            "off"
+          ],
+          "settable": true
+        },
+        "operationMode": {
+          "value": "heating",
+          "values": [
+            "heating",
+            "cooling",
+            "auto"
+          ],
+          "settable": true
+        },
+        "temperatureControl": {
+          "value": {
+            "operationModes": {
+              "auto": {
+                "setpoints": {
+                  "roomTemperature": {
+                    "value": 25,
+                    "minValue": 20,
+                    "maxValue": 30,
+                    "settable": true
+                  }
+                }
+              },
+              "heating": {
+                "setpoints": {
+                  "leavingWaterTemperature": {
+                    "value": 21,
+                    "minValue": 20,
+                    "maxValue": 30,
+                    "settable": false
+                  },
+                  "roomTemperature": {
+                    "value": 25,
+                    "minValue": 20,
+                    "maxValue": 30,
+                    "settable": true
+                  }
+                }
+              },
+              "cooling": {
+                "setpoints": {
+                  "leavingWaterTemperature": {
+                    "value": 21,
+                    "minValue": 20,
+                    "maxValue": 30,
+                    "settable": false
+                  },
+                  "roomTemperature": {
+                    "value": 25,
+                    "minValue": 20,
+                    "maxValue": 30,
+                    "settable": true
+                  }
+                }
+              }
+            }
+          },
+          "ref": "#temperatureControl",
+          "settable": true
+        },
+        "managementPointSubType": "mainZone",
+        "holidayMode": {
+          "value": {
+            "endDate": "2019-11-15",
+            "enabled": true,
+            "startDate": "2018-11-13"
+          },
+          "ref": "#holidayMode",
+          "settable": true
+        },
+        "sensoryData": {
+          "value": {
+            "outdoorTemperature": {
+              "value": 25,
+              "settable": false
+            },
+            "leavingWaterTemperature": {
+              "value": 12,
+              "settable": false
+            },
+            "roomTemperature": {
+              "value": 20,
+              "settable": false
+            }
+          },
+          "ref": "#sensoryData",
+          "settable": false
+        },
+        "onOffMode": {
+          "value": "on",
+          "values": [
+            "on",
+            "off"
+          ],
+          "settable": true
+        },
+        "managementPointType": "climateControl",
+        "name": {
+          "value": "My mock A2W HP",
+          "maxLength": 64,
+          "settable": true
+        },
+        "embeddedId": "1",
+        "isHolidayModeActive": {
+          "value": true,
+          "settable": false
+        },
+        "isPowerfulModeActive": {
+          "value": true,
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "primary",
+        "isInWarningState": {
+          "value": false,
+          "settable": false
+        },
+        "setpointMode": {
+          "value": "fixed",
+          "values": [
+            "fixed",
+            "weatherDependent"
+          ],
+          "settable": false
+        },
+        "isInInstallerState": {
+          "value": false,
+          "settable": false
+        },
+        "isInEmergencyState": {
+          "value": false,
+          "settable": false
+        },
+        "errorCode": {
+          "value": "",
+          "maxLength": 16,
+          "settable": false
+        },
+        "consumptionData": {
+          "value": {
+            "electrical": {
+              "heating": {
+                "w": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null
+                ],
+                "d": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "m": [
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  229,
+                  0,
+                  0,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              }
+            }
+          },
+          "ref": "#consumptionData",
+          "requiresReboot": false,
+          "settable": false
+        },
+        "powerfulMode": {
+          "value": "off",
+          "values": [
+            "off",
+            "on"
+          ],
+          "settable": true
+        },
+        "operationMode": {
+          "value": "heating",
+          "values": [
+            "heating"
+          ],
+          "settable": false
+        },
+        "temperatureControl": {
+          "value": {
+            "operationModes": {
+              "heating": {
+                "setpoints": {
+                  "domesticHotWaterTemperature": {
+                    "settable": true,
+                    "value": 45,
+                    "minValue": 30,
+                    "maxValue": 60,
+                    "stepValue": 1
+                  }
+                }
+              }
+            }
+          },
+          "settable": false,
+          "ref": "#temperatureControl"
+        },
+        "name": {
+          "value": "Tank",
+          "maxLength": 63,
+          "settable": false
+        },
+        "onOffMode": {
+          "value": "off",
+          "values": [
+            "off",
+            "on"
+          ],
+          "settable": true
+        },
+        "sensoryData": {
+          "value": {
+            "tankTemperature": {
+              "settable": false,
+              "value": 53,
+              "minValue": -127,
+              "maxValue": 127,
+              "stepValue": 1
+            }
+          },
+          "settable": false,
+          "ref": "#sensoryData"
+        },
+        "isHolidayModeActive": {
+          "value": false,
+          "settable": false
+        },
+        "heatupMode": {
+          "value": "reheatOnly",
+          "values": [
+            "reheatOnly",
+            "reheatSchedule",
+            "scheduleOnly"
+          ],
+          "settable": false
+        },
+        "isInErrorState": {
+          "value": false,
+          "settable": false
+        },
+        "embeddedId": "2",
+        "managementPointType": "domesticHotWaterTank",
+        "isPowerfulModeActive": {
+          "value": false,
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "secondary",
+        "modelInfo": {
+          "value": "EHVH08S18CB3V",
+          "settable": false
+        },
+        "softwareVersion": {
+          "value": "ID66F2",
+          "settable": false
+        },
+        "embeddedId": "3",
+        "managementPointType": "indoorUnitHydro"
+      },
+      {
+        "managementPointCategory": "secondary",
+        "modelInfo": {
+          "value": "EHVH08S18CB3V",
+          "settable": false
+        },
+        "softwareVersion": {
+          "value": "ID66F2",
+          "settable": false
+        },
+        "embeddedId": "3",
+        "managementPointType": "indoorUnitHydro"
+      },
+      {
+        "managementPointCategory": "secondary",
+        "embeddedId": "4",
+        "managementPointType": "outdoorUnit",
+        "softwareVersion": {
+          "value": "ID0000",
+          "settable": false
+        }
+      },
+      {
+        "managementPointCategory": "secondary",
+        "embeddedId": "5",
+        "managementPointType": "userInterface"
+      }
+    ],
+    "isCloudConnectionUp": {
+      "value": true,
+      "settable": false
+    },
+    "type": "heating",
+    "_id": "c07294f3-1202-41dd-a139-f5a466e6264e",
+    "embeddedId": "29300444-4258-4938-84aa-0296c100e13f",
+    "id": "c07294f3-1202-41dd-a139-f5a466e6264e",
+    "deviceModel": "Altherma"
+  }
+]
