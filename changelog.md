@@ -14,7 +14,19 @@ TBD
 
 ### Fixed
 
-## [2.1.0-beta.0] - 2024-07-02
+## [2.2.0-beta.0] - 2024-07-02  - 2024-07-04
+
+### Added
+
+- Add config for `updateIntervalInMinutes`
+
+### Changed
+
+- Changed the way we poll the Daikin API, see readme for more details on the current logic
+
+### Fixed
+
+## [2.0.0-beta.0 - 2.1.0-beta.5] - 2024-07-02  - 2024-07-03
 
 ### Added
 

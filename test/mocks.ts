@@ -3,37 +3,42 @@
 
 import {EventEmitter} from 'events';
 import {createHash} from 'crypto';
+import {API, PlatformConfig} from "homebridge";
+import {User} from "homebridge/lib/user.js";
+import {PlatformAccessory, UnknownContext} from "homebridge/lib/platformAccessory";
+import {HAP, HAPLegacyTypes} from "homebridge/lib/api";
 
-export const MockLog = (...args) => jest.fn();
-MockLog.debug = MockLog;
-MockLog.info = MockLog;
-MockLog.warn = MockLog;
-MockLog.error = MockLog;
-MockLog.log = MockLog;
+export const MockLogger = (...args) => jest.fn();
+MockLogger.debug = MockLogger;
+MockLogger.info = MockLogger;
+MockLogger.success = MockLogger;
+MockLogger.warn = MockLogger;
+MockLogger.error = MockLogger;
+MockLogger.log = MockLogger;
 
-export class MockPlatformConfig {
-    name: string;
-    platform: string;
-    username: string;
-    password: string;
+export class MockPlatformConfig implements PlatformConfig {
+    name = 'Home';
+    platform = 'DaikinCloud';
+    clientId = 'CLIENT_ID';
+    clientSecret = 'CLIENT_SECRET';
+    oidcCallbackServerBindAddr = 'SERVER_BIND_ADDRESS';
+    callbackServerExternalAddress = 'SERVER_EXTERNAL_ADDRESS';
+    callbackServerPort = 'SERVER_PORT';
     showExtraFeatures: boolean;
 
     constructor(showExtraFeatures = false) {
-        this.name = 'Home';
-        this.platform = 'Home';
-        this.username = 'test';
-        this.password = 'test';
         this.showExtraFeatures = showExtraFeatures;
     }
 }
 
-export class MockPlatformAccessory {
-    private services: MockServiceBase[];
-    private displayName: string;
-    private UUID: string;
-    public context = {};
+export class MockPlatformAccessory<T extends UnknownContext> extends EventEmitter implements DeepPartial<PlatformAccessory<T>> {
+    services: MockServiceBase[];
+    displayName: string;
+    UUID: string;
+    context = {};
 
     constructor(displayName: string, uuid: string) {
+        super();
         this.displayName = displayName;
         this.UUID = uuid;
         this.services = [];
@@ -58,9 +63,6 @@ export class MockPlatformAccessory {
     removeService(sClass) {
         console.log('remove service : ' + sClass);
     }
-
-    // eslint-disable-next-line @typescript-eslint/ban-types,@typescript-eslint/no-empty-function
-    on = jest.fn((event: string, callback: () => {}) => {});
 }
 
 class MockServiceBase {
@@ -158,11 +160,14 @@ class MockCharacteristicBase {
 }
 
 
+type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
 
-export class MockHomebridge {
-    private eventEmitter = new EventEmitter();
+export class MockHomebridge extends EventEmitter implements DeepPartial<API> {
+    constructor() {
+        super();
+    }
 
-    public hap = {
+    public hap= {
         Service: {
             AccessoryInformation,
             CarbonDioxideSensor,
@@ -214,12 +219,12 @@ export class MockHomebridge {
         storagePath: () => { return 'storagePath' }
     };
 
-    public on(eventName: 'didFinishLaunching' | 'shutdown', callback: () => void) {
-        this.eventEmitter.on(eventName, callback);
+    public signalFinished() {
+        this.emit('didFinishLaunching');
     }
 
-    public send(event: 'didFinishLaunching' | 'shutdown') {
-        this.eventEmitter.emit(event);
+    public signalShutdown() {
+        this.emit('shutdown');
     }
 
     public platformAccessory = MockPlatformAccessory;
@@ -295,9 +300,9 @@ class FilterLifeLevel extends MockCharacteristicBase {}
 class CurrentHeaterCoolerState extends MockCharacteristicBase {}
 
 class TargetHeaterCoolerState extends MockCharacteristicBase {
-    public static AUTO = 0;
-    public static HEAT = 1;
-    public static COOL = 2;
+    public static AUTO = 0 as const;
+    public static HEAT = 1 as const;
+    public static COOL = 2 as const;
 }
 
 class TargetHeatingCoolingState extends MockCharacteristicBase {}
@@ -307,8 +312,8 @@ class HeatingThresholdTemperature extends MockCharacteristicBase {}
 class CoolingThresholdTemperature extends MockCharacteristicBase {}
 
 class SwingMode extends MockCharacteristicBase {
-    public static SWING_DISABLED = 0;
-    public static SWING_ENABLED = 1;
+    public static SWING_DISABLED = 0 as const;
+    public static SWING_ENABLED = 1 as const;
 }
 
 class ConfiguredName extends MockCharacteristicBase {}
