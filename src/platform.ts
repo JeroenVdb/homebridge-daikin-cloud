@@ -8,6 +8,7 @@ import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
 import {daikinAlthermaAccessory} from './daikinAlthermaAccessory';
 import {resolve} from 'node:path';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
+import {StringUtils} from './utils/strings';
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -82,6 +83,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         let devices: DaikinCloudDevice[] = [];
 
         this.log.info('--- Daikin info for debugging reasons (enable Debug Mode for more logs) ---');
+
+        this.log.debug('[Config] User config', this.getPrivacyFriendlyConfig(this.config));
 
         try {
             devices = await controller.getCloudDevices();
@@ -172,5 +175,14 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
     private isExcludedDevice(excludedDevicesByDeviceId: Array<string>, deviceId: string): boolean {
         return typeof excludedDevicesByDeviceId !== 'undefined' && excludedDevicesByDeviceId.includes(deviceId);
+    }
+
+    private getPrivacyFriendlyConfig(config: PlatformConfig): object {
+        return {
+            ...config,
+            clientId: StringUtils.mask(config.clientId),
+            clientSecret: StringUtils.mask(config.clientSecret),
+            excludedDevicesByDeviceId: config.excludedDevicesByDeviceId.map(deviceId => StringUtils.mask(deviceId)),
+        };
     }
 }

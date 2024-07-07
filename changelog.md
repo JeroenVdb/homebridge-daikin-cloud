@@ -14,11 +14,16 @@ TBD
 
 ### Fixed
 
-## [2.2.0-beta.0] - 2024-07-02  - 2024-07-04
+## [2.3.0] - 2024-07-02  - 2024-07-04
 
 ### Added
 
-- Add config for `updateIntervalInMinutes`
+- Update daikin-cloud-controller: the controller will now block communication to Daikin when it detects that you have hit your rate limit. If this is not
+  done you will start consuming calls from your next rate limit window. See: https://github.com/Apollon77/daikin-controller-cloud/pull/147
+
+## [2.2.0] - 2024-07-02  - 2024-07-04
+
+### Added
 
 ### Changed
 
@@ -26,7 +31,7 @@ TBD
 
 ### Fixed
 
-## [2.0.0-beta.0 - 2.1.0-beta.5] - 2024-07-02  - 2024-07-03
+## [2.0.0 - 2.1.0] - 2024-07-02  - 2024-07-03
 
 ### Added
 
