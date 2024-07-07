@@ -182,7 +182,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             ...config,
             clientId: StringUtils.mask(config.clientId),
             clientSecret: StringUtils.mask(config.clientSecret),
-            excludedDevicesByDeviceId: config.excludedDevicesByDeviceId.map(deviceId => StringUtils.mask(deviceId)),
+            excludedDevicesByDeviceId: config.excludedDevicesByDeviceId ? config.excludedDevicesByDeviceId.map(deviceId => StringUtils.mask(deviceId)) : [],
         };
     }
 }
