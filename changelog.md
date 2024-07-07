@@ -4,15 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased] - yyyy-mm-dd
 
-TBD
-
-### Added
-
-### Changed
+## [2.4.0-beta0] - 2024-07-07
 
 ### Fixed
+
+- When operation mode is dry you should not be able to set or get the rotation speed because it is not a characteristics for dry mode (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/66)
 
 ## [2.3.0] - 2024-07-02  - 2024-07-04
 
