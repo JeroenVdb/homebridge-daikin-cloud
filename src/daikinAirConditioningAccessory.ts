@@ -25,6 +25,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         accessory: PlatformAccessory<DaikinCloudAccessoryContext>,
     ) {
         super(platform, accessory);
+        const operationMode: DaikinOperationModes = this.getCurrentOperationMode();
 
         this.name = accessory.displayName;
 
@@ -67,15 +68,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
             .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
             .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
 
-
-        this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
-            .setProps({
-                minStep: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
-                minValue: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
-                maxValue: accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
-            })
-            .onGet(this.handleRotationSpeedGet.bind(this))
-            .onSet(this.handleRotationSpeedSet.bind(this));
+        this.addOrUpdateCharacteristicRotationSpeed(operationMode);
 
         if (this.hasSwingModeFeature()) {
             this.platform.log.debug(`[${this.name}] Device has SwingMode, add Characteristic`);
@@ -187,6 +180,21 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         }
     }
 
+    addOrUpdateCharacteristicRotationSpeed(operationMode: DaikinOperationModes) {
+        if (operationMode === DaikinOperationModes.DRY) {
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed));
+        } else {
+            this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
+                .setProps({
+                    minStep: this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
+                    minValue: this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
+                    maxValue: this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
+                })
+                .onGet(this.handleRotationSpeedGet.bind(this))
+                .onSet(this.handleRotationSpeedSet.bind(this));
+        }
+    }
+
     async handleActiveStateGet(): Promise<CharacteristicValue> {
         const state = this.accessory.context.device.getData('climateControl', 'onOffMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}`);
@@ -263,7 +271,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     }
 
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
-        const operationMode: DaikinOperationModes = this.accessory.context.device.getData('climateControl', 'operationMode', undefined).value;
+        const operationMode: DaikinOperationModes = this.getCurrentOperationMode();
         this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}`);
 
         switch (operationMode) {
@@ -271,6 +279,9 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
                 return this.platform.Characteristic.TargetHeaterCoolerState.COOL;
             case DaikinOperationModes.HEATING:
                 return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
+            case DaikinOperationModes.DRY:
+                this.addOrUpdateCharacteristicRotationSpeed(operationMode);
+                return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
             default:
                 return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
         }
