@@ -35,7 +35,7 @@
       },
       "oidcCallbackServerBindAddr": {
         "title": "Callback Server address listener",
-        "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces. This often is 127.0.0.1 or 0.0.0.0 or localhost",
+        "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces. !Important: This often is 127.0.0.1 or 0.0.0.0 or localhost",
         "type": "string",
         "required": false,
         "default": "127.0.0.1"
