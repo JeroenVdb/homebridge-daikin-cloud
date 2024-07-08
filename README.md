@@ -51,7 +51,7 @@ Add config object to the platform array in your Homebridge `config.json`.
             "platform": "DaikinCloud",
             "clientId": "<clientId>",
             "clientSecret": "<clientSecret>",
-            "oidcCallbackServerBindAddr": "<127.0.0.1>",
+            "oidcCallbackServerBindAddr": "<0.0.0.0>",
             "callbackServerExternalAddress": "<redirectUri address>",
             "callbackServerPort": "<redirectUri port>",
             "showExtraFeatures": false, // boolean, default: false
@@ -88,13 +88,13 @@ You will receive a Client ID and Client Secret (keep it with you, you'll only se
 This plugin uses daikin-controller-cloud. This package will set up a small https server where the Authentication flow will finish, so it can get the
 required tokens. Because the server is running in our Homebridge instance the callbackServerExternalAddress will match the one of your Homebridge instance, the port is any free port.
 
-For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `51826`, the callbackServerExternalAddress will be `192.168.0.160`.
-The callbackServerPort can be `51827` (or any other free port). Once you have both you can also construct the Redirect URI you need to configure your Daikin 
-app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this example: `https://192.168.0.160:51826`
+For example is you are running Homebridge on a Raspberry Pi with IP `192.168.0.160` and port `8581`, the callbackServerExternalAddress will be `192.168.0.160`.
+The callbackServerPort can be `8582` (or any other free port). Once you have both you can also construct the Redirect URI you need to configure your Daikin 
+app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this example: `https://192.168.0.160:8582`
 
 #### oidcCallbackServerBindAddr
 
-This is the address the http server binds to, this is often just localhost: `127.0.0.1` or `0.0.0.0`
+This is the address the http server binds to, this is often just localhost: `127.0.0.1`, if that does not work you can use `0.0.0.0` (this will listen for all incoming connections).
 
 ## Fan speed
 
