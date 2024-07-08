@@ -28,7 +28,7 @@
       },
       "callbackServerPort": {
         "title": "Redirect URI port",
-        "description": "The port where the callback server is reachable. This port should be reachable from the browser you're going to do the authorisation flow.",
+        "description": "The port where the callback server is reachable. This port should be free. This port should not be the same port as your Homebridge port. This port should be reachable from the browser you're going to do the authorisation flow.",
         "type": "string",
         "required": false,
         "default": "8582"
@@ -38,7 +38,7 @@
         "description": "Network interface that the HTTP server should bind to. Bind to all interfaces for convenience, please limit as needed to single interfaces. !Important: This often is 127.0.0.1 or 0.0.0.0 or localhost",
         "type": "string",
         "required": false,
-        "default": "127.0.0.1"
+        "default": "0.0.0.0"
       },
       "showExtraFeatures": {
         "title": "Show advanced features",

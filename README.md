@@ -25,11 +25,11 @@ We'll need to see how this plugin can help prevent hitting this limit and in the
 
 ### Polling for data
 
-Because of the rate limit we have to be wary with calls to the Daikin API. 
-For this the current polling logic is as follows:
+Due to the rate limits on the Daikin API, we need to manage our API calls carefully. Here's our current polling approach:
 
-- We poll for new data every 15 minutes by default (set via `updateIntervalInMinutes` config parameter)
-- When you do an update (for example set the target temperature) we'll do a force update so the new status is represented correctly
+- By default, we check for new data every 15 minutes. This interval can be adjusted using the `updateIntervalInMinutes` configuration parameter.
+- When you make changes, such as setting a new target temperature, we trigger an immediate update to ensure the new status is accurately reflected. We do 
+  however wait doing this force update so the Daikin API can process the request.
 
 ### Access token or Refresh token is revoked
 
