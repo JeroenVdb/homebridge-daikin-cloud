@@ -18,7 +18,7 @@
   },
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest test/*",
     "lint": "eslint src/**.ts --max-warnings=0",
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",
