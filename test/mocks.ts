@@ -208,10 +208,9 @@ export class MockHomebridge extends EventEmitter implements DeepPartial<API> {
             ConfiguredName,
         },
         uuid: {
-            generate: (x: string) =>
-                createHash('md5')
-                    .update(x)
-                    .digest('hex'),
+            generate: (x: string) => {
+                return x;
+            },
         },
     };
 
