@@ -144,7 +144,7 @@ exports[`Create DaikinCloudThermostatAccessory with altherma device 1`] = `
             }
         ],
         "displayName": "Altherma",
-        "UUID": "dc4a509fac84ed39d21e5747f42d1adf",
+        "UUID": "10b029e7-484c-4519-b22e-c14be4b7a71c",
         "context": {
             "device": {
                 "_events": {},

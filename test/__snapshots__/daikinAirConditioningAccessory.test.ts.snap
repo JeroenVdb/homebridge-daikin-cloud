@@ -260,7 +260,7 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device 1`] = `
             }
         ],
         "displayName": "Zolder",
-        "UUID": "072872f3604d87ba91827046054eece2",
+        "UUID": "ca043bde-8db6-488b-a69e-f43949a24020",
         "context": {
             "device": {
                 "_events": {},
@@ -2329,7 +2329,7 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device, showExtraFe
             }
         ],
         "displayName": "Zolder",
-        "UUID": "072872f3604d87ba91827046054eece2",
+        "UUID": "ca043bde-8db6-488b-a69e-f43949a24020",
         "context": {
             "device": {
                 "_events": {},
@@ -4253,7 +4253,7 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device 1`] = `
             }
         ],
         "displayName": "Keuken",
-        "UUID": "b8ce91ae326c4b0831744f4edc6e3447",
+        "UUID": "efd08509-2edb-41d0-a9ab-ce913323d811",
         "context": {
             "device": {
                 "_events": {},
@@ -5417,7 +5417,7 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device, showExtraF
             }
         ],
         "displayName": "Keuken",
-        "UUID": "b8ce91ae326c4b0831744f4edc6e3447",
+        "UUID": "efd08509-2edb-41d0-a9ab-ce913323d811",
         "context": {
             "device": {
                 "_events": {},
