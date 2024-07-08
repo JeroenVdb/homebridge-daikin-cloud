@@ -1,14 +1,13 @@
 import {DaikinCloudPlatform} from '../src/platform';
 import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
-import {Logger, API, PlatformAccessory} from 'homebridge';
-import {althermaHeatPump, dx23Airco, dx4Airco} from './devices';
+import {API} from 'homebridge';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {DaikinCloudController} from 'daikin-controller-cloud';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import Path from 'node:path';
-import spyOn = jest.spyOn;
 import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory'
 import {daikinAlthermaAccessory} from "../src/daikinAlthermaAccessory";
+import spyOn = jest.spyOn;
 
 jest.mock('daikin-controller-cloud');
 jest.mock('node:path');
@@ -17,7 +16,7 @@ jest.mock('../src/daikinAirConditioningAccessory');
 jest.mock('../src/daikinAlthermaAccessory');
 jest.mock('daikin-controller-cloud/dist/device');
 
-beforeEach(() => {
+afterEach(() => {
     jest.resetAllMocks();
 });
 
