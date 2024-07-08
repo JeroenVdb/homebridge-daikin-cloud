@@ -6,7 +6,7 @@ import {MockHomebridge, MockLogger, MockPlatformAccessory, MockPlatformConfig, S
 import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
-import {OnectaClient} from "daikin-controller-cloud/dist/onecta/oidc-client";
+import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],
@@ -77,7 +77,6 @@ test('DaikinCloudAirConditioningAccessory Getters', async () => {
 
     const uuid = api.hap.uuid.generate(device.getId());
     const accessory = new api.platformAccessory(device.getData('climateControl', 'name', undefined).value, uuid);
-    // device.updateData = () => jest.fn(() => { return new Promise() });
     accessory.context['device'] = device;
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
