@@ -27,7 +27,7 @@ test.each<Array<string | string | any>>([
 
     const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    expect(homebridgeAccessory).toMatchSnapshot();
+    expect(JSON.stringify(homebridgeAccessory, null, 4)).toMatchSnapshot();
 });
 
 test('DaikinCloudAirConditioningAccessory Getters', async () => {

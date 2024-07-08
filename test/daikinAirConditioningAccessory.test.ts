@@ -27,7 +27,7 @@ test.each<Array<string | string | any>>([
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    expect(homebridgeAccessory).toMatchSnapshot();
+    expect(JSON.stringify(homebridgeAccessory, null, 4)).toMatchSnapshot();
 });
 
 test.each<Array<string | string | any>>([
@@ -56,7 +56,7 @@ test.each<Array<string | string | any>>([
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    expect(homebridgeAccessory).toMatchSnapshot();
+    expect(JSON.stringify(homebridgeAccessory, null, 4)).toMatchSnapshot();
     expect(removeServiceSpy).toHaveBeenNthCalledWith(1, new Switch('Powerful mode'));
     expect(removeServiceSpy).toHaveBeenNthCalledWith(2, new Switch('Econo mode'));
     expect(removeServiceSpy).toHaveBeenNthCalledWith(3, new Switch('Streamer mode'));
