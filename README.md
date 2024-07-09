@@ -20,6 +20,10 @@ The plugin supports some basic Daikin airco settings:
 
 ## Important: NEW Daikin API
 
+Have a close look at the config section below, you need to create an App in the Daikin Europe Developer Portal and set up some required parameters.
+
+If you are still having problems going through the authentication flow, check out related issues [https://github.com/JeroenVdb/homebridge-daikin-cloud/issues?q=label%3A%22authorization+flow%22+](here). 
+
 Since 2.0.0 this plugin uses the new Daikin API, this comes with some challenges. The most important one: you can only do 200 calls per day.
 We'll need to see how this plugin can help prevent hitting this limit and in the same time be accurate.
 
@@ -96,6 +100,8 @@ app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this ex
 
 This is the address the http server binds to, this is often just localhost: `127.0.0.1`, if that does not work you can use `0.0.0.0` (be aware that this will 
 listen for all incoming connections from all over your network, and if your network allows from over the internet).
+
+If you are still having problems going through the authentication flow, check out related issues [https://github.com/JeroenVdb/homebridge-daikin-cloud/issues?q=label%3A%22authorization+flow%22+](here).
 
 ## Fan speed
 
