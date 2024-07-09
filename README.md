@@ -94,7 +94,8 @@ app: `https://<callbackServerExternalAddress>:<callbackServerPort>`. For this ex
 
 #### oidcCallbackServerBindAddr
 
-This is the address the http server binds to, this is often just localhost: `127.0.0.1`, if that does not work you can use `0.0.0.0` (this will listen for all incoming connections).
+This is the address the http server binds to, this is often just localhost: `127.0.0.1`, if that does not work you can use `0.0.0.0` (be aware that this will 
+listen for all incoming connections from all over your network, and if your network allows from over the internet).
 
 ## Fan speed
 
