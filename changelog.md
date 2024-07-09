@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.4.0-beta0] - 2024-07-07
+## [2.4.0] - 2024-07-09
+
+### Added
+
+- Some extra documentation about the config parameter related to the authorisation flow
 
 ### Fixed
 
