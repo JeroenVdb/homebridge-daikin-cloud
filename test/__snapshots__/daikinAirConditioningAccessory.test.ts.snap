@@ -257,6 +257,62 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device 1`] = `
                     }
                 ],
                 "linkedServices": []
+            },
+            {
+                "name": "Dry operation mode",
+                "characteristics": [
+                    {
+                        "value": "Dry operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "Dry operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "optionalCharacteristics": [
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "linkedServices": []
+            },
+            {
+                "name": "Fan only operation mode",
+                "characteristics": [
+                    {
+                        "value": "Fan only operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "Fan only operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "optionalCharacteristics": [
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "linkedServices": []
             }
         ],
         "displayName": "Zolder",
@@ -1974,7 +2030,9 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device 1`] = `
         "ECONO_MODE": "Econo mode",
         "STREAMER_MODE": "Streamer mode",
         "OUTDOUR_SILENT_MODE": "Outdoor silent mode",
-        "INDOOR_SILENT_MODE": "Indoor silent mode"
+        "INDOOR_SILENT_MODE": "Indoor silent mode",
+        "DRY_OPERATION_MODE": "Dry operation mode",
+        "FAN_ONLY_OPERATION_MODE": "Fan only operation mode"
     },
     "name": "Zolder",
     "service": {
@@ -2158,6 +2216,62 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device 1`] = `
             },
             {
                 "value": "Indoor silent mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "optionalCharacteristics": [
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "linkedServices": []
+    },
+    "switchServiceDryOperationMode": {
+        "name": "Dry operation mode",
+        "characteristics": [
+            {
+                "value": "Dry operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "Dry operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "optionalCharacteristics": [
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "linkedServices": []
+    },
+    "switchServiceFanOnlyOperationMode": {
+        "name": "Fan only operation mode",
+        "characteristics": [
+            {
+                "value": "Fan only operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "Fan only operation mode",
                 "events": {},
                 "props": {}
             },
@@ -4043,7 +4157,9 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx4 device, showExtraFe
         "ECONO_MODE": "Econo mode",
         "STREAMER_MODE": "Streamer mode",
         "OUTDOUR_SILENT_MODE": "Outdoor silent mode",
-        "INDOOR_SILENT_MODE": "Indoor silent mode"
+        "INDOOR_SILENT_MODE": "Indoor silent mode",
+        "DRY_OPERATION_MODE": "Dry operation mode",
+        "FAN_ONLY_OPERATION_MODE": "Fan only operation mode"
     },
     "name": "Zolder",
     "service": {
@@ -4249,6 +4365,62 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device 1`] = `
                     }
                 ],
                 "optionalCharacteristics": [],
+                "linkedServices": []
+            },
+            {
+                "name": "Dry operation mode",
+                "characteristics": [
+                    {
+                        "value": "Dry operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "Dry operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "optionalCharacteristics": [
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "linkedServices": []
+            },
+            {
+                "name": "Fan only operation mode",
+                "characteristics": [
+                    {
+                        "value": "Fan only operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "Fan only operation mode",
+                        "events": {},
+                        "props": {}
+                    },
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
+                "optionalCharacteristics": [
+                    {
+                        "value": "",
+                        "events": {},
+                        "props": {}
+                    }
+                ],
                 "linkedServices": []
             }
         ],
@@ -5212,7 +5384,9 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device 1`] = `
         "ECONO_MODE": "Econo mode",
         "STREAMER_MODE": "Streamer mode",
         "OUTDOUR_SILENT_MODE": "Outdoor silent mode",
-        "INDOOR_SILENT_MODE": "Indoor silent mode"
+        "INDOOR_SILENT_MODE": "Indoor silent mode",
+        "DRY_OPERATION_MODE": "Dry operation mode",
+        "FAN_ONLY_OPERATION_MODE": "Fan only operation mode"
     },
     "name": "Keuken",
     "service": {
@@ -5267,6 +5441,62 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device 1`] = `
             }
         ],
         "optionalCharacteristics": [],
+        "linkedServices": []
+    },
+    "switchServiceDryOperationMode": {
+        "name": "Dry operation mode",
+        "characteristics": [
+            {
+                "value": "Dry operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "Dry operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "optionalCharacteristics": [
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "linkedServices": []
+    },
+    "switchServiceFanOnlyOperationMode": {
+        "name": "Fan only operation mode",
+        "characteristics": [
+            {
+                "value": "Fan only operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "Fan only operation mode",
+                "events": {},
+                "props": {}
+            },
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
+        "optionalCharacteristics": [
+            {
+                "value": "",
+                "events": {},
+                "props": {}
+            }
+        ],
         "linkedServices": []
     }
 }"
@@ -6376,7 +6606,9 @@ exports[`Create DaikinCloudAirConditioningAccessory with dx23 device, showExtraF
         "ECONO_MODE": "Econo mode",
         "STREAMER_MODE": "Streamer mode",
         "OUTDOUR_SILENT_MODE": "Outdoor silent mode",
-        "INDOOR_SILENT_MODE": "Indoor silent mode"
+        "INDOOR_SILENT_MODE": "Indoor silent mode",
+        "DRY_OPERATION_MODE": "Dry operation mode",
+        "FAN_ONLY_OPERATION_MODE": "Fan only operation mode"
     },
     "name": "Keuken",
     "service": {

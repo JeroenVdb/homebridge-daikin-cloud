@@ -2,7 +2,7 @@
   "displayName": "Daikin Cloud",
   "platformname": "daikincloud",
   "name": "homebridge-daikin-cloud",
-  "version": "2.4.0",
+  "version": "2.5.0-beta.0",
   "description": "Integrate with the Daikin Cloud to control your Daikin air conditioning via the cloud",
   "license": "Apache-2.0",
   "repository": {
@@ -18,7 +18,7 @@
   },
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "jest test/*",
+    "test": "jest test/* --updateSnapshot",
     "lint": "eslint src/**.ts --max-warnings=0",
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",

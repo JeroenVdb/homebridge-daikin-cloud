@@ -7,12 +7,14 @@ The plugin supports some basic Daikin airco settings:
 - Set airco to cooling, heating or auto + the required temperature**
 - Set the fan speed
 - Swing mode (if supported by your device)
-- Enable special modes (if supported by your device and enabled in config):
+- Enable special modes (if supported by your device and enabled in config), UI in the Home App will be in the form of switches:
   - powerful mode
   - econo mode
   - streamer mode
   - outdoor silent mode
   - indoor silent/quiet mode
+  - dry mode
+  - fan only mode
 
 ** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 

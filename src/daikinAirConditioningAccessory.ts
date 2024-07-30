@@ -9,6 +9,8 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         STREAMER_MODE: 'Streamer mode',
         OUTDOUR_SILENT_MODE: 'Outdoor silent mode',
         INDOOR_SILENT_MODE: 'Indoor silent mode',
+        DRY_OPERATION_MODE: 'Dry operation mode',
+        FAN_ONLY_OPERATION_MODE: 'Fan only operation mode',
     };
 
     private readonly name: string;
@@ -19,6 +21,8 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     private switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
     private switchServiceOutdoorSilentMode = this.accessory.getService(this.extraServices.OUTDOUR_SILENT_MODE);
     private switchServiceIndoorSilentMode = this.accessory.getService(this.extraServices.INDOOR_SILENT_MODE);
+    private switchServiceDryOperationMode = this.accessory.getService(this.extraServices.DRY_OPERATION_MODE);
+    private switchServiceFanOnlyOperationMode = this.accessory.getService(this.extraServices.FAN_ONLY_OPERATION_MODE);
 
     constructor(
         platform: DaikinCloudPlatform,
@@ -176,6 +180,46 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         } else {
             if (this.switchServiceIndoorSilentMode) {
                 accessory.removeService(this.switchServiceIndoorSilentMode);
+            }
+        }
+
+        if (this.hasDryOperationModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.debug(`[${this.name}] Device has DryOperationMode, add Switch Service`);
+
+            this.switchServiceDryOperationMode = this.switchServiceDryOperationMode || accessory.addService(this.platform.Service.Switch, this.extraServices.DRY_OPERATION_MODE, 'dry_operation_mode');
+            this.switchServiceDryOperationMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.DRY_OPERATION_MODE);
+
+            this.switchServiceDryOperationMode
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
+            this.switchServiceDryOperationMode
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.DRY_OPERATION_MODE);
+
+            this.switchServiceDryOperationMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handleDryOperationModeGet.bind(this))
+                .onSet(this.handleDryOperationModeSet.bind(this));
+        } else {
+            if (this.switchServiceDryOperationMode) {
+                accessory.removeService(this.switchServiceDryOperationMode);
+            }
+        }
+
+        if (this.hasFanOnlyOperationModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.debug(`[${this.name}] Device has FanOnlyOperationMode, add Switch Service`);
+
+            this.switchServiceFanOnlyOperationMode = this.switchServiceFanOnlyOperationMode || accessory.addService(this.platform.Service.Switch, this.extraServices.FAN_ONLY_OPERATION_MODE, 'fan_only_operation_mode');
+            this.switchServiceFanOnlyOperationMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.FAN_ONLY_OPERATION_MODE);
+
+            this.switchServiceFanOnlyOperationMode
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
+            this.switchServiceFanOnlyOperationMode
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.FAN_ONLY_OPERATION_MODE);
+
+            this.switchServiceFanOnlyOperationMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handleFanOnlyOperationModeGet.bind(this))
+                .onSet(this.handleFanOnlyOperationModeSet.bind(this));
+        } else {
+            if (this.switchServiceFanOnlyOperationMode) {
+                accessory.removeService(this.switchServiceFanOnlyOperationMode);
             }
         }
     }
@@ -399,6 +443,32 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         this.platform.forceUpdateDevices();
     }
 
+    async handleDryOperationModeGet() {
+        this.platform.log.debug(`[${this.name}] GET DryOperationMode`);
+
+        return this.accessory.context.device.getData('climateControl', 'operationMode', undefined).value === DaikinOperationModes.DRY;
+    }
+
+    async handleDryOperationModeSet(value: CharacteristicValue) {
+        this.platform.log.debug(`[${this.name}] SET DryOperationMode to: ${value}`);
+        const daikinOperationMode = value as boolean ? DaikinOperationModes.DRY : DaikinOperationModes.AUTO;
+        await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode, undefined);
+        this.platform.forceUpdateDevices();
+    }
+
+    async handleFanOnlyOperationModeGet() {
+        this.platform.log.debug(`[${this.name}] GET FanOnlyOperationMode`);
+
+        return this.accessory.context.device.getData('climateControl', 'operationMode', undefined).value === DaikinOperationModes.FAN_ONLY;
+    }
+
+    async handleFanOnlyOperationModeSet(value: CharacteristicValue) {
+        this.platform.log.debug(`[${this.name}] SET FanOnlyOperationMode to: ${value}`);
+        const daikinOperationMode = value as boolean ? DaikinOperationModes.FAN_ONLY : DaikinOperationModes.AUTO;
+        await this.accessory.context.device.setData('climateControl', 'operationMode', daikinOperationMode, undefined);
+        this.platform.forceUpdateDevices();
+    }
+
     getCurrentOperationMode() {
         return this.accessory.context.device.getData('climateControl', 'operationMode', undefined).value;
     }
@@ -439,6 +509,18 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
         const fanSpeedValues: Array<string> = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode').values;
         this.platform.log.debug(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
         return fanSpeedValues.includes(DaikinFanSpeedModes.QUIET);
+    }
+
+    hasDryOperationModeFeature() {
+        const operationModeValues: Array<string> = this.accessory.context.device.getData('climateControl', 'operationMode', undefined).values;
+        this.platform.log.debug(`[${this.name}] hasDryModeFeature, dryModeFeature: ${operationModeValues.includes(DaikinOperationModes.DRY)}`);
+        return operationModeValues.includes(DaikinOperationModes.DRY);
+    }
+
+    hasFanOnlyOperationModeFeature() {
+        const operationModeValues: Array<string> = this.accessory.context.device.getData('climateControl', 'operationMode', undefined).values;
+        this.platform.log.debug(`[${this.name}] hasFanOnlyOperationModeFeature, fanOnlyOperationModeFeature: ${operationModeValues.includes(DaikinOperationModes.FAN_ONLY)}`);
+        return operationModeValues.includes(DaikinOperationModes.FAN_ONLY);
     }
 }
 
