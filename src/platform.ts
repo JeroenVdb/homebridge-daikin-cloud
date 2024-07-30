@@ -154,7 +154,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         await this.controller.updateAllDeviceData();
     }
 
-    forceUpdateDevices(delay: number = ONE_SECOND * 60) {
+    forceUpdateDevices(delay: number = this.config.forceUpdateDelay || ONE_SECOND * 60) {
         this.log.debug(`Force update devices data (delay: ${delay}, update pending: ${this.forceUpdateTimeout})`);
 
         clearInterval(this.updateInterval);
