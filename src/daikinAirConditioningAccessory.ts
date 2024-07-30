@@ -63,14 +63,16 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
             .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
 
-        this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
-            .setProps({
-                minStep: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minStep,
-                minValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
-                maxValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
-            })
-            .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
-            .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
+        if (this.hasOperationMode(DaikinOperationModes.HEATING)) {
+            this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
+                .setProps({
+                    minStep: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minStep,
+                    minValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
+                    maxValue: accessory.context.device.getData('climateControl', 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
+                })
+                .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
+                .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
+        }
 
         this.addOrUpdateCharacteristicRotationSpeed(operationMode);
 
@@ -474,8 +476,8 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     }
 
     hasSwingModeFeature() {
-        const verticalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/vertical/currentMode');
-        const horizontalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanDirection/horizontal/currentMode');
+        const verticalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`);
+        const horizontalSwing = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/horizontal/currentMode`);
         this.platform.log.debug(`[${this.name}] hasSwingModeFeature, verticalSwing: ${Boolean(verticalSwing)}`);
         this.platform.log.debug(`[${this.name}] hasSwingModeFeature, horizontalSwing: ${Boolean(horizontalSwing)}`);
         return Boolean(verticalSwing || horizontalSwing);
@@ -506,21 +508,23 @@ export class daikinAirConditioningAccessory extends daikinAccessory{
     }
 
     hasIndoorSilentModeFeature() {
-        const fanSpeedValues: Array<string> = this.accessory.context.device.getData('climateControl', 'fanControl', '/operationModes/heating/fanSpeed/currentMode').values;
+        const fanSpeedValues: Array<string> = this.accessory.context.device.getData('climateControl', 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`).values;
         this.platform.log.debug(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
         return fanSpeedValues.includes(DaikinFanSpeedModes.QUIET);
     }
 
-    hasDryOperationModeFeature() {
+    hasOperationMode(operationMode: DaikinOperationModes) {
         const operationModeValues: Array<string> = this.accessory.context.device.getData('climateControl', 'operationMode', undefined).values;
-        this.platform.log.debug(`[${this.name}] hasDryModeFeature, dryModeFeature: ${operationModeValues.includes(DaikinOperationModes.DRY)}`);
-        return operationModeValues.includes(DaikinOperationModes.DRY);
+        this.platform.log.debug(`[${this.name}] has ${operationMode}: ${operationModeValues.includes(operationMode)}`);
+        return operationModeValues.includes(operationMode);
+    }
+
+    hasDryOperationModeFeature() {
+        return this.hasOperationMode(DaikinOperationModes.DRY);
     }
 
     hasFanOnlyOperationModeFeature() {
-        const operationModeValues: Array<string> = this.accessory.context.device.getData('climateControl', 'operationMode', undefined).values;
-        this.platform.log.debug(`[${this.name}] hasFanOnlyOperationModeFeature, fanOnlyOperationModeFeature: ${operationModeValues.includes(DaikinOperationModes.FAN_ONLY)}`);
-        return operationModeValues.includes(DaikinOperationModes.FAN_ONLY);
+        return this.hasOperationMode(DaikinOperationModes.FAN_ONLY);
     }
 }
 
