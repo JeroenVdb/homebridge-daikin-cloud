@@ -63,6 +63,8 @@ Add config object to the platform array in your Homebridge `config.json`.
             "showExtraFeatures": false, // boolean, default: false
             "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
             "updateIntervalInMinutes": 15, // how fast do you want Daikin to poll for new Device data, default: 15
+            "forceUpdateDelay": 5 // how long to wait in ms before updating the device data again after a change (PATCH) has been made, default: 60000 (60 
+            seconds)
         }
     ]
 }

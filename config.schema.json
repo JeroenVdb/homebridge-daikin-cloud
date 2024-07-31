@@ -64,11 +64,11 @@
         "description": "Interval in minutes when we poll the Daikin API. Because of rate limitations we recommend to leave this at 15 minutes. This will result in 96 calls to the API per day ((24 * 60) / 15). The rate limit per day is 200."
       },
       "forceUpdateDelay": {
-        "title": "Force update delay",
+        "title": "Force update delay (in ms)",
         "type": "integer",
         "minimum": 0,
         "default": 60000,
-        "description": "The amount of time the plugin waits before updating the device data after a change is made. A delay is needed because the Daikin API does not always return the updated data immediately. If the delay is to low your change might not be reflected in the returned data and interface. If too high the interface feels slow. The default is 60 seconds."
+        "description": "The amount of time in ms the plugin waits before updating the device data after a change is made. A delay is needed because the Daikin API does not always return the updated data immediately. If the delay is to low your change might not be reflected in the returned data and interface. If too high the interface feels slow. The default is 60000 (60 seconds)."
       }
     }
   }
