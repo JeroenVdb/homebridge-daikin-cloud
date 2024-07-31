@@ -18,7 +18,8 @@
   },
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "jest test/* --updateSnapshot",
+    "test": "jest test/*",
+    "test:updateSnapshots": "jest test/* --updateSnapshot",
     "lint": "eslint src/**.ts --max-warnings=0",
     "watch": "npm run build && npm link && nodemon",
     "build": "rimraf ./dist && tsc",
