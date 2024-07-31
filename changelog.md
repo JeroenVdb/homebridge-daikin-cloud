@@ -5,12 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.5.0-beta.0] - 2024-07-30
+## [2.5.0-beta.1] - 2024-07-30
 
 ### Added
 
 - Extra switches for operation modes: dry and fan only, showExtraFeatures must be enabled as well. (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/57,
   https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/45 and https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/25)
+
+### Fixed
+
+- Some devices don't support heating, we now gracefully handle that (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/50)
 
 ## [2.4.1] - 2024-07-30
 
