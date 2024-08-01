@@ -19,7 +19,7 @@ export class daikinAccessory {
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber', undefined) ? accessory.context.device.getData('gateway', 'serialNumber', undefined).value : 'NOT_AVAILABLE');
 
         this.accessory.context.device.on('updated', () => {
-            this.platform.log.debug(`Updated ${this.accessory.displayName} (${this.accessory.UUID})`);
+            this.platform.log.debug(`Updated ${this.accessory.displayName} (${this.accessory.UUID}), LastUpdated: ${this.accessory.context.device.getLastUpdated()}`);
         });
     }
 

@@ -150,8 +150,11 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async updateDevices() {
-        this.log.debug('Update devices data');
-        await this.controller.updateAllDeviceData();
+        try {
+            await this.controller.updateAllDeviceData();
+        } catch (error) {
+            this.log.error(`Failed to update devices data: ${JSON.stringify(error)}`);
+        }
     }
 
     forceUpdateDevices(delay: number = this.config.forceUpdateDelay || ONE_SECOND * 60) {
