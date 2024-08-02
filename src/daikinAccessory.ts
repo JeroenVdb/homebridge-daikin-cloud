@@ -19,18 +19,16 @@ export class daikinAccessory {
             .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.getData('gateway', 'serialNumber', undefined) ? accessory.context.device.getData('gateway', 'serialNumber', undefined).value : 'NOT_AVAILABLE');
 
         this.accessory.context.device.on('updated', () => {
-            this.platform.log.debug(`Updated ${this.accessory.displayName} (${this.accessory.UUID}), LastUpdated: ${this.accessory.context.device.getLastUpdated()}`);
+            this.platform.log.debug(`[API Syncing] Updated ${this.accessory.displayName} (${this.accessory.UUID}), LastUpdated: ${this.accessory.context.device.getLastUpdated()}`);
         });
     }
 
     printDeviceInfo() {
-        this.platform.log.info('Device found with id: ' + this.accessory.UUID);
-        this.platform.log.info('    id: ' + this.accessory.UUID);
-        this.platform.log.info('    name: ' + this.accessory.displayName);
-        this.platform.log.info('    last updated: ' + this.accessory.context.device.getLastUpdated());
-        this.platform.log.info('    modelInfo: ' + this.accessory.context.device.getData('gateway', 'modelInfo', undefined).value);
-        this.platform.log.info('    deviceModel: ' + this.accessory.context.device.getDescription().deviceModel);
-        this.platform.log.info('    config.showExtraFeatures: ' + this.platform.config.showExtraFeatures);
-        this.platform.log.info('    config.excludedDevicesByDeviceId: ' + this.platform.config.showExtraFeatures);
+        this.platform.log.info('[Platform] Device found with id: ' + this.accessory.UUID);
+        this.platform.log.info('[Platform]     id: ' + this.accessory.UUID);
+        this.platform.log.info('[Platform]     name: ' + this.accessory.displayName);
+        this.platform.log.info('[Platform]     last updated: ' + this.accessory.context.device.getLastUpdated());
+        this.platform.log.info('[Platform]     modelInfo: ' + this.accessory.context.device.getData('gateway', 'modelInfo', undefined).value);
+        this.platform.log.info('[Platform]     deviceModel: ' + this.accessory.context.device.getDescription().deviceModel);
     }
 }
