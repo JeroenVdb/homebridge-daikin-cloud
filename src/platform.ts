@@ -35,7 +35,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         public readonly config: PlatformConfig,
         public readonly api: API,
     ) {
-        this.log.debug('Finished initializing platform:', this.config.name);
+        this.log.debug('[Platform] Finished initializing platform:', this.config.name);
 
         this.Service = this.api.hap.Service;
         this.Characteristic = this.api.hap.Characteristic;
@@ -63,19 +63,18 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
 
             this.controller.on('rate_limit_status', (rateLimitStatus) => {
                 if (rateLimitStatus.remainingDay && rateLimitStatus.remainingDay <= 20) {
-                    this.log.warn(`[Rate limit remaining calls] Rate limit almost reached, you only have ${rateLimitStatus.remainingDay} calls left today`);
+                    this.log.warn(`[Rate Limit] Rate limit almost reached, you only have ${rateLimitStatus.remainingDay} calls left today`);
                 }
-                this.log.debug(`[Rate limit remaining calls] today: ${rateLimitStatus.remainingDay}/${rateLimitStatus.limitDay} -- this minute: ${rateLimitStatus.remainingMinute}/${rateLimitStatus.limitMinute}`);
+                this.log.debug(`[Rate Limit] Remaining calls today: ${rateLimitStatus.remainingDay}/${rateLimitStatus.limitDay} -- this minute: ${rateLimitStatus.remainingMinute}/${rateLimitStatus.limitMinute}`);
             });
 
             await this.discoverDevices(this.controller);
             this.startUpdateDevicesInterval();
-
         });
     }
 
     public configureAccessory(accessory: PlatformAccessory<DaikinCloudAccessoryContext>) {
-        this.log.info('Loading accessory from cache:', accessory.displayName);
+        this.log.info('[Platform] Loading accessory from cache:', accessory.displayName);
         this.accessories.push(accessory);
     }
 
@@ -90,7 +89,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             devices = await controller.getCloudDevices();
         } catch (error) {
             if (error instanceof Error) {
-                error.message = `Failed to get cloud devices from Daikin Cloud: ${error.message}`;
+                error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
                 this.log.error(error.message);
             }
         }
@@ -105,7 +104,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
                 if (this.isExcludedDevice(this.config.excludedDevicesByDeviceId, uuid)) {
-                    this.log.info(`Device with id ${uuid} is excluded, don't add accessory`);
+                    this.log.info(`[Platform] Device with id ${uuid} is excluded, don't add accessory`);
                     if (existingAccessory) {
                         this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
                     }
@@ -113,7 +112,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 }
 
                 if (existingAccessory) {
-                    this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+                    this.log.info('[Platform] Restoring existing accessory from cache:', existingAccessory.displayName);
                     existingAccessory.context.device = device;
                     this.api.updatePlatformAccessories([existingAccessory]);
 
@@ -124,7 +123,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     }
 
                 } else {
-                    this.log.info('Adding new accessory:', name);
+                    this.log.info('[Platform] Adding new accessory:', name);
                     const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(name, uuid);
                     accessory.context.device = device;
 
@@ -141,7 +140,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 console.error(error);
 
                 if (error instanceof Error) {
-                    this.log.error(`Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
+                    this.log.error(`[Platform] Failed to create HeaterCooler accessory from device, only HeaterCooler is supported at the moment: ${error.message}, device JSON: ${JSON.stringify(device)}`);
                 }
             }
         });
@@ -150,12 +149,15 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async updateDevices() {
-        this.log.debug('Update devices data');
-        await this.controller.updateAllDeviceData();
+        try {
+            await this.controller.updateAllDeviceData();
+        } catch (error) {
+            this.log.error(`[API Syncing] Failed to update devices data: ${JSON.stringify(error)}`);
+        }
     }
 
-    forceUpdateDevices(delay: number = ONE_SECOND * 60) {
-        this.log.debug(`Force update devices data (delay: ${delay}, update pending: ${this.forceUpdateTimeout})`);
+    forceUpdateDevices(delay: number = this.config.forceUpdateDelay || ONE_SECOND * 60) {
+        this.log.debug(`[API Syncing] Force update devices data (delayed by ${delay}, update pending: ${this.forceUpdateTimeout || 'no update pending'})`);
 
         clearInterval(this.updateInterval);
         clearTimeout(this.forceUpdateTimeout);
@@ -167,7 +169,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private startUpdateDevicesInterval() {
-        this.log.debug(`Starting update devices interval every ${this.updateIntervalDelay / ONE_MINUTE} minutes`);
+        this.log.debug(`[API Syncing] (Re)starting update devices interval every ${this.updateIntervalDelay / ONE_MINUTE} minutes`);
         this.updateInterval = setInterval(async () => {
             await this.updateDevices();
         }, this.updateIntervalDelay);

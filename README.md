@@ -7,12 +7,14 @@ The plugin supports some basic Daikin airco settings:
 - Set airco to cooling, heating or auto + the required temperature**
 - Set the fan speed
 - Swing mode (if supported by your device)
-- Enable special modes (if supported by your device and enabled in config):
+- Enable special modes (if supported by your device and enabled in config), UI in the Home App will be in the form of switches:
   - powerful mode
   - econo mode
   - streamer mode
   - outdoor silent mode
   - indoor silent/quiet mode
+  - dry mode
+  - fan only mode
 
 ** HomeKit does not support all operation modes of Daikin (for example dry and fan only).
 
@@ -61,6 +63,8 @@ Add config object to the platform array in your Homebridge `config.json`.
             "showExtraFeatures": false, // boolean, default: false
             "excludedDevicesByDeviceId": [], // array of strings, find you deviceId in the logs when homekit starts
             "updateIntervalInMinutes": 15, // how fast do you want Daikin to poll for new Device data, default: 15
+            "forceUpdateDelay": 5 // how long to wait in ms before updating the device data again after a change (PATCH) has been made, default: 60000 (60 
+            seconds)
         }
     ]
 }
@@ -131,6 +135,8 @@ Supported:
 - Powerful mode
 - Outdoor silent mode
 - Indoor silent/quiet mode
+- Dry mode
+- Fan only mode
 
 Extra info and example: https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/8#issuecomment-1188128335
 
