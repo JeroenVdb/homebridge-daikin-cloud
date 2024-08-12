@@ -18,14 +18,14 @@ export class ClimateControlService {
 
     private readonly name: string;
 
-    private service?: Service;
-    private switchServicePowerfulMode?: Service;
-    private switchServiceEconoMode?: Service;
-    private switchServiceStreamerMode?: Service;
-    private switchServiceOutdoorSilentMode?: Service;
-    private switchServiceIndoorSilentMode?: Service;
-    private switchServiceDryOperationMode?: Service;
-    private switchServiceFanOnlyOperationMode?: Service;
+    private readonly service?: Service;
+    private readonly switchServicePowerfulMode?: Service;
+    private readonly switchServiceEconoMode?: Service;
+    private readonly switchServiceStreamerMode?: Service;
+    private readonly switchServiceOutdoorSilentMode?: Service;
+    private readonly switchServiceIndoorSilentMode?: Service;
+    private readonly switchServiceDryOperationMode?: Service;
+    private readonly switchServiceFanOnlyOperationMode?: Service;
 
     constructor(
         platform: DaikinCloudPlatform,
