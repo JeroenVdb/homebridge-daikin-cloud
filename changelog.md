@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.6.0-beta.0] - 2024-08-11
+
+### Added
+
+- Refactored the way accessories and services are used, so we can more easily support extra devices.
+
 ## [2.5.0] - 2024-08-05
 
 ### Added

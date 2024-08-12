@@ -1,7 +1,7 @@
 import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
-import {DaikinClimateControlEmbeddedId, daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
+import {daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
 
 import {DaikinCloudController} from 'daikin-controller-cloud';
 
@@ -97,8 +97,6 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
         devices.forEach(device => {
             try {
                 const uuid = this.api.hap.uuid.generate(device.getId());
-                const climateControlEmbeddedId: DaikinClimateControlEmbeddedId = device.getDescription().deviceModel === 'Altherma' ? 'climateControlMainZone' : 'climateControl';
-                const name: string = device.getData(climateControlEmbeddedId, 'name', undefined).value;
                 const deviceModel: string = device.getDescription().deviceModel;
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
@@ -123,7 +121,9 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     }
 
                 } else {
-                    this.log.info('[Platform] Adding new accessory:', name);
+                    const climateControlEmbeddedId = device.desc.managementPoints.find(mp => mp.managementPointType === 'climateControl')?.embeddedId;
+                    const name: string = device.getData(climateControlEmbeddedId, 'name', undefined).value;
+                    this.log.info('[Platform] Adding new accessory, deviceModel:', name);
                     const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(name, uuid);
                     accessory.context.device = device;
 

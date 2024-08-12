@@ -1,12 +1,10 @@
-import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
+import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
-import {daikinAccessory} from './daikinAccessory';
-import {DaikinClimateControlEmbeddedId} from "./daikinAirConditioningAccessory";
 
 export class ClimateControlService {
     readonly platform: DaikinCloudPlatform;
     readonly accessory: PlatformAccessory<DaikinCloudAccessoryContext>;
-    readonly managementPointId: DaikinClimateControlEmbeddedId;
+    readonly managementPointId: string;
 
     private extraServices = {
         POWERFUL_MODE: 'Powerful mode',
@@ -32,7 +30,7 @@ export class ClimateControlService {
     constructor(
         platform: DaikinCloudPlatform,
         accessory: PlatformAccessory<DaikinCloudAccessoryContext>,
-        managementPointId: DaikinClimateControlEmbeddedId,
+        managementPointId: string,
     ) {
         this.platform = platform;
         this.accessory = accessory;

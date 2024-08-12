@@ -1,13 +1,13 @@
-import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
+import {PlatformAccessory} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {daikinAccessory} from './daikinAccessory';
-import {ClimateControlService} from "./climateControlService";
-import {HotWaterTankService} from "./hotWaterTankService";
+import {ClimateControlService} from './climateControlService';
+import {HotWaterTankService} from './hotWaterTankService';
 
 export class daikinAlthermaAccessory extends daikinAccessory{
     private readonly name: string;
-    private service: ClimateControlService;
-    private hotWaterTankService: HotWaterTankService;
+    private service?: ClimateControlService;
+    private hotWaterTankService?: HotWaterTankService;
 
     constructor(
         platform: DaikinCloudPlatform,
@@ -17,10 +17,20 @@ export class daikinAlthermaAccessory extends daikinAccessory{
 
         this.name = this.accessory.displayName;
 
-        this.service = new ClimateControlService(this.platform, this.accessory, 'climateControl');
-        this.hotWaterTankService = new HotWaterTankService(this.platform, this.accessory);
+        const climateControlEmbeddedId = this.getEmbeddedIdByManagementPointType('climateControl');
+        const domesticHotWaterTankEmbeddedId = this.getEmbeddedIdByManagementPointType('domesticHotWaterTank');
+
+        if (climateControlEmbeddedId !== null) {
+            this.service = new ClimateControlService(this.platform, this.accessory, climateControlEmbeddedId);
+        } else {
+            this.platform.log.warn(`[${this.name}] No climate control management point found`);
+        }
+
+        if (domesticHotWaterTankEmbeddedId !== null) {
+            this.hotWaterTankService = new HotWaterTankService(this.platform, this.accessory, domesticHotWaterTankEmbeddedId);
+        } else {
+            this.platform.log.warn(`[${this.name}] No domestic hot water tank management point found`);
+        }
 
     }
-
-
 }

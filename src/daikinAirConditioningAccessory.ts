@@ -1,7 +1,7 @@
-import {Service, PlatformAccessory, CharacteristicValue} from 'homebridge';
+import {PlatformAccessory} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {daikinAccessory} from './daikinAccessory';
-import {ClimateControlService} from "./climateControlService";
+import {ClimateControlService} from './climateControlService';
 
 export class daikinAirConditioningAccessory extends daikinAccessory {
     private extraServices = {
@@ -21,9 +21,12 @@ export class daikinAirConditioningAccessory extends daikinAccessory {
         accessory: PlatformAccessory<DaikinCloudAccessoryContext>,
     ) {
         super(platform, accessory);
-        this.service = new ClimateControlService(this.platform, this.accessory, 'climateControl');
+        const climateControlEmbeddedId = this.getEmbeddedIdByManagementPointType('climateControl');
+
+        if (climateControlEmbeddedId === null) {
+            throw new Error('No climate control management point found');
+        }
+
+        this.service = new ClimateControlService(this.platform, this.accessory, climateControlEmbeddedId);
     }
 }
-
-
-export type DaikinClimateControlEmbeddedId = 'climateControl' | 'climateControlMainZone';
