@@ -111,12 +111,6 @@ export class HotWaterTankService {
         await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
         this.platform.forceUpdateDevices();
     }
-
-    hasOnlyHeating() {
-        const operationModes: Array<string> = this.accessory.context.device.getData('climateControlMainZone', 'operationMode', undefined).values;
-        this.platform.log.debug(`[${this.name}] hasOnlyHeating, operationModes: ${operationModes.join(', ')}`);
-        return operationModes.length === 1 && operationModes[0] === 'heating';
-    }
 }
 
 enum DaikinOnOffModes {
