@@ -45,8 +45,6 @@ export class ClimateControlService {
         this.switchServiceDryOperationMode = this.accessory.getService(this.extraServices.DRY_OPERATION_MODE);
         this.switchServiceFanOnlyOperationMode = this.accessory.getService(this.extraServices.FAN_ONLY_OPERATION_MODE);
 
-        const operationMode: DaikinOperationModes = this.getCurrentOperationMode();
-
         this.name = accessory.displayName;
 
         this.service = this.service || this.accessory.addService(this.platform.Service.HeaterCooler);
