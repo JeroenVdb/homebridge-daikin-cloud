@@ -32,7 +32,7 @@ export class HotWaterTankService {
 
         this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
             .setProps({
-                minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minStep,
+                minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').stepValue,
                 minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minValue,
                 maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').maxValue,
             })

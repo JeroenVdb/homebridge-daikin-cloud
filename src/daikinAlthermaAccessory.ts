@@ -6,8 +6,8 @@ import {HotWaterTankService} from './hotWaterTankService';
 
 export class daikinAlthermaAccessory extends daikinAccessory{
     private readonly name: string;
-    private service?: ClimateControlService;
-    private hotWaterTankService?: HotWaterTankService;
+    service?: ClimateControlService;
+    hotWaterTankService?: HotWaterTankService;
 
     constructor(
         platform: DaikinCloudPlatform,

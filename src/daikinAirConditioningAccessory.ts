@@ -14,7 +14,7 @@ export class daikinAirConditioningAccessory extends daikinAccessory {
         FAN_ONLY_OPERATION_MODE: 'Fan only operation mode',
     };
 
-    private service: ClimateControlService;
+    service: ClimateControlService;
 
     constructor(
         platform: DaikinCloudPlatform,

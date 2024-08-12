@@ -53,7 +53,7 @@ test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
     });
 
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
-        return [new DaikinCloudDevice({managementPoints: []}, {} as unknown as OnectaClient)];
+        return [new DaikinCloudDevice({'deviceModel': 'dx23', managementPoints: []}, {} as unknown as OnectaClient)];
     });
 
     const config = new MockPlatformConfig(true);

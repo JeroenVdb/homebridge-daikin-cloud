@@ -33,7 +33,7 @@ export class daikinAccessory {
     }
 
     getEmbeddedIdByManagementPointType(managementPointType: string): string | null {
-        const managementPoints = this.accessory.context.device.desc.managementPoints.filter((managementPoint) => (managementPoint).managementPointType === 'climateControl');
+        const managementPoints = this.accessory.context.device.desc.managementPoints.filter((managementPoint) => (managementPoint).managementPointType === managementPointType);
 
         if (managementPoints.length === 0) {
             this.platform.log.error(`[Platform] No management point found for managementPointType ${managementPointType}`);

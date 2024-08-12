@@ -69,20 +69,22 @@ export class ClimateControlService {
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
-        this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
-            .setProps({
-                minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minStep,
-                minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minValue,
-                maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').maxValue,
-            })
-            .onGet(this.handleCoolingThresholdTemperatureGet.bind(this))
-            .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
+        if (this.hasOperationMode(DaikinOperationModes.COOLING)) {
+            this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
+                .setProps({
+                    minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').stepValue,
+                    minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minValue,
+                    maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').maxValue,
+                })
+                .onGet(this.handleCoolingThresholdTemperatureGet.bind(this))
+                .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
+        }
 
         if (this.hasOperationMode(DaikinOperationModes.HEATING)) {
             this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
                 .setProps({
-                    minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minStep,
+                    minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').stepValue,
                     minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
                     maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
                 })
@@ -90,7 +92,7 @@ export class ClimateControlService {
                 .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
         }
 
-        this.addOrUpdateCharacteristicRotationSpeed(operationMode);
+        this.addOrUpdateCharacteristicRotationSpeed();
 
         if (this.hasSwingModeFeature()) {
             this.platform.log.debug(`[${this.name}] Device has SwingMode, add Characteristic`);
@@ -242,22 +244,24 @@ export class ClimateControlService {
         }
     }
 
-    addOrUpdateCharacteristicRotationSpeed(operationMode: DaikinOperationModes) {
+    addOrUpdateCharacteristicRotationSpeed() {
         if (!this.service) {
             throw Error('Service not initialized');
         }
 
-        if (operationMode === DaikinOperationModes.DRY) {
-            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed));
-        } else {
+        const fanControl = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`);
+
+        if (fanControl) {
             this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
                 .setProps({
-                    minStep: this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minStep,
-                    minValue: this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).minValue,
-                    maxValue: this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).maxValue,
+                    minStep: fanControl.stepValue,
+                    minValue: fanControl.minValue,
+                    maxValue: fanControl.maxValue,
                 })
                 .onGet(this.handleRotationSpeedGet.bind(this))
                 .onSet(this.handleRotationSpeedSet.bind(this));
+        } else {
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed));
         }
     }
 
@@ -346,7 +350,7 @@ export class ClimateControlService {
             case DaikinOperationModes.HEATING:
                 return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
             case DaikinOperationModes.DRY:
-                this.addOrUpdateCharacteristicRotationSpeed(operationMode);
+                this.addOrUpdateCharacteristicRotationSpeed();
                 return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
             default:
                 return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
@@ -529,7 +533,11 @@ export class ClimateControlService {
     }
 
     hasIndoorSilentModeFeature() {
-        const fanSpeedValues: Array<string> = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`).values;
+        const currentModeFanControl = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`);
+        if (!currentModeFanControl) {
+            return false;
+        }
+        const fanSpeedValues: Array<string> = currentModeFanControl.values;
         this.platform.log.debug(`[${this.name}] hasIndoorSilentModeFeature, indoorSilentMode: ${fanSpeedValues.includes(DaikinFanSpeedModes.QUIET)}`);
         return fanSpeedValues.includes(DaikinFanSpeedModes.QUIET);
     }
