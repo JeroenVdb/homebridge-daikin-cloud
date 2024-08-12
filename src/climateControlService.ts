@@ -264,6 +264,7 @@ export class ClimateControlService {
     }
 
     async handleActiveStateGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const state = this.accessory.context.device.getData(this.managementPointId, 'onOffMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return state === DaikinOnOffModes.ON;
@@ -277,16 +278,18 @@ export class ClimateControlService {
         } catch (e) {
             this.platform.log.error('Failed to set', e);
         }
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const temperature = this.accessory.context.device.getData(this.managementPointId, 'sensoryData', '/roomTemperature').value;
         this.platform.log.debug(`[${this.name}] GET CurrentTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
 
     async handleCoolingThresholdTemperatureGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').value;
         this.platform.log.debug(`[${this.name}] GET CoolingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
@@ -302,10 +305,11 @@ export class ClimateControlService {
             this.platform.log.error('Failed to set', e);
         }
 
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleRotationSpeedGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const speed = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`).value;
         this.platform.log.debug(`[${this.name}] GET RotationSpeed, speed: ${speed}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return speed;
@@ -321,10 +325,11 @@ export class ClimateControlService {
             this.platform.log.error('Failed to set', e);
         }
 
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').value;
         this.platform.log.debug(`[${this.name}] GET HeatingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
@@ -335,10 +340,11 @@ export class ClimateControlService {
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
         await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', temperature);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
+        await this.platform.forceUpdateDevices();
         const operationMode: DaikinOperationModes = this.getCurrentOperationMode();
         this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}, last update: ${this.accessory.context.device.getLastUpdated()}`);
 
@@ -375,7 +381,7 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
         await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
         await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.ON, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleSwingModeSet(value: CharacteristicValue) {
@@ -385,11 +391,11 @@ export class ClimateControlService {
 
         await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/horizontal/currentMode`, daikinSwingMode);
         await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`, daikinSwingMode);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleSwingModeGet(): Promise<CharacteristicValue> {
-
+        await this.platform.forceUpdateDevices();
         const verticalSwingMode = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`).value;
         const horizontalSwingMode = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`).value;
         this.platform.log.debug(`[${this.name}] GET SwingMode, verticalSwingMode: ${verticalSwingMode}, last update: ${this.accessory.context.device.getLastUpdated()}`);
@@ -403,6 +409,7 @@ export class ClimateControlService {
     }
 
     async handlePowerfulModeGet() {
+        await this.platform.forceUpdateDevices();
         const powerfulModeOn = this.accessory.context.device.getData(this.managementPointId, 'powerfulMode', undefined).value === DaikinPowerfulModes.ON;
         this.platform.log.debug(`[${this.name}] GET PowerfulMode, powerfulModeOn: ${powerfulModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return powerfulModeOn;
@@ -412,10 +419,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET PowerfulMode to: ${value}`);
         const daikinPowerfulMode = value as boolean ? DaikinPowerfulModes.ON : DaikinPowerfulModes.OFF;
         await this.accessory.context.device.setData(this.managementPointId, 'powerfulMode', daikinPowerfulMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleEconoModeGet() {
+        await this.platform.forceUpdateDevices();
         const econoModeOn = this.accessory.context.device.getData(this.managementPointId, 'econoMode', undefined).value === DaikinEconoModes.ON;
         this.platform.log.debug(`[${this.name}] GET EconoMode, econoModeOn: ${econoModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return econoModeOn;
@@ -425,10 +433,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET EconoMode to: ${value}`);
         const daikinEconoMode = value as boolean ? DaikinEconoModes.ON : DaikinEconoModes.OFF;
         await this.accessory.context.device.setData(this.managementPointId, 'econoMode', daikinEconoMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleStreamerModeGet() {
+        await this.platform.forceUpdateDevices();
         const streamerModeOn = this.accessory.context.device.getData(this.managementPointId, 'streamerMode', undefined).value === DaikinStreamerModes.ON;
         this.platform.log.debug(`[${this.name}] GET StreamerMode, streamerModeOn: ${streamerModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return streamerModeOn;
@@ -438,10 +447,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET streamerMode to: ${value}`);
         const daikinStreamerMode = value as boolean ? DaikinStreamerModes.ON : DaikinStreamerModes.OFF;
         await this.accessory.context.device.setData(this.managementPointId, 'streamerMode', daikinStreamerMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleOutdoorSilentModeGet() {
+        await this.platform.forceUpdateDevices();
         const outdoorSilentModeOn = this.accessory.context.device.getData(this.managementPointId, 'outdoorSilentMode', undefined).value === DaikinOutdoorSilentModes.ON;
         this.platform.log.debug(`[${this.name}] GET OutdoorSilentMode, outdoorSilentModeOn: ${outdoorSilentModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return outdoorSilentModeOn;
@@ -451,10 +461,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET outdoorSilentMode to: ${value}`);
         const daikinOutdoorSilentMode = value as boolean ? DaikinOutdoorSilentModes.ON : DaikinOutdoorSilentModes.OFF;
         await this.accessory.context.device.setData(this.managementPointId, 'outdoorSilentMode', daikinOutdoorSilentMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleIndoorSilentModeGet() {
+        await this.platform.forceUpdateDevices();
         const indoorSilentModeOn = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`).value === DaikinFanSpeedModes.QUIET;
         this.platform.log.debug(`[${this.name}] GET IndoorSilentMode, indoorSilentModeOn: ${indoorSilentModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return indoorSilentModeOn;
@@ -464,10 +475,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET indoorSilentMode to: ${value}`);
         const daikinFanSpeedMode = value as boolean ? DaikinFanSpeedModes.QUIET : DaikinFanSpeedModes.FIXED;
         await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, daikinFanSpeedMode);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleDryOperationModeGet() {
+        await this.platform.forceUpdateDevices();
         const dryOperationModeOn = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value === DaikinOperationModes.DRY;
         this.platform.log.debug(`[${this.name}] GET DryOperationMode, dryOperationModeOn: ${dryOperationModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
 
@@ -478,10 +490,11 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET DryOperationMode to: ${value}`);
         const daikinOperationMode = value as boolean ? DaikinOperationModes.DRY : DaikinOperationModes.AUTO;
         await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     async handleFanOnlyOperationModeGet() {
+        await this.platform.forceUpdateDevices();
         const fanOnlyOperationModeOn = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value === DaikinOperationModes.FAN_ONLY;
         this.platform.log.debug(`[${this.name}] GET FanOnlyOperationMode, fanOnlyOperationModeOn: ${fanOnlyOperationModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return fanOnlyOperationModeOn;
@@ -491,7 +504,7 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] SET FanOnlyOperationMode to: ${value}`);
         const daikinOperationMode = value as boolean ? DaikinOperationModes.FAN_ONLY : DaikinOperationModes.AUTO;
         await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
-        this.platform.forceUpdateDevices();
+        await this.platform.forceUpdateDevices();
     }
 
     getCurrentOperationMode() {

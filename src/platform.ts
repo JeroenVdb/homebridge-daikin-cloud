@@ -30,6 +30,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     public updateInterval: NodeJS.Timeout | undefined;
     public forceUpdateTimeout: NodeJS.Timeout | undefined;
 
+    public updateDevicesPromise: Promise<unknown> | null = null;
+
     constructor(
         public readonly log: Logger,
         public readonly config: PlatformConfig,
@@ -149,23 +151,26 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async updateDevices() {
+        this.log.debug('[API Syncing] updateDevices');
         try {
+            new Promise(resolve => setTimeout(resolve, 5000));
             await this.controller.updateAllDeviceData();
         } catch (error) {
             this.log.error(`[API Syncing] Failed to update devices data: ${JSON.stringify(error)}`);
+        } finally {
+            this.updateDevicesPromise = null;
         }
     }
 
-    forceUpdateDevices(delay: number = this.config.forceUpdateDelay || ONE_SECOND * 60) {
+    async forceUpdateDevices(delay: number = this.config.forceUpdateDelay || ONE_SECOND * 60) {
         this.log.debug(`[API Syncing] Force update devices data (delayed by ${delay}, update pending: ${this.forceUpdateTimeout || 'no update pending'})`);
 
-        clearInterval(this.updateInterval);
-        clearTimeout(this.forceUpdateTimeout);
+        if (this.updateDevicesPromise) {
+            this.log.debug('[API Syncing] Force update devices data already pending, skipping');
+            return this.updateDevicesPromise;
+        }
 
-        this.forceUpdateTimeout = setTimeout(async () => {
-            await this.updateDevices();
-            this.startUpdateDevicesInterval();
-        }, delay);
+        return this.updateDevicesPromise = this.updateDevices();
     }
 
     private startUpdateDevicesInterval() {
