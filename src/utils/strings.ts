@@ -15,4 +15,8 @@ export class StringUtils {
 
         return firstThree + '******' + lastThree;
     }
+
+    static isEmpty(str: unknown): boolean {
+        return typeof str !== 'string' || str.length === 0;
+    }
 }
