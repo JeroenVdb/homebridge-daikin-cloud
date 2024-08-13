@@ -124,7 +124,7 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                     const climateControlEmbeddedId = device.desc.managementPoints.find(mp => mp.managementPointType === 'climateControl')?.embeddedId;
                     const name: string = device.getData(climateControlEmbeddedId, 'name', undefined).value;
                     this.log.info('[Platform] Adding new accessory, deviceModel:', StringUtils.isEmpty(name) ? deviceModel : name);
-                    const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(name, uuid);
+                    const accessory = new this.api.platformAccessory<DaikinCloudAccessoryContext>(StringUtils.isEmpty(name) ? deviceModel : name, uuid);
                     accessory.context.device = device;
 
                     if (deviceModel === 'Altherma') {
