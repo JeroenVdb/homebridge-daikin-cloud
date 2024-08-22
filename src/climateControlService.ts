@@ -507,10 +507,6 @@ export class ClimateControlService {
         return this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value;
     }
 
-    hasRoomTemperatureSet() {
-
-    }
-
     hasSwingModeFeature() {
         const verticalSwing = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`);
         const horizontalSwing = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/horizontal/currentMode`);
