@@ -45,7 +45,7 @@ export class ClimateControlService {
         this.switchServiceDryOperationMode = this.accessory.getService(this.extraServices.DRY_OPERATION_MODE);
         this.switchServiceFanOnlyOperationMode = this.accessory.getService(this.extraServices.FAN_ONLY_OPERATION_MODE);
 
-        this.name = accessory.displayName;
+        this.name = this.accessory.displayName;
 
         this.service = this.service || this.accessory.addService(this.platform.Service.HeaterCooler);
 

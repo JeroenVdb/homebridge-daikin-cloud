@@ -1,7 +1,8 @@
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
-import {althermaHeatPump, dx4Airco} from './devices';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
+import {dx4Airco} from './fixtures/dx4-airco';
+import {althermaHeatPump} from './fixtures/altherma-heat-pump';
 
 it('Get deviceModel from device %s', async () => {
     const accessory = new PlatformAccessory('NAME', 'efd08509-2edb-41d0-a9ab-ce913323d811');

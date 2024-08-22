@@ -16,7 +16,7 @@ export class HotWaterTankService {
         this.platform = platform;
         this.accessory = accessory;
         this.managementPointId = managementPointId;
-        this.name = this.accessory.displayName;
+        this.name = 'Hot water tank';
 
 
         this.hotWaterTankService = this.accessory.getService('Hot water tank') || accessory.addService(this.platform.Service.Thermostat, 'Hot water tank', 'hot_water_tank');

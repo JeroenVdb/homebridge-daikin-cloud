@@ -1,5 +1,4 @@
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
-import {althermaHeatPump, althermaWithEmbeddedIdZero, crSense2, v1ckoelnDevice} from './devices';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from '../src/platform';
 import {API} from 'homebridge';
 import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
@@ -7,14 +6,19 @@ import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
-import exp = require("node:constants");
+import {althermaV1ckoeln} from "./fixtures/altherma-v1ckoeln";
+import {althermaCrSense2} from "./fixtures/altherma-crSense-2";
+import {althermaWithEmbeddedIdZero} from "./fixtures/altherma-with-embedded-id-zero";
+import {althermaHeatPump} from "./fixtures/altherma-heat-pump";
+import {althermaHeatPump2} from "./fixtures/altherma-heat-pump-2";
 
 
 test.each<Array<string | string | any>>([
     ['altherma', 'climateControlMainZone', althermaHeatPump],
+    ['altherma', 'climateControlMainZone', althermaHeatPump2],
     ['altherma2', '1', althermaWithEmbeddedIdZero],
-    ['altherma3', '1', crSense2],
-    ['altherma4', 'climateControlMainZone', v1ckoelnDevice],
+    ['altherma3', '1', althermaCrSense2],
+    ['altherma4', 'climateControlMainZone', althermaV1ckoeln],
 ])('Create DaikinCloudThermostatAccessory with %s device', (name, climateControlEmbeddedId, deviceJson) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 

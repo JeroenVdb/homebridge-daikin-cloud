@@ -1,5 +1,4 @@
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
-import {dx23Airco, dx4Airco, unknownJan, unknownKitchenGuests} from './devices';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from '../src/platform';
 import {API, Logger} from 'homebridge';
 import {MockHomebridge, MockLogger, MockPlatformAccessory, MockPlatformConfig, Switch} from './mocks';
@@ -7,6 +6,10 @@ import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccess
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
+import {unknownJan} from "./fixtures/unknown-jan";
+import {unknownKitchenGuests} from "./fixtures/unknown-kitchen-guests";
+import {dx23Airco} from "./fixtures/dx23-airco";
+import {dx4Airco} from "./fixtures/dx4-airco";
 
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],
