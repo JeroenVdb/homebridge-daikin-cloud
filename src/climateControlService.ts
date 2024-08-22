@@ -51,13 +51,16 @@ export class ClimateControlService {
 
         this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
 
+        // Required characteristic
         this.service.getCharacteristic(this.platform.Characteristic.Active)
             .onSet(this.handleActiveStateSet.bind(this))
             .onGet(this.handleActiveStateGet.bind(this));
 
+        // Required characteristic
         this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
             .onGet(this.handleCurrentTemperatureGet.bind(this));
 
+        // Required characteristic
         this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
             .setProps({
                 minStep: 1,
@@ -67,27 +70,33 @@ export class ClimateControlService {
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
-        if (this.hasOperationMode(DaikinOperationModes.COOLING)) {
+        const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature');
+        if (roomTemperatureControlForCooling) {
             this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
                 .setProps({
-                    minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').stepValue,
-                    minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').minValue,
-                    maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').maxValue,
+                    minStep: roomTemperatureControlForCooling.stepValue,
+                    minValue: roomTemperatureControlForCooling.minValue,
+                    maxValue: roomTemperatureControlForCooling.maxValue,
                 })
                 .onGet(this.handleCoolingThresholdTemperatureGet.bind(this))
                 .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
+        } else {
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature));
         }
 
-        if (this.hasOperationMode(DaikinOperationModes.HEATING)) {
+        const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature');
+        if (roomTemperatureControlForHeating) {
             this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
                 .setProps({
-                    minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').stepValue,
-                    minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').minValue,
-                    maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').maxValue,
+                    minStep: roomTemperatureControlForHeating.stepValue,
+                    minValue: roomTemperatureControlForHeating.minValue,
+                    maxValue: roomTemperatureControlForHeating.maxValue,
                 })
                 .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
                 .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
+        } else {
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature));
         }
 
         this.addOrUpdateCharacteristicRotationSpeed();
@@ -496,6 +505,10 @@ export class ClimateControlService {
 
     getCurrentOperationMode() {
         return this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value;
+    }
+
+    hasRoomTemperatureSet() {
+
     }
 
     hasSwingModeFeature() {
