@@ -5,7 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.6.0-beta.4] - 2024-08-11
+## [2.7.0-beta.0] - 2024-10-20
+
+### Added
+
+- Update dependencies
+
+### Fixes
+
+- Update Altherma support (fixes
+  https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/81)
+
+## [2.6.0-beta.5] - 2024-08-11
 
 ### Added
 

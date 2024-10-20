@@ -16,7 +16,7 @@ test.each<Array<string | string | any>>([
     ['dx23', 'climateControl', dx23Airco],
     ['unknown', 'climateControl', unknownKitchenGuests],
     ['unknown2', 'climateControl', unknownJan],
-])('Create DaikinCloudAirConditioningAccessory with %s device', (name, climateControlEmbeddedId, deviceJson) => {
+])('Create DaikinCloudAirConditioningAccessory with %s device', async (name: string, climateControlEmbeddedId, deviceJson) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
@@ -31,8 +31,18 @@ test.each<Array<string | string | any>>([
     accessory.context['device'] = device;
 
     expect(() => {
-        const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
-    }).not.toThrow()
+        new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+    }).not.toThrow();
+
+    const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+
+    expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBeDefined();
+    expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBeDefined();
+    expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBeDefined();
+
+    if (!name.includes('unknown')) {
+        expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();
+    }
 });
 
 test.each<Array<string | string | any>>([

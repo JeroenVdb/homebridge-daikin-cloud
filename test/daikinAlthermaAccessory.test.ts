@@ -11,6 +11,7 @@ import {althermaCrSense2} from "./fixtures/altherma-crSense-2";
 import {althermaWithEmbeddedIdZero} from "./fixtures/altherma-with-embedded-id-zero";
 import {althermaHeatPump} from "./fixtures/altherma-heat-pump";
 import {althermaHeatPump2} from "./fixtures/altherma-heat-pump-2";
+import {althermaFraction} from "./fixtures/altherma-fraction";
 
 
 test.each<Array<string | string | any>>([
@@ -19,7 +20,8 @@ test.each<Array<string | string | any>>([
     ['altherma2', '1', althermaWithEmbeddedIdZero],
     ['altherma3', '1', althermaCrSense2],
     ['altherma4', 'climateControlMainZone', althermaV1ckoeln],
-])('Create DaikinCloudThermostatAccessory with %s device', (name, climateControlEmbeddedId, deviceJson) => {
+    ['althermaFraction', 'climateControlMainZone', althermaFraction],
+])('Create DaikinCloudThermostatAccessory with %s device', async (name, climateControlEmbeddedId, deviceJson) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
@@ -36,6 +38,16 @@ test.each<Array<string | string | any>>([
     expect(() => {
         new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
     }).not.toThrow();
+
+    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+
+
+    expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBeDefined();
+    expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBeDefined();
+    expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();
+    expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBeDefined();
+
+
 });
 
 test('DaikinCloudAirConditioningAccessory Getters', async () => {
