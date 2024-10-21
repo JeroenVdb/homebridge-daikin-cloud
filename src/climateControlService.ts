@@ -70,7 +70,7 @@ export class ClimateControlService {
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
-        const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature');
+        const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`);
         if (roomTemperatureControlForCooling) {
             this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
                 .setProps({
@@ -85,7 +85,7 @@ export class ClimateControlService {
             this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature));
         }
 
-        const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature');
+        const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`);
         if (roomTemperatureControlForHeating) {
             this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
                 .setProps({
@@ -296,7 +296,7 @@ export class ClimateControlService {
     }
 
     async handleCoolingThresholdTemperatureGet(): Promise<CharacteristicValue> {
-        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature').value;
+        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`).value;
         this.platform.log.debug(`[${this.name}] GET CoolingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
@@ -306,7 +306,7 @@ export class ClimateControlService {
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);
         try {
-            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', '/operationModes/cooling/setpoints/roomTemperature', temperature);
+            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`, temperature);
         } catch (e) {
             this.platform.log.error('Failed to set', e);
         }
@@ -334,7 +334,7 @@ export class ClimateControlService {
     }
 
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
-        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature').value;
+        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`).value;
         this.platform.log.debug(`[${this.name}] GET HeatingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
@@ -343,7 +343,7 @@ export class ClimateControlService {
         const temperature = Math.round(value as number * 2) / 2;
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
-        await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/roomTemperature', temperature);
+        await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`, temperature);
         this.platform.forceUpdateDevices();
     }
 
@@ -515,6 +515,17 @@ export class ClimateControlService {
         }
 
         return 'roomTemperature';
+    }
+
+    getSetpoint() {
+        const controlMode = this.getCurrentControlMode();
+
+        switch (controlMode) {
+            case 'leavingWaterTemperature':
+                return 'leavingWaterOffset';
+            default:
+                return 'roomTemperature';
+        }
     }
 
     hasSwingModeFeature() {
