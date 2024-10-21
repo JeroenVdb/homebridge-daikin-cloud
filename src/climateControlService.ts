@@ -290,7 +290,7 @@ export class ClimateControlService {
     }
 
     async handleCurrentTemperatureGet(): Promise<CharacteristicValue> {
-        const temperature = this.accessory.context.device.getData(this.managementPointId, 'sensoryData', '/roomTemperature') ? this.accessory.context.device.getData(this.managementPointId, 'sensoryData', '/roomTemperature').value : this.accessory.context.device.getData(this.managementPointId, 'sensoryData', '/' + this.getCurrentControlMode()).value;
+        const temperature = this.accessory.context.device.getData(this.managementPointId, 'sensoryData', '/' + this.getCurrentControlMode()).value;
         this.platform.log.debug(`[${this.name}] GET CurrentTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
