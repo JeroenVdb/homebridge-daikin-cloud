@@ -10,10 +10,12 @@ import {unknownJan} from "./fixtures/unknown-jan";
 import {unknownKitchenGuests} from "./fixtures/unknown-kitchen-guests";
 import {dx23Airco} from "./fixtures/dx23-airco";
 import {dx4Airco} from "./fixtures/dx4-airco";
+import {dx23Airco2} from "./fixtures/dx23-airco-2";
 
 test.each<Array<string | string | any>>([
     ['dx4', 'climateControl', dx4Airco],
     ['dx23', 'climateControl', dx23Airco],
+    ['dx23-2', 'climateControl', dx23Airco2],
     ['unknown', 'climateControl', unknownKitchenGuests],
     ['unknown2', 'climateControl', unknownJan],
 ])('Create DaikinCloudAirConditioningAccessory with %s device', async (name: string, climateControlEmbeddedId, deviceJson) => {
@@ -43,6 +45,10 @@ test.each<Array<string | string | any>>([
     if (!name.includes('unknown')) {
         expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();
     }
+
+    expect(async () => {
+        await homebridgeAccessory.service.handleSwingModeSet(1);
+    }).not.toThrow();
 });
 
 test.each<Array<string | string | any>>([
