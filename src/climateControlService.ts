@@ -543,28 +543,29 @@ export class ClimateControlService {
         }
     }
 
-    getCurrentOperationMode() {
+    getCurrentOperationMode(): DaikinOperationModes {
         return this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value;
     }
 
-    getCurrentControlMode() {
+    getCurrentControlMode(): DaikinControlModes {
         const controlMode = this.accessory.context.device.getData(this.managementPointId, 'controlMode', undefined);
 
-        if (controlMode) {
-            return controlMode.value;
+        // Only Altherma devices have a controlMode, others have a fixed controlMode of ROOM_TEMPERATURE AFAIK
+        if (!controlMode) {
+            return DaikinControlModes.ROOM_TEMPERATURE;
         }
 
-        return 'roomTemperature';
+        return controlMode.value;
     }
 
-    getSetpoint() {
+    getSetpoint(): DaikinSetpoints {
         const controlMode = this.getCurrentControlMode();
 
         switch (controlMode) {
-            case 'leavingWaterTemperature':
-                return 'leavingWaterOffset';
+            case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                return DaikinSetpoints.LEAVING_WATER_OFFSET;
             default:
-                return 'roomTemperature';
+                return DaikinSetpoints.ROOM_TEMPERATURE;
         }
     }
 
@@ -671,5 +672,16 @@ enum DaikinOperationModes {
     HEATING = 'heating',
     COOLING = 'cooling',
     AUTO = 'auto',
-    DRY = 'dry'
+    DRY = 'dry',
+}
+
+enum DaikinControlModes {
+    ROOM_TEMPERATURE = 'roomTemperature',
+    LEAVING_WATER_TEMPERATURE = 'leavingWaterTemperature',
+    EXTERNAL_ROOM_TEMPERATURE = 'externalRoomTemperature',
+}
+
+enum DaikinSetpoints {
+    ROOM_TEMPERATURE = 'roomTemperature',
+    LEAVING_WATER_OFFSET = 'leavingWaterOffset',
 }
