@@ -8,5 +8,5 @@ test.each<Array<string | any>>([
     ['dx23', dx23Airco],
     ['altherma', althermaHeatPump],
 ])('Clean cloud device data for %s device', (name, deviceJson) => {
-    expect(DaikinCloudRepo.maskSensitiveCloudDeviceData([deviceJson])).toMatchSnapshot();
+    expect(DaikinCloudRepo.maskSensitiveCloudDeviceData(deviceJson)).toMatchSnapshot();
 });

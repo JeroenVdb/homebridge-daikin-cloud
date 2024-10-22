@@ -1,7 +1,7 @@
 export class DaikinCloudRepo {
     static maskSensitiveCloudDeviceData(cloudDeviceDetails) {
-        cloudDeviceDetails.map(deviceDetail => {
-            deviceDetail = deviceDetail.managementPoints.map(managementPoint => {
+        return {
+            managementPoints: cloudDeviceDetails.managementPoints.map(managementPoint => {
                 if (managementPoint.embeddedId === 'gateway') {
                     if (managementPoint.ipAddress) managementPoint.ipAddress.value = 'REDACTED';
                     if (managementPoint.macAddress) managementPoint.macAddress.value = 'REDACTED';
@@ -19,9 +19,8 @@ export class DaikinCloudRepo {
                     if (managementPoint.consumptionData) managementPoint.consumptionData = 'REDACTED';
                 }
                 return managementPoint;
-            });
-            return deviceDetail;
-        });
-        return cloudDeviceDetails;
+            }),
+            ...cloudDeviceDetails
+        };
     }
 }

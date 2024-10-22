@@ -1,5 +1,6 @@
 import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
+import {DaikinCloudRepo} from "./repository/daikinCloudRepo";
 
 export class ClimateControlService {
     readonly platform: DaikinCloudPlatform;
@@ -284,7 +285,7 @@ export class ClimateControlService {
         try {
             await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', state ? DaikinOnOffModes.ON : DaikinOnOffModes.OFF, undefined);
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
         this.platform.forceUpdateDevices();
     }
@@ -308,7 +309,7 @@ export class ClimateControlService {
         try {
             await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`, temperature);
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
 
         this.platform.forceUpdateDevices();
@@ -327,7 +328,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, 'fixed');
             await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`, speed);
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
 
         this.platform.forceUpdateDevices();
@@ -347,7 +348,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`, temperature);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -391,7 +392,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.ON, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -405,7 +406,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanDirection/vertical/currentMode`, daikinSwingMode);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -436,7 +437,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'powerfulMode', daikinPowerfulMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -453,7 +454,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'econoMode', daikinEconoMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -470,7 +471,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'streamerMode', daikinStreamerMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -487,7 +488,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'outdoorSilentMode', daikinOutdoorSilentMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -504,7 +505,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/currentMode`, daikinFanSpeedMode);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -522,7 +523,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
@@ -539,7 +540,7 @@ export class ClimateControlService {
             await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
             this.platform.forceUpdateDevices();
         } catch (e) {
-            this.platform.log.error('Failed to set', e, this.accessory.context.device.desc);
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
     }
 
