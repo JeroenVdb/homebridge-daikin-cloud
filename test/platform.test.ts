@@ -1,12 +1,10 @@
 import {DaikinCloudPlatform} from '../src/platform';
 import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
 import {API} from 'homebridge';
-import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {DaikinCloudController} from 'daikin-controller-cloud';
-import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import Path from 'node:path';
-import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory'
-import {daikinAlthermaAccessory} from "../src/daikinAlthermaAccessory";
+import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
+import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 import spyOn = jest.spyOn;
 
 jest.mock('daikin-controller-cloud');
@@ -42,19 +40,24 @@ test('Initialize platform', async () => {
 });
 
 test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
-    jest.spyOn(DaikinCloudDevice.prototype, 'getId').mockImplementation(() => {
-        return 'MOCK_ID';
-    });
-    jest.spyOn(DaikinCloudDevice.prototype, 'getDescription').mockReturnValue({
-        deviceModel: 'MOCK_DEVICE_MODEL',
-    });
-    jest.spyOn(DaikinCloudDevice.prototype, 'getData').mockReturnValue({
-        value: 'MOCK_VALUE',
-    });
-
-    jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
-        return [new DaikinCloudDevice({managementPoints: []}, {} as unknown as OnectaClient)];
-    });
+    // @ts-ignore
+    jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockResolvedValue([{
+        getId: () => 'MOCK_ID',
+        getDescription: () => {
+            return {
+                deviceModel: 'Airco',
+            };
+        },
+        getData: () => 'MOCK_DATE',
+        desc: {
+            managementPoints: [
+                {
+                    'embeddedId': 'climateControl',
+                    'managementPointType': 'climateControl'
+                }
+            ]
+        }
+    }]);
 
     const config = new MockPlatformConfig(true);
     const api = new MockHomebridge();
@@ -73,19 +76,24 @@ test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
 });
 
 test('DaikinCloudPlatform with new Altherma accessory', (done) => {
-    jest.spyOn(DaikinCloudDevice.prototype, 'getId').mockImplementation(() => {
-        return 'MOCK_ID';
-    });
-    jest.spyOn(DaikinCloudDevice.prototype, 'getDescription').mockReturnValue({
-        deviceModel: 'Altherma',
-    });
-    jest.spyOn(DaikinCloudDevice.prototype, 'getData').mockReturnValue({
-        value: 'MOCK_VALUE',
-    });
-
-    jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
-        return [new DaikinCloudDevice({managementPoints: []}, {} as unknown as OnectaClient)];
-    });
+    // @ts-ignore
+    jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockResolvedValue([{
+        getId: () => 'MOCK_ID',
+        getDescription: () => {
+            return {
+                deviceModel: 'Altherma',
+            };
+        },
+        getData: () => 'MOCK_DATE',
+        desc: {
+            managementPoints: [
+                {
+                    'embeddedId': 'climateControl',
+                    'managementPointType': 'climateControl'
+                }
+            ]
+        }
+    }]);
 
     const config = new MockPlatformConfig(true);
     const api = new MockHomebridge();

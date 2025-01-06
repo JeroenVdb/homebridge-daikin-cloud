@@ -5,6 +5,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [2.7.0] - 2024-10-22
+
+### Added
+
+- Update dependencies
+
+### Fixes
+
+- Update Altherma support (fixes
+  https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/81)
+- Fix for devices that don't have both horizontal and vertical swing (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/89)
+
+## [2.6.0] - 2024-08-11
+
+### Added
+
+- Refactored the way accessories and services are used, so we can more easily support extra devices.
+
+### Fixes
+
+- Optional add CoolingThresholdTemperature and heatingThresholdTemperature for devices that don't support roomTemperature temperature control (fixes 
+  https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/81)
+
 ## [2.5.0] - 2024-08-05
 
 ### Added

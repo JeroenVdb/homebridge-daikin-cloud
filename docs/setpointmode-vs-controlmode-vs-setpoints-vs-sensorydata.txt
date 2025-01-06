@@ -1,0 +1,6 @@
+setpointMode;                           controlMode;                setpoints                                 sensorydata
+weatherDependentHeatingFixedCooling;    roomTemperature             roomTemperature,leavingWaterOffset;       roomTemperature, outdoorTemperature,leavingWaterTemperature
+weatherDependent;                       leavingWaterTemperature;    leavingWaterOffset;                       leavingWaterTemperature,outdoorTemperature
+weatherDependent;                       roomTemperature;            roomTemperature,leavingWaterOffset        roomTemperature, outdoorTemperature,leavingWaterTemperature
+weatherDependent;                       leavingWaterTemperature;    leavingWaterOffset                        leavingWaterTemperature,outdoorTemperature
+weatherDependentHeatingFixedCooling;    leavingWaterTemperature;    leavingWaterOffset                         roomTemperature, outdoorTemperature,leavingWaterTemperature

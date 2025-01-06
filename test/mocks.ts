@@ -83,6 +83,11 @@ class MockServiceBase {
         return this;
     }
 
+    removeCharacteristic(_characteristic: typeof MockCharacteristicBase): MockServiceBase {
+        console.log('imlpement this');
+        return this;
+    }
+
     addOptionalCharacteristic(characteristic: typeof MockCharacteristicBase): MockServiceBase {
         this.optionalCharacteristics.push(new characteristic(''));
         return this;
