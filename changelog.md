@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.7.0-beta.5] - 2024-10-22
+## [2.7.0] - 2024-10-22
 
 ### Added
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/81)
 - Fix for devices that don't have both horizontal and vertical swing (fixes https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/89)
 
-## [2.6.0-beta.5] - 2024-08-11
+## [2.6.0] - 2024-08-11
 
 ### Added
 
