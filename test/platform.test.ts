@@ -40,6 +40,10 @@ test('Initialize platform', async () => {
 });
 
 test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
+    spyOn(Path, 'resolve').mockImplementation((...args) => {
+        return args.join('/')
+    });
+
     // @ts-ignore
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockResolvedValue([{
         getId: () => 'MOCK_ID',
@@ -76,6 +80,10 @@ test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
 });
 
 test('DaikinCloudPlatform with new Altherma accessory', (done) => {
+    spyOn(Path, 'resolve').mockImplementation((...args) => {
+        return args.join('/')
+    });
+
     // @ts-ignore
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockResolvedValue([{
         getId: () => 'MOCK_ID',
