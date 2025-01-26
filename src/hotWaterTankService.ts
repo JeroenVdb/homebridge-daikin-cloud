@@ -96,8 +96,11 @@ export class HotWaterTankService {
         let daikinOperationMode: DaikinOperationModes = DaikinOperationModes.COOLING;
 
         if (operationMode === this.platform.Characteristic.TargetHeatingCoolingState.OFF) {
-            await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.OFF, undefined);
-
+            try {
+                await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.OFF, undefined);
+            } catch (e) {
+                this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
+            }
             return;
         }
 
@@ -132,20 +135,20 @@ export class HotWaterTankService {
         if (operationMode.settable === false) {
             if (operationMode.value === DaikinOperationModes.HEATING) {
                 return {
-                    minValue: 1,
+                    minValue: 0,
                     maxValue: 1,
                     minStep: 1,
                 };
             } else if (operationMode.value === DaikinOperationModes.COOLING) {
                 return {
-                    minValue: 2,
+                    minValue: 0,
                     maxValue: 2,
                     minStep: 1,
                 };
 
             } else {
                 return {
-                    minValue: 3,
+                    minValue: 0,
                     maxValue: 3,
                     minStep: 1,
                 };
