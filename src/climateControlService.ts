@@ -564,14 +564,37 @@ export class ClimateControlService {
         return controlMode.value;
     }
 
-    getSetpoint(): DaikinSetpoints {
+    getSetpointMode(): DaikinSetpointModes | null {
+        const setpointMode = this.accessory.context.device.getData(this.managementPointId, 'setpointMode', undefined);
+        if (!setpointMode) {
+            return null;
+        }
+        return setpointMode.value;
+    }
+
+    getSetpoint(): DaikinTemperatureControlSetpoints {
+        // depending on the settings of the device the temperatureControl can be set in different ways "DaikinTemperatureControlSetpoints"
+        // Docs: https://developer.cloud.daikineurope.com/docs/b0dffcaa-7b51-428a-bdff-a7c8a64195c0/supported_features
+        // Looks like the setpointMode is the most important one to determine the setpoint
+        // If the setpointMode is not available (in case on non-Althermas), we can use the controlMode to determine the setpoint
+
+        const setpointMode = this.getSetpointMode();
         const controlMode = this.getCurrentControlMode();
+
+        if (setpointMode) {
+            switch (setpointMode) {
+                case DaikinSetpointModes.FIXED:
+                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_TEMPERATURE;
+                case DaikinSetpointModes.WEATHER_DEPENDENT:
+                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
+            }
+        }
 
         switch (controlMode) {
             case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
-                return DaikinSetpoints.LEAVING_WATER_OFFSET;
+                return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
             default:
-                return DaikinSetpoints.ROOM_TEMPERATURE;
+                return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
         }
     }
 
@@ -695,7 +718,14 @@ enum DaikinControlModes {
     EXTERNAL_ROOM_TEMPERATURE = 'externalRoomTemperature',
 }
 
-enum DaikinSetpoints {
+enum DaikinTemperatureControlSetpoints {
     ROOM_TEMPERATURE = 'roomTemperature',
     LEAVING_WATER_OFFSET = 'leavingWaterOffset',
+    LEAVING_WATER_TEMPERATURE = 'leavingWaterTemperature',
+}
+
+enum DaikinSetpointModes {
+    FIXED = 'fixed',
+    WEATHER_DEPENDENT_HEATING_FIXED_COOLING = 'weatherDependentHeatingFixedCooling',
+    WEATHER_DEPENDENT = 'weatherDependent'
 }

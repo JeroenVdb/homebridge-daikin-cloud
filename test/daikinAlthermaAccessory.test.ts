@@ -6,12 +6,13 @@ import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
-import {althermaV1ckoeln} from "./fixtures/altherma-v1ckoeln";
-import {althermaCrSense2} from "./fixtures/altherma-crSense-2";
-import {althermaWithEmbeddedIdZero} from "./fixtures/altherma-with-embedded-id-zero";
-import {althermaHeatPump} from "./fixtures/altherma-heat-pump";
-import {althermaHeatPump2} from "./fixtures/altherma-heat-pump-2";
-import {althermaFraction} from "./fixtures/altherma-fraction";
+import {althermaV1ckoeln} from './fixtures/altherma-v1ckoeln';
+import {althermaCrSense2} from './fixtures/altherma-crSense-2';
+import {althermaWithEmbeddedIdZero} from './fixtures/altherma-with-embedded-id-zero';
+import {althermaHeatPump} from './fixtures/altherma-heat-pump';
+import {althermaHeatPump2} from './fixtures/altherma-heat-pump-2';
+import {althermaFraction} from './fixtures/altherma-fraction';
+import {althermaMiladcerkic} from './fixtures/altherma-miladcerkic';
 
 
 test.each<Array<string | string | any>>([
@@ -21,6 +22,7 @@ test.each<Array<string | string | any>>([
     ['altherma3', '1', althermaCrSense2],
     ['altherma4', 'climateControlMainZone', althermaV1ckoeln],
     ['althermaFraction', 'climateControlMainZone', althermaFraction],
+    ['althermaMiladcerkic', 'climateControlMainZone', althermaMiladcerkic],
 ])('Create DaikinCloudThermostatAccessory with %s device', async (name, climateControlEmbeddedId, deviceJson) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 

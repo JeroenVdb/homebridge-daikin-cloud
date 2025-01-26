@@ -5,7 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.8.0-beta.0] - 2025-01-07
+## [2.8.1] - 2025-01-23
+
+### Added
+
+- Extra debugging information for when Hot Water Tank operations fail
+
+## [2.8.0] - 2025-01-23
 
 In this update the plugin will remove the `.daikin-controller-cloud-tokenset` file containing your oauth credentials as soon as the refresh token is marked as invalidated. This prevents people having to manually remove the file when the refresh token is invalidated. A restart of Homebridge is required after the file is removed to restart the authorisation flow.
 

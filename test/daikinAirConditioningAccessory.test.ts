@@ -12,13 +12,19 @@ import {dx23Airco} from "./fixtures/dx23-airco";
 import {dx4Airco} from "./fixtures/dx4-airco";
 import {dx23Airco2} from "./fixtures/dx23-airco-2";
 
-test.each<Array<string | string | any>>([
-    ['dx4', 'climateControl', dx4Airco],
-    ['dx23', 'climateControl', dx23Airco],
-    ['dx23-2', 'climateControl', dx23Airco2],
-    ['unknown', 'climateControl', unknownKitchenGuests],
-    ['unknown2', 'climateControl', unknownJan],
-])('Create DaikinCloudAirConditioningAccessory with %s device', async (name: string, climateControlEmbeddedId, deviceJson) => {
+type DeviceState = {
+    activeState: boolean;
+    currentTemperature: number;
+    targetHeaterCoolerState: string;
+};
+
+test.each<Array<string | string | any | DeviceState>>([
+    ['dx4', 'climateControl', dx4Airco, { activeState: true, currentTemperature: 25, targetHeaterCoolerState: 1 }],
+    ['dx23', 'climateControl', dx23Airco, { activeState: false, currentTemperature: 27, targetHeaterCoolerState: 2 }],
+    ['dx23-2', 'climateControl', dx23Airco2, { activeState: true, currentTemperature: 19, targetHeaterCoolerState: 1 }],
+    ['unknown', 'climateControl', unknownKitchenGuests, { activeState: false, currentTemperature: 30.1, targetHeaterCoolerState: 2 }],
+    ['unknown2', 'climateControl', unknownJan, { activeState: false, currentTemperature: 27, targetHeaterCoolerState: 2 }],
+])('Create DaikinCloudAirConditioningAccessory with %s device', async (name: string, climateControlEmbeddedId: string, deviceJson, state: DeviceState) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
@@ -38,9 +44,9 @@ test.each<Array<string | string | any>>([
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBeDefined();
-    expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBeDefined();
-    expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBeDefined();
+    expect(await homebridgeAccessory.service.handleActiveStateGet()).toBe(state.activeState);
+    expect(await homebridgeAccessory.service.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
+    expect(await homebridgeAccessory.service.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
 
     if (!name.includes('unknown')) {
         expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();

@@ -12,6 +12,9 @@ import {StringUtils} from './utils/strings';
 import {OnectaClientConfig} from 'daikin-controller-cloud/dist/onecta/oidc-utils';
 
 import fs from 'node:fs';
+import {DaikinCloudRepo} from './repository/daikinCloudRepo';
+import {althermaMiladcerkic} from "../test/fixtures/altherma-miladcerkic";
+import {OnectaClient} from "daikin-controller-cloud/dist/onecta/oidc-client";
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -104,19 +107,23 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async discoverDevices(controller: DaikinCloudController, onInvalidGrantError: () => void): Promise<DaikinCloudDevice[]> {
-        try {
-            return await controller.getCloudDevices();
-        } catch (error) {
-            if (error instanceof Error) {
-                error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
-                this.log.error(error.message);
-
-                if (error.message.includes('invalid_grant')) {
-                    onInvalidGrantError();
-                }
-            }
-            return [];
-        }
+        // try {
+        //     return await controller.getCloudDevices();
+        // } catch (error) {
+        //     if (error instanceof Error) {
+        //         error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
+        //         this.log.error(error.message);
+        //
+        //         if (error.message.includes('invalid_grant')) {
+        //             onInvalidGrantError();
+        //         }
+        //     }
+        //     return [];
+        // }
+        return new Promise((resolve, reject) => {
+            const device = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
+           resolve([device]);
+        });
     }
 
     private async createDevices(devices: DaikinCloudDevice[]) {
@@ -126,6 +133,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 const deviceModel: string = device.getDescription().deviceModel;
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+
+                this.log.debug('Create Device', deviceModel, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(device.desc), null, 4));
 
                 if (this.isExcludedDevice(this.config.excludedDevicesByDeviceId, uuid)) {
                     this.log.info(`[Platform] Device with id ${uuid} is excluded, don't add accessory`);

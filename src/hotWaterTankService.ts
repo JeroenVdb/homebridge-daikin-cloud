@@ -1,5 +1,6 @@
 import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
+import {DaikinCloudRepo} from './repository/daikinCloudRepo';
 
 export class HotWaterTankService {
     readonly platform: DaikinCloudPlatform;
@@ -30,21 +31,23 @@ export class HotWaterTankService {
         this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
             .onGet(this.handleHotWaterTankCurrentTemperatureGet.bind(this));
 
-        this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetTemperature)
-            .setProps({
-                minStep: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').stepValue,
-                minValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').minValue,
-                maxValue: accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature').maxValue,
-            })
+        const temperatureControl = accessory.context.device.getData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature');
+        const targetTemperature = this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetTemperature);
+        targetTemperature.setProps({
+            minStep: temperatureControl.stepValue,
+            minValue: temperatureControl.minValue,
+            maxValue: temperatureControl.maxValue,
+        })
             .onGet(this.handleHotWaterTankHeatingTargetTemperatureGet.bind(this))
             .onSet(this.handleHotWaterTankHeatingTargetTemperatureSet.bind(this));
 
+        // remove the set handler if the temperature is not settable
+        if (temperatureControl.settable === false) {
+            targetTemperature.removeOnSet();
+        }
+
         this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
-            .setProps({
-                minStep: 1,
-                minValue: 0,
-                maxValue: 1,
-            })
+            .setProps(this.getTargetHeatingCoolingStateProps())
             .onGet(this.handleHotWaterTankTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleHotWaterTankTargetHeaterCoolerStateSet.bind(this));
 
@@ -65,7 +68,11 @@ export class HotWaterTankService {
     async handleHotWaterTankHeatingTargetTemperatureSet(value: CharacteristicValue) {
         const temperature = Math.round(value as number * 2) / 2;
         this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature domesticHotWaterTank, temperature to: ${temperature}`);
-        await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature', temperature);
+        try {
+            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', '/operationModes/heating/setpoints/domesticHotWaterTemperature', temperature);
+        } catch (e) {
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
+        }
         this.platform.forceUpdateDevices();
     }
 
@@ -107,9 +114,49 @@ export class HotWaterTankService {
         }
 
         this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
-        await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.ON, undefined);
-        await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
+
+        try {
+            await this.accessory.context.device.setData(this.managementPointId, 'onOffMode', DaikinOnOffModes.ON, undefined);
+            await this.accessory.context.device.setData(this.managementPointId, 'operationMode', daikinOperationMode, undefined);
+        } catch (e) {
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
+        }
+
         this.platform.forceUpdateDevices();
+    }
+
+    getTargetHeatingCoolingStateProps(): { minValue: number; maxValue: number; minStep: number } {
+        const operationMode = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined);
+        this.platform.log.debug('OperationMode', JSON.stringify(operationMode, null, 4));
+
+        if (operationMode.settable === false) {
+            if (operationMode.value === DaikinOperationModes.HEATING) {
+                return {
+                    minValue: 1,
+                    maxValue: 1,
+                    minStep: 1,
+                };
+            } else if (operationMode.value === DaikinOperationModes.COOLING) {
+                return {
+                    minValue: 2,
+                    maxValue: 2,
+                    minStep: 1,
+                };
+
+            } else {
+                return {
+                    minValue: 3,
+                    maxValue: 3,
+                    minStep: 1,
+                };
+            }
+        }
+
+        return {
+            minValue: 0,
+            maxValue: 3,
+            minStep: 1,
+        };
     }
 }
 

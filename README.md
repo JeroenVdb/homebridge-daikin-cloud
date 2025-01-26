@@ -168,6 +168,7 @@ Use HomeKit Accessory Simulator to find out which are compatible or via the Home
 For running a local Homebridge setup: https://github.com/oznu/homebridge-config-ui-x#installation-instructions
 
 ```
+nvm use v18.19.1
 sudo hb-service start
 sudo hb-service stop
 ```
