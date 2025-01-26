@@ -584,9 +584,19 @@ export class ClimateControlService {
         if (setpointMode) {
             switch (setpointMode) {
                 case DaikinSetpointModes.FIXED:
-                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_TEMPERATURE;
+                    switch (controlMode) {
+                        case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                            return DaikinTemperatureControlSetpoints.LEAVING_WATER_TEMPERATURE;
+                        default:
+                            return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
+                    }
                 case DaikinSetpointModes.WEATHER_DEPENDENT:
-                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
+                    switch (controlMode) {
+                        case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                            return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
+                        default:
+                            return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
+                    }
             }
         }
 

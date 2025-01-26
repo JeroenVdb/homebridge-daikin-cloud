@@ -149,6 +149,11 @@ class MockCharacteristicBase {
         return this;
     }
 
+    removeOnSet() {
+        delete this.events['set'];
+        return this;
+    }
+
     onGet(fn: any) {
         this.events['get'] = fn;
         return this;

@@ -107,23 +107,23 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async discoverDevices(controller: DaikinCloudController, onInvalidGrantError: () => void): Promise<DaikinCloudDevice[]> {
-        // try {
-        //     return await controller.getCloudDevices();
-        // } catch (error) {
-        //     if (error instanceof Error) {
-        //         error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
-        //         this.log.error(error.message);
-        //
-        //         if (error.message.includes('invalid_grant')) {
-        //             onInvalidGrantError();
-        //         }
-        //     }
-        //     return [];
-        // }
-        return new Promise((resolve, reject) => {
-            const device = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
-           resolve([device]);
-        });
+        try {
+            return await controller.getCloudDevices();
+        } catch (error) {
+            if (error instanceof Error) {
+                error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
+                this.log.error(error.message);
+
+                if (error.message.includes('invalid_grant')) {
+                    onInvalidGrantError();
+                }
+            }
+            return [];
+        }
+        // return new Promise((resolve, reject) => {
+        //     const device = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
+        //    resolve([device]);
+        // });
     }
 
     private async createDevices(devices: DaikinCloudDevice[]) {
