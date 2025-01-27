@@ -61,7 +61,9 @@ export class HotWaterTankService {
     async handleHotWaterTankCurrentHeatingCoolingStateGet(): Promise<CharacteristicValue> {
         const state = this.accessory.context.device.getData(this.managementPointId, 'onOffMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}, last update: ${this.accessory.context.device.getLastUpdated()}`);
-        return state === DaikinOnOffModes.ON ? this.platform.Characteristic.CurrentHeatingCoolingState.HEAT : this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        const val = state === DaikinOnOffModes.ON ? this.platform.Characteristic.CurrentHeatingCoolingState.HEAT : this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
+        this.platform.log.debug(`[${this.name}] GET ActiveState going to return ${val}`);
+        return val;
     }
 
     async handleHotWaterTankCurrentTemperatureGet(): Promise<CharacteristicValue> {
@@ -94,7 +96,12 @@ export class HotWaterTankService {
 
     async handleHotWaterTankTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
         const operationMode: DaikinOperationModes = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value;
-        this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}`);
+        const state = this.accessory.context.device.getData(this.managementPointId, 'onOffMode', undefined).value;
+        this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}, state: ${state}`);
+
+        if (state === DaikinOnOffModes.OFF) {
+            return this.platform.Characteristic.TargetHeatingCoolingState.OFF;
+        }
 
         switch (operationMode) {
             case DaikinOperationModes.COOLING:
