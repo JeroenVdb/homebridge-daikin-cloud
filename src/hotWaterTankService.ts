@@ -61,7 +61,7 @@ export class HotWaterTankService {
     async handleHotWaterTankCurrentHeatingCoolingStateGet(): Promise<CharacteristicValue> {
         const state = this.accessory.context.device.getData(this.managementPointId, 'onOffMode', undefined).value;
         this.platform.log.debug(`[${this.name}] GET ActiveState, state: ${state}, last update: ${this.accessory.context.device.getLastUpdated()}`);
-        return state === DaikinOnOffModes.ON;
+        return state === DaikinOnOffModes.ON ? this.platform.Characteristic.CurrentHeatingCoolingState.HEAT : this.platform.Characteristic.CurrentHeatingCoolingState.OFF;
     }
 
     async handleHotWaterTankCurrentTemperatureGet(): Promise<CharacteristicValue> {
