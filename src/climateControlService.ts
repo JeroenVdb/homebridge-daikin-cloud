@@ -698,7 +698,8 @@ enum DaikinEconoModes {
     ON = 'on',
     OFF = 'off',
 }
-enum DaikinPowerfulModes {
+
+export enum DaikinPowerfulModes {
     ON = 'on',
     OFF = 'off',
 }

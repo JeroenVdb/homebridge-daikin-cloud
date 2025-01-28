@@ -3,13 +3,21 @@ import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {DaikinCloudRepo} from './repository/daikinCloudRepo';
 import {PartialAllowingNull} from "hap-nodejs/dist/types";
 import {CharacteristicProps} from "hap-nodejs/dist/lib/Characteristic";
+import {DaikinPowerfulModes} from "./climateControlService";
 
 export class HotWaterTankService {
     readonly platform: DaikinCloudPlatform;
     readonly accessory: PlatformAccessory<DaikinCloudAccessoryContext>;
     private readonly managementPointId: string;
+
+    private extraServices = {
+        POWERFUL_MODE: 'Powerful mode',
+    };
+
     private readonly name: string;
-    private hotWaterTankService: Service;
+
+    private readonly hotWaterTankService: Service;
+    private readonly switchServicePowerfulMode?: Service;
 
     constructor(
         platform: DaikinCloudPlatform,
@@ -21,6 +29,7 @@ export class HotWaterTankService {
         this.managementPointId = managementPointId;
         this.name = 'Hot water tank';
 
+        this.switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
 
         this.hotWaterTankService = this.accessory.getService('Hot water tank') || accessory.addService(this.platform.Service.Thermostat, 'Hot water tank', 'hot_water_tank');
         this.hotWaterTankService.setCharacteristic(this.platform.Characteristic.Name, 'Hot water tank');
@@ -55,6 +64,27 @@ export class HotWaterTankService {
             .setProps(this.getTargetHeatingCoolingStateProps())
             .onGet(this.handleHotWaterTankTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleHotWaterTankTargetHeaterCoolerStateSet.bind(this));
+
+        if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
+            this.platform.log.debug(`[${this.name}] Device has PowerfulMode, add Switch Service`);
+
+            this.switchServicePowerfulMode = this.switchServicePowerfulMode || accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
+            this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.POWERFUL_MODE);
+
+            this.switchServicePowerfulMode
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
+            this.switchServicePowerfulMode
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.POWERFUL_MODE);
+
+            this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
+                .onGet(this.handlePowerfulModeGet.bind(this))
+                .onSet(this.handlePowerfulModeSet.bind(this));
+
+        } else {
+            if (this.switchServicePowerfulMode) {
+                accessory.removeService(this.switchServicePowerfulMode);
+            }
+        }
 
     }
 
@@ -159,6 +189,23 @@ export class HotWaterTankService {
         this.platform.forceUpdateDevices();
     }
 
+    async handlePowerfulModeGet() {
+        const powerfulModeOn = this.accessory.context.device.getData(this.managementPointId, 'powerfulMode', undefined).value === DaikinPowerfulModes.ON;
+        this.platform.log.debug(`[${this.name}] GET PowerfulMode, powerfulModeOn: ${powerfulModeOn}, last update: ${this.accessory.context.device.getLastUpdated()}`);
+        return powerfulModeOn;
+    }
+
+    async handlePowerfulModeSet(value: CharacteristicValue) {
+        try {
+            this.platform.log.debug(`[${this.name}] SET PowerfulMode to: ${value}`);
+            const daikinPowerfulMode = value as boolean ? DaikinPowerfulModes.ON : DaikinPowerfulModes.OFF;
+            await this.accessory.context.device.setData(this.managementPointId, 'powerfulMode', daikinPowerfulMode, undefined);
+            this.platform.forceUpdateDevices();
+        } catch (e) {
+            this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
+        }
+    }
+
     getTargetHeatingCoolingStateProps(): PartialAllowingNull<CharacteristicProps> {
         const operationMode = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined);
         this.platform.log.debug('OperationMode', JSON.stringify(operationMode, null, 4));
@@ -186,6 +233,12 @@ export class HotWaterTankService {
             maxValue: 3,
             minStep: 1,
         };
+    }
+
+    hasPowerfulModeFeature() {
+        const powerfulMode = this.accessory.context.device.getData(this.managementPointId, 'powerfulMode', undefined);
+        this.platform.log.debug(`[${this.name}] hasPowerfulModeFeature, powerfulMode: ${Boolean(powerfulMode)}`);
+        return Boolean(powerfulMode);
     }
 }
 
