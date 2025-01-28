@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import {DaikinCloudRepo} from './repository/daikinCloudRepo';
 import {althermaMiladcerkic} from "../test/fixtures/altherma-miladcerkic";
 import {OnectaClient} from "daikin-controller-cloud/dist/onecta/oidc-client";
+import {althermaMiladcerkicOff} from "../test/fixtures/altherma-miladcerkic-off";
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -107,8 +108,12 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async discoverDevices(controller: DaikinCloudController, onInvalidGrantError: () => void): Promise<DaikinCloudDevice[]> {
+        // const mockDevice = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
+
         try {
-            return await controller.getCloudDevices();
+            const devices = await controller.getCloudDevices();
+            // devices.push(mockDevice);
+            return devices;
         } catch (error) {
             if (error instanceof Error) {
                 error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;
@@ -120,10 +125,6 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
             }
             return [];
         }
-        // return new Promise((resolve, reject) => {
-        //     const device = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
-        //    resolve([device]);
-        // });
     }
 
     private async createDevices(devices: DaikinCloudDevice[]) {
