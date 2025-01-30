@@ -108,12 +108,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
     }
 
     private async discoverDevices(controller: DaikinCloudController, onInvalidGrantError: () => void): Promise<DaikinCloudDevice[]> {
-        // const mockDevice = new DaikinCloudDevice(althermaMiladcerkic, undefined as unknown as OnectaClient);
-
         try {
-            const devices = await controller.getCloudDevices();
-            // devices.push(mockDevice);
-            return devices;
+            return await controller.getCloudDevices();
         } catch (error) {
             if (error instanceof Error) {
                 error.message = `[API Syncing] Failed to get cloud devices from Daikin Cloud: ${error.message}`;

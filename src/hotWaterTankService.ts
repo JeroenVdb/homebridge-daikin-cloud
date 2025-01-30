@@ -213,11 +213,15 @@ export class HotWaterTankService {
         if (operationMode.settable === false) {
             if (operationMode.value === DaikinOperationModes.HEATING) {
                 return {
-                    validValues: [0, 1],
+                    validValues: [this.platform.Characteristic.TargetHeatingCoolingState.OFF, this.platform.Characteristic.TargetHeatingCoolingState.HEAT],
                 };
             } else if (operationMode.value === DaikinOperationModes.COOLING) {
                 return {
-                    validValues: [0, 2],
+                    validValues: [this.platform.Characteristic.TargetHeatingCoolingState.OFF, this.platform.Characteristic.TargetHeatingCoolingState.COOL],
+                };
+            } else if (operationMode.value === DaikinOperationModes.AUTO) {
+                return {
+                    validValues: [this.platform.Characteristic.TargetHeatingCoolingState.OFF, this.platform.Characteristic.TargetHeatingCoolingState.AUTO],
                 };
             } else {
                 return {
