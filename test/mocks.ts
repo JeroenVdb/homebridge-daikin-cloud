@@ -60,8 +60,8 @@ export class MockPlatformAccessory<T extends UnknownContext> extends EventEmitte
         return this.services.find(s => s instanceof sClass);
     }
 
-    removeService(sClass) {
-        console.log('remove service : ' + sClass);
+    removeService(_sClass) {
+        return;
     }
 }
 
@@ -84,7 +84,6 @@ class MockServiceBase {
     }
 
     removeCharacteristic(_characteristic: typeof MockCharacteristicBase): MockServiceBase {
-        console.log('imlpement this');
         return this;
     }
 
@@ -100,7 +99,6 @@ class MockServiceBase {
                 ret = new characteristic('');
                 this.characteristics.push(ret);
             } catch (err) {
-                console.log(characteristic);
                 throw new Error(`No characteristic ${characteristic}`);
             }
         }
@@ -200,6 +198,7 @@ export class MockHomebridge extends EventEmitter implements DeepPartial<API> {
             CurrentTemperature,
             TargetTemperature,
             CurrentRelativeHumidity,
+            CurrentHeatingCoolingState,
             Active,
             StatusActive,
             CurrentAirPurifierState,
@@ -307,6 +306,8 @@ class FilterChangeIndication extends MockCharacteristicBase {}
 class FilterLifeLevel extends MockCharacteristicBase {}
 
 class CurrentHeaterCoolerState extends MockCharacteristicBase {}
+
+class CurrentHeatingCoolingState extends MockCharacteristicBase {}
 
 class TargetHeaterCoolerState extends MockCharacteristicBase {
     public static AUTO = 0 as const;

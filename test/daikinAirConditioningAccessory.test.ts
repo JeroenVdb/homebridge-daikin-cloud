@@ -6,24 +6,135 @@ import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccess
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {DaikinCloudController} from 'daikin-controller-cloud/dist/index.js';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
-import {unknownJan} from "./fixtures/unknown-jan";
-import {unknownKitchenGuests} from "./fixtures/unknown-kitchen-guests";
-import {dx23Airco} from "./fixtures/dx23-airco";
-import {dx4Airco} from "./fixtures/dx4-airco";
-import {dx23Airco2} from "./fixtures/dx23-airco-2";
+import {unknownJan} from './fixtures/unknown-jan';
+import {unknownKitchenGuests} from './fixtures/unknown-kitchen-guests';
+import {dx23Airco} from './fixtures/dx23-airco';
+import {dx4Airco} from './fixtures/dx4-airco';
+import {dx23Airco2} from './fixtures/dx23-airco-2';
 
 type DeviceState = {
-    activeState: boolean;
-    currentTemperature: number;
-    targetHeaterCoolerState: string;
+	activeState: boolean;
+	currentTemperature: number;
+	targetHeaterCoolerState: string;
+	coolingThresholdTemperature: number;
+	heatingThresholdTemperature: number;
+	rotationSpeed: number;
+	swingMode: number;
+	powerfulMode: number;
+	econoMode: number;
+	streamerMode: number;
+	outdoorSilentMode: number;
+	indoorSilentMode: number;
+	dryOperationMode: number;
+	fanOnlyOperationMode: number;
 };
 
 test.each<Array<string | string | any | DeviceState>>([
-    ['dx4', 'climateControl', dx4Airco, { activeState: true, currentTemperature: 25, targetHeaterCoolerState: 1 }],
-    ['dx23', 'climateControl', dx23Airco, { activeState: false, currentTemperature: 27, targetHeaterCoolerState: 2 }],
-    ['dx23-2', 'climateControl', dx23Airco2, { activeState: true, currentTemperature: 19, targetHeaterCoolerState: 1 }],
-    ['unknown', 'climateControl', unknownKitchenGuests, { activeState: false, currentTemperature: 30.1, targetHeaterCoolerState: 2 }],
-    ['unknown2', 'climateControl', unknownJan, { activeState: false, currentTemperature: 27, targetHeaterCoolerState: 2 }],
+    [
+        'dx4',
+        'climateControl',
+        dx4Airco,
+        {
+            activeState: true,
+            currentTemperature: 25,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 25,
+            heatingThresholdTemperature: 22,
+            rotationSpeed: 2,
+            swingMode: 0,
+            powerfulMode: false,
+            econoMode: false,
+            streamerMode: false,
+            outdoorSilentMode: false,
+            indoorSilentMode: false,
+            dryOperationMode: false,
+            fanOnlyOperationMode: false,
+        },
+    ],
+    [
+        'dx23',
+        'climateControl',
+        dx23Airco,
+        {
+            activeState: false,
+            currentTemperature: 27,
+            targetHeaterCoolerState: 2,
+            coolingThresholdTemperature: 17,
+            heatingThresholdTemperature: 17,
+            rotationSpeed: 3,
+            swingMode: 1,
+            powerfulMode: undefined,
+            econoMode: undefined,
+            streamerMode: undefined,
+            outdoorSilentMode: undefined,
+            indoorSilentMode: undefined,
+            dryOperationMode: false,
+            fanOnlyOperationMode: false,
+        },
+    ],
+    [
+        'dx23-2',
+        'climateControl',
+        dx23Airco2,
+        {
+            activeState: true,
+            currentTemperature: 19,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 25,
+            heatingThresholdTemperature: 13,
+            rotationSpeed: 4,
+            swingMode: 0,
+            powerfulMode: false,
+            econoMode: undefined,
+            streamerMode: undefined,
+            outdoorSilentMode: undefined,
+            indoorSilentMode: false,
+            dryOperationMode: false,
+            fanOnlyOperationMode: false,
+        },
+    ],
+    [
+        'unknown',
+        'climateControl',
+        unknownKitchenGuests,
+        {
+            activeState: false,
+            currentTemperature: 30.1,
+            targetHeaterCoolerState: 2,
+            coolingThresholdTemperature: 23.5,
+            heatingThresholdTemperature: undefined,
+            rotationSpeed: 1,
+            swingMode: 1,
+            powerfulMode: undefined,
+            econoMode: undefined,
+            streamerMode: undefined,
+            outdoorSilentMode: undefined,
+            indoorSilentMode: undefined,
+            dryOperationMode: false,
+            fanOnlyOperationMode: false,
+        },
+    ],
+    [
+        'unknown2',
+        'climateControl',
+        unknownJan,
+        {
+            activeState: false,
+            currentTemperature: 27,
+            targetHeaterCoolerState: 2,
+            coolingThresholdTemperature: 26.1,
+            heatingThresholdTemperature: undefined,
+            rotationSpeed: 1,
+            swingMode: 1,
+            powerfulMode: undefined,
+            econoMode: undefined,
+            streamerMode: undefined,
+            outdoorSilentMode: undefined,
+            indoorSilentMode: undefined,
+            dryOperationMode: false,
+            fanOnlyOperationMode: false,
+        },
+    ],
 ])('Create DaikinCloudAirConditioningAccessory with %s device', async (name: string, climateControlEmbeddedId: string, deviceJson, state: DeviceState) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 
@@ -44,17 +155,95 @@ test.each<Array<string | string | any | DeviceState>>([
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    expect(await homebridgeAccessory.service.handleActiveStateGet()).toBe(state.activeState);
-    expect(await homebridgeAccessory.service.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
-    expect(await homebridgeAccessory.service.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
-
-    if (!name.includes('unknown')) {
-        expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();
+    if (state.activeState) {
+        expect(await homebridgeAccessory.service.handleActiveStateGet()).toBe(state.activeState);
+        expect(async () => {
+            await homebridgeAccessory.service.handleActiveStateSet(1);
+        }).not.toThrow();
+        expect(async () => {
+            await homebridgeAccessory.service.handleActiveStateSet(0);
+        }).not.toThrow();
     }
 
-    expect(async () => {
-        await homebridgeAccessory.service.handleSwingModeSet(1);
-    }).not.toThrow();
+    expect(await homebridgeAccessory.service.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
+
+    if (state.coolingThresholdTemperature) {
+        expect(await homebridgeAccessory.service.handleCoolingThresholdTemperatureGet()).toBe(state.coolingThresholdTemperature);
+        expect(async () => {
+            await homebridgeAccessory.service.handleCoolingThresholdTemperatureSet(21);
+        }).not.toThrow();
+    }
+
+    if (state.heatingThresholdTemperature) {
+        expect(await homebridgeAccessory.service.handleHeatingThresholdTemperatureGet()).toBe(state.heatingThresholdTemperature);
+        expect(async () => {
+            await homebridgeAccessory.service.handleHeatingThresholdTemperatureSet(25);
+        }).not.toThrow();
+    }
+
+    if (state.rotationSpeed) {
+        expect(await homebridgeAccessory.service.handleRotationSpeedGet()).toBe(state.rotationSpeed);
+        expect(async () => {
+            await homebridgeAccessory.service.handleRotationSpeedSet(50);
+        }).not.toThrow();
+    }
+
+    if (state.targetHeaterCoolerState) {
+        expect(await homebridgeAccessory.service.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
+        expect(async () => {
+            await homebridgeAccessory.service.handleTargetHeaterCoolerStateSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.swingMode) {
+        expect(await homebridgeAccessory.service.handleSwingModeGet()).toBe(state.swingMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handleSwingModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.powerfulMode) {
+        expect(await homebridgeAccessory.service.handlePowerfulModeGet()).toBe(state.powerfulMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handlePowerfulModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.econoMode) {
+        expect(await homebridgeAccessory.service.handleEconoModeGet()).toBe(state.econoMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handleEconoModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.streamerMode) {
+        expect(await homebridgeAccessory.service.handleStreamerModeGet()).toBe(state.streamerMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handleStreamerModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.outdoorSilentMode) {
+        expect(await homebridgeAccessory.service.handleOutdoorSilentModeGet()).toBe(state.outdoorSilentMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handleOutdoorSilentModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.indoorSilentMode) {
+        expect(await homebridgeAccessory.service.handleIndoorSilentModeGet()).toBe(state.indoorSilentMode);
+        expect(async () => {
+            await homebridgeAccessory.service.handleIndoorSilentModeSet(1);
+        }).not.toThrow();
+    }
+
+    if (state.dryOperationMode) {
+        expect(await homebridgeAccessory.service.handleDryOperationModeGet()).toBe(state.dryOperationMode);
+    }
+
+    if (state.fanOnlyOperationMode) {
+        expect(await homebridgeAccessory.service.handleFanOnlyOperationModeGet()).toBe(state.fanOnlyOperationMode);
+    }
 });
 
 test.each<Array<string | string | any>>([

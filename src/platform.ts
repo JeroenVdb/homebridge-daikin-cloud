@@ -1,4 +1,4 @@
-import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
+import {API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 import {daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
@@ -13,9 +13,6 @@ import {OnectaClientConfig} from 'daikin-controller-cloud/dist/onecta/oidc-utils
 
 import fs from 'node:fs';
 import {DaikinCloudRepo} from './repository/daikinCloudRepo';
-import {althermaMiladcerkic} from "../test/fixtures/altherma-miladcerkic";
-import {OnectaClient} from "daikin-controller-cloud/dist/onecta/oidc-client";
-import {althermaMiladcerkicOff} from "../test/fixtures/altherma-miladcerkic-off";
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;

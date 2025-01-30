@@ -14,16 +14,100 @@ import {althermaHeatPump2} from './fixtures/altherma-heat-pump-2';
 import {althermaFraction} from './fixtures/altherma-fraction';
 import {althermaMiladcerkic} from './fixtures/altherma-miladcerkic';
 
+type DeviceState = {
+    activeState: boolean;
+    currentTemperature: number;
+    targetHeaterCoolerState: string;
+    coolingThresholdTemperature: number;
+    heatingThresholdTemperature: number;
+};
 
-test.each<Array<string | string | any>>([
-    ['altherma', 'climateControlMainZone', althermaHeatPump],
-    ['altherma', 'climateControlMainZone', althermaHeatPump2],
-    ['altherma2', '1', althermaWithEmbeddedIdZero],
-    ['altherma3', '1', althermaCrSense2],
-    ['altherma4', 'climateControlMainZone', althermaV1ckoeln],
-    ['althermaFraction', 'climateControlMainZone', althermaFraction],
-    ['althermaMiladcerkic', 'climateControlMainZone', althermaMiladcerkic],
-])('Create DaikinCloudThermostatAccessory with %s device', async (name, climateControlEmbeddedId, deviceJson) => {
+test.each<Array<string | string | any | DeviceState>>([
+    [
+        'altherma',
+        'climateControlMainZone',
+        althermaHeatPump,
+        {
+            activeState: true,
+            currentTemperature: 22.4,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: undefined,
+            heatingThresholdTemperature: 22,
+        },
+    ],
+    [
+        'altherma',
+        'climateControlMainZone',
+        althermaHeatPump2,
+        {
+            activeState: false,
+            currentTemperature: 33,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 0,
+            heatingThresholdTemperature: 0,
+        },
+    ],
+    [
+        'altherma2',
+        '1',
+        althermaWithEmbeddedIdZero,
+        {
+            activeState: false,
+            currentTemperature: 27.7,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 20,
+            heatingThresholdTemperature: 21,
+        },
+    ],
+    [
+        'altherma3',
+        '1',
+        althermaCrSense2,
+        {
+            activeState: false,
+            currentTemperature: 27.8,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 20,
+            heatingThresholdTemperature: 21,
+        },
+    ],
+    [
+        'altherma4',
+        'climateControlMainZone',
+        althermaV1ckoeln,
+        {
+            activeState: false,
+            currentTemperature: 34, // or should we always show the roomTemperature here which is 27.5
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 20,
+            heatingThresholdTemperature: 0,
+        },
+    ],
+    [
+        'althermaFraction',
+        'climateControlMainZone',
+        althermaFraction,
+        {
+            activeState: true,
+            currentTemperature: 35, // has no roomTemperature :(
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 0,
+            heatingThresholdTemperature: 0,
+        },
+    ],
+    [
+        'althermaMiladcerkic',
+        'climateControlMainZone',
+        althermaMiladcerkic,
+        {
+            activeState: true,
+            currentTemperature: 45,
+            targetHeaterCoolerState: 1,
+            coolingThresholdTemperature: 20,
+            heatingThresholdTemperature: 45,
+        },
+    ],
+])('Create DaikinCloudThermostatAccessory with %s device', async (name, climateControlEmbeddedId, deviceJson, state) => {
     const device = new DaikinCloudDevice(deviceJson, undefined as unknown as OnectaClient);
 
     jest.spyOn(DaikinCloudController.prototype, 'getCloudDevices').mockImplementation(async () => {
@@ -44,12 +128,38 @@ test.each<Array<string | string | any>>([
     const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
 
-    expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBeDefined();
-    expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBeDefined();
-    expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBeDefined();
-    expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBeDefined();
+    if (state.activeState) {
+        expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBe(state.activeState);
+        expect(async () => {
+            await homebridgeAccessory.service?.handleActiveStateSet(1);
+        }).not.toThrow();
+        expect(async () => {
+            await homebridgeAccessory.service?.handleActiveStateSet(0);
+        }).not.toThrow();
+    }
 
+    expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
 
+    if (state.coolingThresholdTemperature) {
+        expect(await homebridgeAccessory.service?.handleCoolingThresholdTemperatureGet()).toBe(state.coolingThresholdTemperature);
+        expect(async () => {
+            await homebridgeAccessory.service?.handleCoolingThresholdTemperatureSet(21);
+        }).not.toThrow();
+    }
+
+    if (state.heatingThresholdTemperature) {
+        expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBe(state.heatingThresholdTemperature);
+        expect(async () => {
+            await homebridgeAccessory.service?.handleHeatingThresholdTemperatureSet(25);
+        }).not.toThrow();
+    }
+
+    if (state.targetHeaterCoolerState) {
+        expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
+        expect(async () => {
+            await homebridgeAccessory.service?.handleTargetHeaterCoolerStateSet(1);
+        }).not.toThrow();
+    }
 });
 
 test('DaikinCloudAirConditioningAccessory Getters', async () => {
