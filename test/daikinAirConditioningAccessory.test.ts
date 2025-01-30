@@ -155,7 +155,7 @@ test.each<Array<string | string | any | DeviceState>>([
 
     const homebridgeAccessory = new daikinAirConditioningAccessory(new DaikinCloudPlatform(MockLogger as unknown as Logger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
-    if (state.activeState) {
+    if (typeof state.activeState !== 'undefined') {
         expect(await homebridgeAccessory.service.handleActiveStateGet()).toBe(state.activeState);
         expect(async () => {
             await homebridgeAccessory.service.handleActiveStateSet(1);
@@ -167,81 +167,81 @@ test.each<Array<string | string | any | DeviceState>>([
 
     expect(await homebridgeAccessory.service.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
 
-    if (state.coolingThresholdTemperature) {
+    if (typeof state.coolingThresholdTemperature !== 'undefined') {
         expect(await homebridgeAccessory.service.handleCoolingThresholdTemperatureGet()).toBe(state.coolingThresholdTemperature);
         expect(async () => {
             await homebridgeAccessory.service.handleCoolingThresholdTemperatureSet(21);
         }).not.toThrow();
     }
 
-    if (state.heatingThresholdTemperature) {
+    if (typeof state.heatingThresholdTemperature !== 'undefined') {
         expect(await homebridgeAccessory.service.handleHeatingThresholdTemperatureGet()).toBe(state.heatingThresholdTemperature);
         expect(async () => {
             await homebridgeAccessory.service.handleHeatingThresholdTemperatureSet(25);
         }).not.toThrow();
     }
 
-    if (state.rotationSpeed) {
+    if (typeof state.rotationSpeed !== 'undefined') {
         expect(await homebridgeAccessory.service.handleRotationSpeedGet()).toBe(state.rotationSpeed);
         expect(async () => {
             await homebridgeAccessory.service.handleRotationSpeedSet(50);
         }).not.toThrow();
     }
 
-    if (state.targetHeaterCoolerState) {
+    if (typeof state.targetHeaterCoolerState !== 'undefined') {
         expect(await homebridgeAccessory.service.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
         expect(async () => {
             await homebridgeAccessory.service.handleTargetHeaterCoolerStateSet(1);
         }).not.toThrow();
     }
 
-    if (state.swingMode) {
+    if (typeof state.swingMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleSwingModeGet()).toBe(state.swingMode);
         expect(async () => {
             await homebridgeAccessory.service.handleSwingModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.powerfulMode) {
+    if (typeof state.powerfulMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handlePowerfulModeGet()).toBe(state.powerfulMode);
         expect(async () => {
             await homebridgeAccessory.service.handlePowerfulModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.econoMode) {
+    if (typeof state.econoMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleEconoModeGet()).toBe(state.econoMode);
         expect(async () => {
             await homebridgeAccessory.service.handleEconoModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.streamerMode) {
+    if (typeof state.streamerMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleStreamerModeGet()).toBe(state.streamerMode);
         expect(async () => {
             await homebridgeAccessory.service.handleStreamerModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.outdoorSilentMode) {
+    if (typeof state.outdoorSilentMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleOutdoorSilentModeGet()).toBe(state.outdoorSilentMode);
         expect(async () => {
             await homebridgeAccessory.service.handleOutdoorSilentModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.indoorSilentMode) {
+    if (typeof state.indoorSilentMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleIndoorSilentModeGet()).toBe(state.indoorSilentMode);
         expect(async () => {
             await homebridgeAccessory.service.handleIndoorSilentModeSet(1);
         }).not.toThrow();
     }
 
-    if (state.dryOperationMode) {
+    if (typeof state.dryOperationMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleDryOperationModeGet()).toBe(state.dryOperationMode);
     }
 
-    if (state.fanOnlyOperationMode) {
+    if (typeof state.fanOnlyOperationMode !== 'undefined') {
         expect(await homebridgeAccessory.service.handleFanOnlyOperationModeGet()).toBe(state.fanOnlyOperationMode);
     }
 });

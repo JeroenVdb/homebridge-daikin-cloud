@@ -20,6 +20,11 @@ type DeviceState = {
     targetHeaterCoolerState: string;
     coolingThresholdTemperature: number;
     heatingThresholdTemperature: number;
+    hotWaterTankCurrentHeatingCoolingState: number;
+    hotWaterTankCurrentTemperature: number;
+    hotWaterTankHeatingTargetTemperature: number;
+    hotWaterTankTargetHeaterCoolerState: number;
+    powerfulMode: number;
 };
 
 test.each<Array<string | string | any | DeviceState>>([
@@ -33,6 +38,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: undefined,
             heatingThresholdTemperature: 22,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 48,
+            hotWaterTankHeatingTargetTemperature: 48,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -45,6 +56,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 0,
             heatingThresholdTemperature: 0,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 50,
+            hotWaterTankHeatingTargetTemperature: 50,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -57,6 +74,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 20,
             heatingThresholdTemperature: 21,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 42,
+            hotWaterTankHeatingTargetTemperature: 45,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -69,6 +92,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 20,
             heatingThresholdTemperature: 21,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 45,
+            hotWaterTankHeatingTargetTemperature: 45,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -81,6 +110,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 20,
             heatingThresholdTemperature: 0,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 42,
+            hotWaterTankHeatingTargetTemperature: 46,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -93,6 +128,12 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 0,
             heatingThresholdTemperature: 0,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 45,
+            hotWaterTankHeatingTargetTemperature: 47,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
+
         },
     ],
     [
@@ -105,6 +146,11 @@ test.each<Array<string | string | any | DeviceState>>([
             targetHeaterCoolerState: 1,
             coolingThresholdTemperature: 20,
             heatingThresholdTemperature: 45,
+            hotWaterTankCurrentHeatingCoolingState: 1,
+            hotWaterTankCurrentTemperature: 49,
+            hotWaterTankHeatingTargetTemperature: 50,
+            hotWaterTankTargetHeaterCoolerState: 1,
+            powerfulMode: false,
         },
     ],
 ])('Create DaikinCloudThermostatAccessory with %s device', async (name, climateControlEmbeddedId, deviceJson, state) => {
@@ -128,7 +174,7 @@ test.each<Array<string | string | any | DeviceState>>([
     const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
 
-    if (state.activeState) {
+    if (typeof state.activeState !== 'undefined') {
         expect(await homebridgeAccessory.service?.handleActiveStateGet()).toBe(state.activeState);
         expect(async () => {
             await homebridgeAccessory.service?.handleActiveStateSet(1);
@@ -140,26 +186,44 @@ test.each<Array<string | string | any | DeviceState>>([
 
     expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toBe(state.currentTemperature);
 
-    if (state.coolingThresholdTemperature) {
+    if (typeof state.coolingThresholdTemperature !== 'undefined') {
         expect(await homebridgeAccessory.service?.handleCoolingThresholdTemperatureGet()).toBe(state.coolingThresholdTemperature);
         expect(async () => {
             await homebridgeAccessory.service?.handleCoolingThresholdTemperatureSet(21);
         }).not.toThrow();
     }
 
-    if (state.heatingThresholdTemperature) {
+    if (typeof state.heatingThresholdTemperature !== 'undefined') {
         expect(await homebridgeAccessory.service?.handleHeatingThresholdTemperatureGet()).toBe(state.heatingThresholdTemperature);
         expect(async () => {
             await homebridgeAccessory.service?.handleHeatingThresholdTemperatureSet(25);
         }).not.toThrow();
     }
 
-    if (state.targetHeaterCoolerState) {
+    if (typeof state.targetHeaterCoolerState !== 'undefined') {
         expect(await homebridgeAccessory.service?.handleTargetHeaterCoolerStateGet()).toBe(state.targetHeaterCoolerState);
         expect(async () => {
             await homebridgeAccessory.service?.handleTargetHeaterCoolerStateSet(1);
         }).not.toThrow();
     }
+
+
+    if (typeof state.hotWaterTankCurrentHeatingCoolingState !== 'undefined') {
+        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankCurrentHeatingCoolingStateGet()).toBe(state.hotWaterTankCurrentHeatingCoolingState);
+    }
+    if (typeof state.hotWaterTankCurrentTemperature !== 'undefined') {
+        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankCurrentTemperatureGet()).toBe(state.hotWaterTankCurrentTemperature);
+    }
+    if (typeof state.hotWaterTankHeatingTargetTemperature !== 'undefined') {
+        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankHeatingTargetTemperatureGet()).toBe(state.hotWaterTankHeatingTargetTemperature);
+    }
+    if (typeof state.hotWaterTankTargetHeaterCoolerState !== 'undefined') {
+        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankTargetHeaterCoolerStateGet()).toBe(state.hotWaterTankTargetHeaterCoolerState);
+    }
+    if (typeof state.powerfulMode !== 'undefined') {
+        expect(await homebridgeAccessory.hotWaterTankService?.handlePowerfulModeGet()).toBe(state.powerfulMode);
+    }
+
 });
 
 test('DaikinCloudAirConditioningAccessory Getters', async () => {
