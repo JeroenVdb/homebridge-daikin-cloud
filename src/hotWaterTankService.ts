@@ -62,8 +62,8 @@ export class HotWaterTankService {
 
         this.hotWaterTankService.getCharacteristic(this.platform.Characteristic.TargetHeatingCoolingState)
             .setProps(this.getTargetHeatingCoolingStateProps())
-            .onGet(this.handleHotWaterTankTargetHeaterCoolerStateGet.bind(this))
-            .onSet(this.handleHotWaterTankTargetHeaterCoolerStateSet.bind(this));
+            .onGet(this.handleHotWaterTankTargetHeatingCoolingStateGet.bind(this))
+            .onSet(this.handleHotWaterTankTargetHeatingCoolingStateSet.bind(this));
 
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has PowerfulMode, add Switch Service`);
@@ -124,10 +124,10 @@ export class HotWaterTankService {
         this.platform.forceUpdateDevices();
     }
 
-    async handleHotWaterTankTargetHeaterCoolerStateGet(): Promise<CharacteristicValue> {
+    async handleHotWaterTankTargetHeatingCoolingStateGet(): Promise<CharacteristicValue> {
         const operationMode: DaikinOperationModes = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined).value;
         const state = this.accessory.context.device.getData(this.managementPointId, 'onOffMode', undefined).value;
-        this.platform.log.debug(`[${this.name}] GET TargetHeaterCoolerState, operationMode: ${operationMode}, state: ${state}`);
+        this.platform.log.debug(`[${this.name}] GET TankTargetHeatingCoolingState, operationMode: ${operationMode}, state: ${state}`);
 
         if (state === DaikinOnOffModes.OFF) {
             return this.platform.Characteristic.TargetHeatingCoolingState.OFF;
@@ -143,9 +143,9 @@ export class HotWaterTankService {
         }
     }
 
-    async handleHotWaterTankTargetHeaterCoolerStateSet(value: CharacteristicValue) {
+    async handleHotWaterTankTargetHeatingCoolingStateSet(value: CharacteristicValue) {
         const operationMode = value as number;
-        this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, OperationMode to: ${value}`);
+        this.platform.log.debug(`[${this.name}] SET TargetHeatingCoolingState, OperationMode to: ${value}`);
         let daikinOperationMode: DaikinOperationModes = DaikinOperationModes.COOLING;
 
         if (operationMode === this.platform.Characteristic.TargetHeatingCoolingState.OFF) {
@@ -169,7 +169,7 @@ export class HotWaterTankService {
                 break;
         }
 
-        this.platform.log.debug(`[${this.name}] SET TargetHeaterCoolerState, daikinOperationMode to: ${daikinOperationMode}`);
+        this.platform.log.debug(`[${this.name}] SET TargetHeatingCoolingState, daikinOperationMode to: ${daikinOperationMode}`);
 
         try {
             // turn on the device as well because there is no specific on/off characteristic in Homebridge, while targetState/operationMode and onOffMode are separate with the Daikin API
@@ -177,7 +177,7 @@ export class HotWaterTankService {
 
             const operationMode = this.accessory.context.device.getData(this.managementPointId, 'operationMode', undefined);
             if (operationMode.settable === false) {
-                this.platform.log.warn(`[${this.name}] SET TargetHeaterCoolerState is not possible because operationMode isn't settable`, operationMode);
+                this.platform.log.warn(`[${this.name}] SET TargetHeatingCoolingState is not possible because operationMode isn't settable`, operationMode);
                 return;
             }
 

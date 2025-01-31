@@ -218,7 +218,7 @@ test.each<Array<string | string | any | DeviceState>>([
         expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankHeatingTargetTemperatureGet()).toBe(state.hotWaterTankHeatingTargetTemperature);
     }
     if (typeof state.hotWaterTankTargetHeaterCoolerState !== 'undefined') {
-        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankTargetHeaterCoolerStateGet()).toBe(state.hotWaterTankTargetHeaterCoolerState);
+        expect(await homebridgeAccessory.hotWaterTankService?.handleHotWaterTankTargetHeatingCoolingStateGet()).toBe(state.hotWaterTankTargetHeaterCoolerState);
     }
     if (typeof state.powerfulMode !== 'undefined') {
         expect(await homebridgeAccessory.hotWaterTankService?.handlePowerfulModeGet()).toBe(state.powerfulMode);
