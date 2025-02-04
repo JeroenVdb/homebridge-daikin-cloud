@@ -1,7 +1,6 @@
-import {CharacteristicValue, PlatformAccessory} from 'homebridge';
+import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {DaikinCloudRepo} from './repository/daikinCloudRepo';
-import { Characteristic, Service } from 'hap-nodejs';
 
 export class ClimateControlService {
     readonly platform: DaikinCloudPlatform;
@@ -38,7 +37,7 @@ export class ClimateControlService {
         this.accessory = accessory;
         this.managementPointId = managementPointId;
 
-        this.service = this.accessory.getService(Service.HeaterCooler);
+        this.service = this.accessory.getService(this.platform.Service.HeaterCooler);
         this.switchServicePowerfulMode = this.accessory.getService(this.extraServices.POWERFUL_MODE);
         this.switchServiceEconoMode = this.accessory.getService(this.extraServices.ECONO_MODE);
         this.switchServiceStreamerMode = this.accessory.getService(this.extraServices.STREAMER_MODE);
@@ -49,21 +48,21 @@ export class ClimateControlService {
 
         this.name = this.accessory.displayName;
 
-        this.service = this.service || this.accessory.addService(Service.HeaterCooler);
+        this.service = this.service || this.accessory.addService(this.platform.Service.HeaterCooler);
 
-        this.service.setCharacteristic(Characteristic.Name, this.name);
+        this.service.setCharacteristic(this.platform.Characteristic.Name, this.name);
 
         // Required characteristic
-        this.service.getCharacteristic(Characteristic.Active)
+        this.service.getCharacteristic(this.platform.Characteristic.Active)
             .onSet(this.handleActiveStateSet.bind(this))
             .onGet(this.handleActiveStateGet.bind(this));
 
         // Required characteristic
-        this.service.getCharacteristic(Characteristic.CurrentTemperature)
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
             .onGet(this.handleCurrentTemperatureGet.bind(this));
 
         // Required characteristic
-        this.service.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+        this.service.getCharacteristic(this.platform.Characteristic.TargetHeaterCoolerState)
             .setProps({
                 minStep: 1,
                 minValue: 0,
@@ -74,7 +73,7 @@ export class ClimateControlService {
 
         const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.COOLING}/setpoints/${this.getSetpoint(DaikinOperationModes.COOLING)}`);
         if (roomTemperatureControlForCooling) {
-            this.service.getCharacteristic(Characteristic.CoolingThresholdTemperature)
+            this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
                 .setProps({
                     minStep: roomTemperatureControlForCooling.stepValue,
                     minValue: roomTemperatureControlForCooling.minValue,
@@ -84,12 +83,12 @@ export class ClimateControlService {
                 .onSet(this.handleCoolingThresholdTemperatureSet.bind(this));
 
         } else {
-            this.service.removeCharacteristic(this.service.getCharacteristic(Characteristic.CoolingThresholdTemperature));
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature));
         }
 
         const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.HEATING}/setpoints/${this.getSetpoint(DaikinOperationModes.HEATING)}`);
         if (roomTemperatureControlForHeating) {
-            this.service.getCharacteristic(Characteristic.HeatingThresholdTemperature)
+            this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
                 .setProps({
                     minStep: roomTemperatureControlForHeating.stepValue,
                     minValue: roomTemperatureControlForHeating.minValue,
@@ -98,14 +97,14 @@ export class ClimateControlService {
                 .onGet(this.handleHeatingThresholdTemperatureGet.bind(this))
                 .onSet(this.handleHeatingThresholdTemperatureSet.bind(this));
         } else {
-            this.service.removeCharacteristic(this.service.getCharacteristic(Characteristic.HeatingThresholdTemperature));
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature));
         }
 
         this.addOrUpdateCharacteristicRotationSpeed();
 
         if (this.hasSwingModeFeature()) {
             this.platform.log.debug(`[${this.name}] Device has SwingMode, add Characteristic`);
-            this.service.getCharacteristic(Characteristic.SwingMode)
+            this.service.getCharacteristic(this.platform.Characteristic.SwingMode)
                 .onGet(this.handleSwingModeGet.bind(this))
                 .onSet(this.handleSwingModeSet.bind(this));
         }
@@ -113,15 +112,15 @@ export class ClimateControlService {
         if (this.hasPowerfulModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has PowerfulMode, add Switch Service`);
 
-            this.switchServicePowerfulMode = this.switchServicePowerfulMode || accessory.addService(Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
-            this.switchServicePowerfulMode.setCharacteristic(Characteristic.Name, this.extraServices.POWERFUL_MODE);
+            this.switchServicePowerfulMode = this.switchServicePowerfulMode || accessory.addService(this.platform.Service.Switch, this.extraServices.POWERFUL_MODE, 'powerful_mode');
+            this.switchServicePowerfulMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.POWERFUL_MODE);
 
             this.switchServicePowerfulMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServicePowerfulMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.POWERFUL_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.POWERFUL_MODE);
 
-            this.switchServicePowerfulMode.getCharacteristic(Characteristic.On)
+            this.switchServicePowerfulMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handlePowerfulModeGet.bind(this))
                 .onSet(this.handlePowerfulModeSet.bind(this));
 
@@ -134,15 +133,15 @@ export class ClimateControlService {
         if (this.hasEconoModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has EconoMode, add Switch Service`);
 
-            this.switchServiceEconoMode = this.switchServiceEconoMode || accessory.addService(Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
-            this.switchServiceEconoMode.setCharacteristic(Characteristic.Name, this.extraServices.ECONO_MODE);
+            this.switchServiceEconoMode = this.switchServiceEconoMode || accessory.addService(this.platform.Service.Switch, this.extraServices.ECONO_MODE, 'econo_mode');
+            this.switchServiceEconoMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.ECONO_MODE);
 
             this.switchServiceEconoMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceEconoMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.ECONO_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.ECONO_MODE);
 
-            this.switchServiceEconoMode.getCharacteristic(Characteristic.On)
+            this.switchServiceEconoMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleEconoModeGet.bind(this))
                 .onSet(this.handleEconoModeSet.bind(this));
         } else {
@@ -154,15 +153,15 @@ export class ClimateControlService {
         if (this.hasStreamerModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceStreamerMode = this.switchServiceStreamerMode || accessory.addService(Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
-            this.switchServiceStreamerMode.setCharacteristic(Characteristic.Name, this.extraServices.STREAMER_MODE);
+            this.switchServiceStreamerMode = this.switchServiceStreamerMode || accessory.addService(this.platform.Service.Switch, this.extraServices.STREAMER_MODE, 'streamer_mode');
+            this.switchServiceStreamerMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.STREAMER_MODE);
 
             this.switchServiceStreamerMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceStreamerMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.STREAMER_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.STREAMER_MODE);
 
-            this.switchServiceStreamerMode.getCharacteristic(Characteristic.On)
+            this.switchServiceStreamerMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleStreamerModeGet.bind(this))
                 .onSet(this.handleStreamerModeSet.bind(this));
 
@@ -175,15 +174,15 @@ export class ClimateControlService {
         if (this.hasOutdoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has StreamerMode, add Switch Service`);
 
-            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || accessory.addService(Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
-            this.switchServiceOutdoorSilentMode.setCharacteristic(Characteristic.Name, this.extraServices.OUTDOUR_SILENT_MODE);
+            this.switchServiceOutdoorSilentMode = this.switchServiceOutdoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.OUTDOUR_SILENT_MODE, 'outdoor_silent_mode');
+            this.switchServiceOutdoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.OUTDOUR_SILENT_MODE);
 
             this.switchServiceOutdoorSilentMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceOutdoorSilentMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.OUTDOUR_SILENT_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.OUTDOUR_SILENT_MODE);
 
-            this.switchServiceOutdoorSilentMode.getCharacteristic(Characteristic.On)
+            this.switchServiceOutdoorSilentMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleOutdoorSilentModeGet.bind(this))
                 .onSet(this.handleOutdoorSilentModeSet.bind(this));
         } else {
@@ -195,15 +194,15 @@ export class ClimateControlService {
         if (this.hasIndoorSilentModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has IndoorSilentMode, add Switch Service`);
 
-            this.switchServiceIndoorSilentMode = this.switchServiceIndoorSilentMode || accessory.addService(Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
-            this.switchServiceIndoorSilentMode.setCharacteristic(Characteristic.Name, this.extraServices.INDOOR_SILENT_MODE);
+            this.switchServiceIndoorSilentMode = this.switchServiceIndoorSilentMode || accessory.addService(this.platform.Service.Switch, this.extraServices.INDOOR_SILENT_MODE, 'indoor_silent_mode');
+            this.switchServiceIndoorSilentMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.INDOOR_SILENT_MODE);
 
             this.switchServiceIndoorSilentMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceIndoorSilentMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.INDOOR_SILENT_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.INDOOR_SILENT_MODE);
 
-            this.switchServiceIndoorSilentMode.getCharacteristic(Characteristic.On)
+            this.switchServiceIndoorSilentMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleIndoorSilentModeGet.bind(this))
                 .onSet(this.handleIndoorSilentModeSet.bind(this));
         } else {
@@ -215,15 +214,15 @@ export class ClimateControlService {
         if (this.hasDryOperationModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has DryOperationMode, add Switch Service`);
 
-            this.switchServiceDryOperationMode = this.switchServiceDryOperationMode || accessory.addService(Service.Switch, this.extraServices.DRY_OPERATION_MODE, 'dry_operation_mode');
-            this.switchServiceDryOperationMode.setCharacteristic(Characteristic.Name, this.extraServices.DRY_OPERATION_MODE);
+            this.switchServiceDryOperationMode = this.switchServiceDryOperationMode || accessory.addService(this.platform.Service.Switch, this.extraServices.DRY_OPERATION_MODE, 'dry_operation_mode');
+            this.switchServiceDryOperationMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.DRY_OPERATION_MODE);
 
             this.switchServiceDryOperationMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceDryOperationMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.DRY_OPERATION_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.DRY_OPERATION_MODE);
 
-            this.switchServiceDryOperationMode.getCharacteristic(Characteristic.On)
+            this.switchServiceDryOperationMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleDryOperationModeGet.bind(this))
                 .onSet(this.handleDryOperationModeSet.bind(this));
         } else {
@@ -235,15 +234,15 @@ export class ClimateControlService {
         if (this.hasFanOnlyOperationModeFeature() && this.platform.config.showExtraFeatures) {
             this.platform.log.debug(`[${this.name}] Device has FanOnlyOperationMode, add Switch Service`);
 
-            this.switchServiceFanOnlyOperationMode = this.switchServiceFanOnlyOperationMode || accessory.addService(Service.Switch, this.extraServices.FAN_ONLY_OPERATION_MODE, 'fan_only_operation_mode');
-            this.switchServiceFanOnlyOperationMode.setCharacteristic(Characteristic.Name, this.extraServices.FAN_ONLY_OPERATION_MODE);
+            this.switchServiceFanOnlyOperationMode = this.switchServiceFanOnlyOperationMode || accessory.addService(this.platform.Service.Switch, this.extraServices.FAN_ONLY_OPERATION_MODE, 'fan_only_operation_mode');
+            this.switchServiceFanOnlyOperationMode.setCharacteristic(this.platform.Characteristic.Name, this.extraServices.FAN_ONLY_OPERATION_MODE);
 
             this.switchServiceFanOnlyOperationMode
-                .addOptionalCharacteristic(Characteristic.ConfiguredName);
+                .addOptionalCharacteristic(this.platform.Characteristic.ConfiguredName);
             this.switchServiceFanOnlyOperationMode
-                .setCharacteristic(Characteristic.ConfiguredName, this.extraServices.FAN_ONLY_OPERATION_MODE);
+                .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.extraServices.FAN_ONLY_OPERATION_MODE);
 
-            this.switchServiceFanOnlyOperationMode.getCharacteristic(Characteristic.On)
+            this.switchServiceFanOnlyOperationMode.getCharacteristic(this.platform.Characteristic.On)
                 .onGet(this.handleFanOnlyOperationModeGet.bind(this))
                 .onSet(this.handleFanOnlyOperationModeSet.bind(this));
         } else {
@@ -261,7 +260,7 @@ export class ClimateControlService {
         const fanControl = this.accessory.context.device.getData(this.managementPointId, 'fanControl', `/operationModes/${this.getCurrentOperationMode()}/fanSpeed/modes/fixed`);
 
         if (fanControl) {
-            this.service.getCharacteristic(Characteristic.RotationSpeed)
+            this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed)
                 .setProps({
                     minStep: fanControl.stepValue,
                     minValue: fanControl.minValue,
@@ -270,7 +269,7 @@ export class ClimateControlService {
                 .onGet(this.handleRotationSpeedGet.bind(this))
                 .onSet(this.handleRotationSpeedSet.bind(this));
         } else {
-            this.service.removeCharacteristic(this.service.getCharacteristic(Characteristic.RotationSpeed));
+            this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.RotationSpeed));
         }
     }
 
@@ -359,14 +358,14 @@ export class ClimateControlService {
 
         switch (operationMode) {
             case DaikinOperationModes.COOLING:
-                return Characteristic.TargetHeaterCoolerState.COOL;
+                return this.platform.Characteristic.TargetHeaterCoolerState.COOL;
             case DaikinOperationModes.HEATING:
-                return Characteristic.TargetHeaterCoolerState.HEAT;
+                return this.platform.Characteristic.TargetHeaterCoolerState.HEAT;
             case DaikinOperationModes.DRY:
                 this.addOrUpdateCharacteristicRotationSpeed();
-                return Characteristic.TargetHeaterCoolerState.AUTO;
+                return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
             default:
-                return Characteristic.TargetHeaterCoolerState.AUTO;
+                return this.platform.Characteristic.TargetHeaterCoolerState.AUTO;
         }
     }
 
@@ -376,13 +375,13 @@ export class ClimateControlService {
         let daikinOperationMode: DaikinOperationModes = DaikinOperationModes.COOLING;
 
         switch (operationMode) {
-            case Characteristic.TargetHeaterCoolerState.COOL:
+            case this.platform.Characteristic.TargetHeaterCoolerState.COOL:
                 daikinOperationMode = DaikinOperationModes.COOLING;
                 break;
-            case Characteristic.TargetHeaterCoolerState.HEAT:
+            case this.platform.Characteristic.TargetHeaterCoolerState.HEAT:
                 daikinOperationMode = DaikinOperationModes.HEATING;
                 break;
-            case Characteristic.TargetHeaterCoolerState.AUTO:
+            case this.platform.Characteristic.TargetHeaterCoolerState.AUTO:
                 daikinOperationMode = DaikinOperationModes.AUTO;
                 break;
         }
@@ -424,10 +423,10 @@ export class ClimateControlService {
         this.platform.log.debug(`[${this.name}] GET SwingMode, horizontalSwingMode: ${horizontalSwingMode}, last update: ${this.accessory.context.device.getLastUpdated()}`);
 
         if (horizontalSwingMode === DaikinFanDirectionHorizontalModes.STOP || verticalSwingMode === DaikinFanDirectionVerticalModes.STOP) {
-            return Characteristic.SwingMode.SWING_DISABLED;
+            return this.platform.Characteristic.SwingMode.SWING_DISABLED;
         }
 
-        return Characteristic.SwingMode.SWING_ENABLED;
+        return this.platform.Characteristic.SwingMode.SWING_ENABLED;
     }
 
     async handlePowerfulModeGet() {
