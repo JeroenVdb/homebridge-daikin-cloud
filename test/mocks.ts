@@ -7,6 +7,7 @@ import {API, PlatformConfig} from "homebridge";
 import {User} from "homebridge/lib/user.js";
 import {PlatformAccessory, UnknownContext} from "homebridge/lib/platformAccessory";
 import {HAP, HAPLegacyTypes} from "homebridge/lib/api";
+import * as api from "hap-nodejs";
 
 export const MockLogger = (...args) => jest.fn();
 MockLogger.debug = MockLogger;
@@ -175,7 +176,9 @@ export class MockHomebridge extends EventEmitter implements DeepPartial<API> {
         super();
     }
 
-    public hap= {
+    // @ts-ignore
+    // public hap = api;
+    public hap = {
         Service: {
             AccessoryInformation,
             CarbonDioxideSensor,

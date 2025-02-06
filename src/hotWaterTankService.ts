@@ -1,8 +1,6 @@
-import {CharacteristicValue, PlatformAccessory, Service} from 'homebridge';
+import {CharacteristicProps, CharacteristicValue, PartialAllowingNull, PlatformAccessory, Service} from 'homebridge';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from './platform';
 import {DaikinCloudRepo} from './repository/daikinCloudRepo';
-import {PartialAllowingNull} from 'hap-nodejs/dist/types';
-import {CharacteristicProps} from 'hap-nodejs/dist/lib/Characteristic';
 import {DaikinPowerfulModes} from './climateControlService';
 
 export class HotWaterTankService {

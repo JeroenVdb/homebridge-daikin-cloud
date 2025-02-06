@@ -8,15 +8,10 @@ import {dx4Airco} from './fixtures/dx4-airco';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import {althermaHeatPump} from './fixtures/altherma-heat-pump';
 
-describe('HotWaterTankService', () => {
-    let device: DaikinCloudDevice;
-    let homebridgeAccessory: HotWaterTankService;
-    let config: MockPlatformConfig;
+import { HomebridgeAPI } from 'homebridge/lib/api.js';
+import { Logger } from 'homebridge/lib/logger.js';
 
-    const platform: DaikinCloudPlatform = {
-        log: MockLogger,
-        config: new MockPlatformConfig(true),
-    } as unknown as DaikinCloudPlatform;
+describe('HotWaterTankService', () => {
     let accessory: PlatformAccessory<DaikinCloudAccessoryContext>;
     let service: HotWaterTankService;
 
@@ -27,28 +22,11 @@ describe('HotWaterTankService', () => {
         accessory.context['device'] = new DaikinCloudDevice(althermaHeatPump, undefined as unknown as OnectaClient);
 
         accessory.context.device.getLastUpdated = jest.fn().mockReturnValue(new Date(1987, 0, 19, 0, 0, 0, 0));
-        // accessory.context.device.managementPoints['climateControl']['operationMode'] = {
-        //     'settable': true,
-        //     'values': [
-        //         'auto',
-        //         'dry',
-        //         'cooling',
-        //         'heating',
-        //         'fanOnly',
-        //     ],
-        //     'value': 'cooling',
-        // };
-        // accessory.context.device.managementPoints['climateControl']['onOffMode'] = {value: 'on'};
-        // accessory.context.device.managementPoints['climateControl']['temperatureControl']['/operationModes/heating/setpoints/domesticHotWaterTemperature'] = {
-        //     'settable': true,
-        //     'requiresReboot': false,
-        //     'value': 50,
-        //     'maxValue': 60,
-        //     'minValue': 30,
-        //     'stepValue': 1,
-        // };
 
-        config = new MockPlatformConfig(true);
+        const config = new MockPlatformConfig(true);
+
+        const platform = new DaikinCloudPlatform(new Logger(), config, new HomebridgeAPI());
+
         service = new HotWaterTankService(platform, accessory, EMBEDDED_ID);
     });
 
@@ -128,6 +106,6 @@ describe('HotWaterTankService', () => {
     });
 
     it('should get the powerful mode', async () => {
-        expect(await service.handlePowerfulModeGet()).toBe(0);
+        expect(await service.handlePowerfulModeGet()).toBe(false);
     });
 });
