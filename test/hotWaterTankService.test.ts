@@ -1,15 +1,14 @@
 import {HotWaterTankService} from '../src/hotWaterTankService';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
-import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
+import {MockPlatformConfig} from './mocks';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from '../src/platform';
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
-import {Characteristic, Service, uuid} from 'hap-nodejs';
-import {dx4Airco} from './fixtures/dx4-airco';
+import {Characteristic, uuid} from 'hap-nodejs';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
 import {althermaHeatPump} from './fixtures/altherma-heat-pump';
 
-import { HomebridgeAPI } from 'homebridge/lib/api.js';
-import { Logger } from 'homebridge/lib/logger.js';
+import {HomebridgeAPI} from 'homebridge/lib/api.js';
+import {Logger} from 'homebridge/lib/logger.js';
 
 describe('HotWaterTankService', () => {
     let accessory: PlatformAccessory<DaikinCloudAccessoryContext>;

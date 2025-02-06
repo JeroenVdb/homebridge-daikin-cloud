@@ -1,7 +1,6 @@
 import {PlatformAccessory} from 'homebridge/lib/platformAccessory';
 import {DaikinCloudAccessoryContext, DaikinCloudPlatform} from '../src/platform';
-import {API} from 'homebridge';
-import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
+import {MockPlatformConfig} from './mocks';
 import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 import {DaikinCloudDevice} from 'daikin-controller-cloud/dist/device';
 import {OnectaClient} from 'daikin-controller-cloud/dist/onecta/oidc-client';
@@ -13,6 +12,9 @@ import {althermaHeatPump} from './fixtures/altherma-heat-pump';
 import {althermaHeatPump2} from './fixtures/altherma-heat-pump-2';
 import {althermaFraction} from './fixtures/altherma-fraction';
 import {althermaMiladcerkic} from './fixtures/altherma-miladcerkic';
+
+import {HomebridgeAPI} from 'homebridge/lib/api.js';
+import { Logger } from 'homebridge/lib/logger.js';
 
 type DeviceState = {
     activeState: boolean;
@@ -161,17 +163,17 @@ test.each<Array<string | string | any | DeviceState>>([
     });
 
     const config = new MockPlatformConfig(true);
-    const api = new MockHomebridge();
+    const api = new HomebridgeAPI();
 
     const uuid = api.hap.uuid.generate(device.getId());
-    const accessory = new api.platformAccessory(device.getData(climateControlEmbeddedId, 'name', undefined).value, uuid);
+    const accessory = new api.platformAccessory("NAME_FOR_TEST", uuid);
     accessory.context['device'] = device;
 
     expect(() => {
-        new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+        new daikinAlthermaAccessory(new DaikinCloudPlatform(new Logger(), config, api), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
     }).not.toThrow();
 
-    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(new Logger(), config, api), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
 
     if (typeof state.activeState !== 'undefined') {
@@ -234,13 +236,13 @@ test('DaikinCloudAirConditioningAccessory Getters', async () => {
     });
 
     const config = new MockPlatformConfig(false);
-    const api = new MockHomebridge();
+    const api = new HomebridgeAPI();
 
     const uuid = api.hap.uuid.generate(device.getId());
     const accessory = new api.platformAccessory(device.getData('climateControlMainZone', 'name', undefined).value, uuid);
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(new Logger(), config, api), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
     expect(await homebridgeAccessory.service?.handleActiveStateGet()).toEqual(true);
     expect(await homebridgeAccessory.service?.handleCurrentTemperatureGet()).toEqual(22.4);
@@ -258,13 +260,13 @@ test('DaikinCloudAirConditioningAccessory Setters', async () => {
     const setDataSpy = jest.spyOn(DaikinCloudDevice.prototype, 'setData').mockImplementation();
 
     const config = new MockPlatformConfig(false);
-    const api = new MockHomebridge();
+    const api = new HomebridgeAPI();
 
     const uuid = api.hap.uuid.generate(device.getId());
     const accessory = new api.platformAccessory(device.getData('climateControlMainZone', 'name', undefined).value, uuid);
     accessory.context['device'] = device;
 
-    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(MockLogger, config, api as unknown as API), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
+    const homebridgeAccessory = new daikinAlthermaAccessory(new DaikinCloudPlatform(new Logger(), config, api), accessory as unknown as PlatformAccessory<DaikinCloudAccessoryContext>);
 
     await homebridgeAccessory.service?.handleActiveStateSet(1);
     expect(setDataSpy).toHaveBeenNthCalledWith(1, 'climateControlMainZone', 'onOffMode', 'on', undefined);
