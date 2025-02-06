@@ -71,7 +71,7 @@ export class ClimateControlService {
             .onGet(this.handleTargetHeaterCoolerStateGet.bind(this))
             .onSet(this.handleTargetHeaterCoolerStateSet.bind(this));
 
-        const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`);
+        const roomTemperatureControlForCooling = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.COOLING}/setpoints/${this.getSetpoint(DaikinOperationModes.COOLING)}`);
         if (roomTemperatureControlForCooling) {
             this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature)
                 .setProps({
@@ -86,7 +86,7 @@ export class ClimateControlService {
             this.service.removeCharacteristic(this.service.getCharacteristic(this.platform.Characteristic.CoolingThresholdTemperature));
         }
 
-        const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`);
+        const roomTemperatureControlForHeating = accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.HEATING}/setpoints/${this.getSetpoint(DaikinOperationModes.HEATING)}`);
         if (roomTemperatureControlForHeating) {
             this.service.getCharacteristic(this.platform.Characteristic.HeatingThresholdTemperature)
                 .setProps({
@@ -297,7 +297,7 @@ export class ClimateControlService {
     }
 
     async handleCoolingThresholdTemperatureGet(): Promise<CharacteristicValue> {
-        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`).value;
+        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.COOLING}/setpoints/${this.getSetpoint(DaikinOperationModes.COOLING)}`).value;
         this.platform.log.debug(`[${this.name}] GET CoolingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
@@ -307,7 +307,7 @@ export class ClimateControlService {
         // const temperature = value as number;
         this.platform.log.debug(`[${this.name}] SET CoolingThresholdTemperature, temperature to: ${temperature}`);
         try {
-            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/cooling/setpoints/${this.getSetpoint()}`, temperature);
+            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.COOLING}/setpoints/${this.getSetpoint(DaikinOperationModes.COOLING)}`, temperature);
         } catch (e) {
             this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
         }
@@ -335,7 +335,7 @@ export class ClimateControlService {
     }
 
     async handleHeatingThresholdTemperatureGet(): Promise<CharacteristicValue> {
-        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`).value;
+        const temperature = this.accessory.context.device.getData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.HEATING}/setpoints/${this.getSetpoint(DaikinOperationModes.HEATING)}`).value;
         this.platform.log.debug(`[${this.name}] GET HeatingThresholdTemperature, temperature: ${temperature}, last update: ${this.accessory.context.device.getLastUpdated()}`);
         return temperature;
     }
@@ -345,7 +345,7 @@ export class ClimateControlService {
             const temperature = Math.round(value as number * 2) / 2;
             // const temperature = value as number;
             this.platform.log.debug(`[${this.name}] SET HeatingThresholdTemperature, temperature to: ${temperature}`);
-            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/heating/setpoints/${this.getSetpoint()}`, temperature);
+            await this.accessory.context.device.setData(this.managementPointId, 'temperatureControl', `/operationModes/${DaikinOperationModes.HEATING}/setpoints/${this.getSetpoint(DaikinOperationModes.HEATING)}`, temperature);
             this.platform.forceUpdateDevices();
         } catch (e) {
             this.platform.log.error('Failed to set', e, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4));
@@ -564,14 +564,63 @@ export class ClimateControlService {
         return controlMode.value;
     }
 
-    getSetpoint(): DaikinSetpoints {
+    getSetpointMode(): DaikinSetpointModes | null {
+        const setpointMode = this.accessory.context.device.getData(this.managementPointId, 'setpointMode', undefined);
+        if (!setpointMode) {
+            return null;
+        }
+        return setpointMode.value;
+    }
+
+    getSetpoint(operationMode: DaikinOperationModes): DaikinTemperatureControlSetpoints {
+        // depending on the settings of the device the temperatureControl can be set in different ways "DaikinTemperatureControlSetpoints"
+        // Docs: https://developer.cloud.daikineurope.com/docs/b0dffcaa-7b51-428a-bdff-a7c8a64195c0/supported_features
+        // Looks like the setpointMode is the most important one to determine the setpoint,
+        // then the controleMode and in case of weatherDependentHeatingFixedCooling also the operation mode
+        // If the setpointMode is not available (in case on non-Althermas), we can use the controlMode to determine the setpoint
+
+        const setpointMode = this.getSetpointMode();
         const controlMode = this.getCurrentControlMode();
+
+        if (setpointMode) {
+            switch (setpointMode) {
+                case DaikinSetpointModes.FIXED:
+                    switch (controlMode) {
+                        case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                            return DaikinTemperatureControlSetpoints.LEAVING_WATER_TEMPERATURE;
+                        default:
+                            return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
+                    }
+                case DaikinSetpointModes.WEATHER_DEPENDENT:
+                    switch (controlMode) {
+                        case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                            return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
+                        default:
+                            return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
+                    }
+                case DaikinSetpointModes.WEATHER_DEPENDENT_HEATING_FIXED_COOLING:
+                    switch (controlMode) {
+                        case DaikinControlModes.ROOM_TEMPERATURE:
+                            return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
+                        case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
+                            switch (operationMode) {
+                                case DaikinOperationModes.HEATING:
+                                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
+                                case DaikinOperationModes.COOLING:
+                                    return DaikinTemperatureControlSetpoints.LEAVING_WATER_TEMPERATURE;
+                            }
+                    }
+            }
+
+
+            throw new Error(`Could not determine the TemperatureControlSetpoint for operationMode: ${operationMode}, setpointMode: ${setpointMode}, controlMode: ${controlMode}, for device: ${JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(this.accessory.context.device.desc), null, 4)}`);
+        }
 
         switch (controlMode) {
             case DaikinControlModes.LEAVING_WATER_TEMPERATURE:
-                return DaikinSetpoints.LEAVING_WATER_OFFSET;
+                return DaikinTemperatureControlSetpoints.LEAVING_WATER_OFFSET;
             default:
-                return DaikinSetpoints.ROOM_TEMPERATURE;
+                return DaikinTemperatureControlSetpoints.ROOM_TEMPERATURE;
         }
     }
 
@@ -665,7 +714,8 @@ enum DaikinEconoModes {
     ON = 'on',
     OFF = 'off',
 }
-enum DaikinPowerfulModes {
+
+export enum DaikinPowerfulModes {
     ON = 'on',
     OFF = 'off',
 }
@@ -695,7 +745,14 @@ enum DaikinControlModes {
     EXTERNAL_ROOM_TEMPERATURE = 'externalRoomTemperature',
 }
 
-enum DaikinSetpoints {
+enum DaikinTemperatureControlSetpoints {
     ROOM_TEMPERATURE = 'roomTemperature',
     LEAVING_WATER_OFFSET = 'leavingWaterOffset',
+    LEAVING_WATER_TEMPERATURE = 'leavingWaterTemperature',
+}
+
+enum DaikinSetpointModes {
+    FIXED = 'fixed',
+    WEATHER_DEPENDENT_HEATING_FIXED_COOLING = 'weatherDependentHeatingFixedCooling',
+    WEATHER_DEPENDENT = 'weatherDependent'
 }

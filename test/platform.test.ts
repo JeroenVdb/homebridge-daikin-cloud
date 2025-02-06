@@ -1,11 +1,12 @@
 import {DaikinCloudPlatform} from '../src/platform';
-import {MockHomebridge, MockLogger, MockPlatformConfig} from './mocks';
-import {API} from 'homebridge';
+import {MockPlatformConfig} from './mocks';
 import {DaikinCloudController} from 'daikin-controller-cloud';
 import Path from 'node:path';
 import {daikinAirConditioningAccessory} from '../src/daikinAirConditioningAccessory';
 import {daikinAlthermaAccessory} from '../src/daikinAlthermaAccessory';
 import spyOn = jest.spyOn;
+import { HomebridgeAPI } from 'homebridge/lib/api.js';
+import { Logger } from 'homebridge/lib/logger.js';
 
 jest.mock('daikin-controller-cloud');
 jest.mock('node:path');
@@ -19,12 +20,18 @@ afterEach(() => {
 });
 
 test('Initialize platform', async () => {
+    const api = new HomebridgeAPI();
+
     const resolveSpy = spyOn(Path, 'resolve').mockImplementation((...args) => {
-        return args.join('/')
+        return args.join('/');
     });
 
-    const api = new MockHomebridge();
-    const platform = new DaikinCloudPlatform(MockLogger, new MockPlatformConfig(), api as unknown as API);
+    const storagePathSpy = spyOn(api.user, 'storagePath').mockImplementation(() => {
+        return 'storagePath';
+    });
+
+
+    const platform = new DaikinCloudPlatform(new Logger(), new MockPlatformConfig(), api);
 
     expect(resolveSpy).toHaveBeenCalledWith('storagePath', '.daikin-controller-cloud-tokenset')
     expect(DaikinCloudController).toHaveBeenCalledWith({
@@ -64,11 +71,11 @@ test('DaikinCloudPlatform with new Aircondition accessory', (done) => {
     }]);
 
     const config = new MockPlatformConfig(true);
-    const api = new MockHomebridge();
+    const api = new HomebridgeAPI();
 
     const registerPlatformAccessoriesSpy = jest.spyOn(api, 'registerPlatformAccessories');
 
-    new DaikinCloudPlatform(MockLogger, config, api as unknown as API);
+    new DaikinCloudPlatform(new Logger(), config, api);
     api.signalFinished();
 
     setTimeout(() => {
@@ -104,11 +111,11 @@ test('DaikinCloudPlatform with new Altherma accessory', (done) => {
     }]);
 
     const config = new MockPlatformConfig(true);
-    const api = new MockHomebridge();
+    const api = new HomebridgeAPI();
 
     const registerPlatformAccessoriesSpy = jest.spyOn(api, 'registerPlatformAccessories');
 
-    new DaikinCloudPlatform(MockLogger, config, api as unknown as API);
+    new DaikinCloudPlatform(new Logger(), config, api);
     api.signalFinished();
 
     setTimeout(() => {

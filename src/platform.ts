@@ -1,4 +1,4 @@
-import {API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic} from 'homebridge';
+import {API, Characteristic, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service} from 'homebridge';
 
 import {PLATFORM_NAME, PLUGIN_NAME} from './settings';
 import {daikinAirConditioningAccessory} from './daikinAirConditioningAccessory';
@@ -12,6 +12,7 @@ import {StringUtils} from './utils/strings';
 import {OnectaClientConfig} from 'daikin-controller-cloud/dist/onecta/oidc-utils';
 
 import fs from 'node:fs';
+import {DaikinCloudRepo} from './repository/daikinCloudRepo';
 
 const ONE_SECOND = 1000;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -126,6 +127,8 @@ export class DaikinCloudPlatform implements DynamicPlatformPlugin {
                 const deviceModel: string = device.getDescription().deviceModel;
 
                 const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+
+                this.log.debug('Create Device', deviceModel, JSON.stringify(DaikinCloudRepo.maskSensitiveCloudDeviceData(device.desc), null, 4));
 
                 if (this.isExcludedDevice(this.config.excludedDevicesByDeviceId, uuid)) {
                     this.log.info(`[Platform] Device with id ${uuid} is excluded, don't add accessory`);

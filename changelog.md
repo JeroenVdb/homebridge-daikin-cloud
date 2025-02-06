@@ -5,7 +5,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [2.8.0-beta.0] - 2025-01-07
+## [2.9.0] - 2025-01-30
+
+### Added
+
+- Added `CurrentHeatingCoolingState` characteristic for Hot Wat Tank 
+- Added Powerful mode switch for Hot Wat Tank (when using the `showExtraFeatures` option)
+- Added a lot of "e2e" tests with device mocks shared in the issues so we can spot regressions more easily
+
+### Updated
+
+- Improved the way we decide on which setpoint to use when getting and setting the `temperatureControl` (https://github.com/JeroenVdb/homebridge-daikin-cloud/pull/100) (solves https://github.com/JeroenVdb/homebridge-daikin-cloud/issues/98)
+- `TargetHeatingCoolingState` will show `off` when onOffMode is `off`
+- `TargetHeatingCoolingState` will set onOffMode to `off` when target `off` is picked
+- `TargetHeatingCoolingState` only includes tha states (heating, cooling, auto, off) that are available in your device
+
+## [2.8.1] - 2025-01-23
+
+### Added
+
+- Extra debugging information for when Hot Water Tank operations fail
+
+## [2.8.0] - 2025-01-23
 
 In this update the plugin will remove the `.daikin-controller-cloud-tokenset` file containing your oauth credentials as soon as the refresh token is marked as invalidated. This prevents people having to manually remove the file when the refresh token is invalidated. A restart of Homebridge is required after the file is removed to restart the authorisation flow.
 
