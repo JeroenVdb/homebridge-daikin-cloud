@@ -19,12 +19,9 @@ describe('HotWaterTankService', () => {
     beforeEach(() => {
         accessory = new PlatformAccessory<DaikinCloudAccessoryContext>('ACCESSORY_NAME', uuid.generate('ACCESSORY_UUID'));
         accessory.context['device'] = new DaikinCloudDevice(althermaHeatPump, undefined as unknown as OnectaClient);
-
         accessory.context.device.getLastUpdated = jest.fn().mockReturnValue(new Date(1987, 0, 19, 0, 0, 0, 0));
 
-        const config = new MockPlatformConfig(true);
-
-        const platform = new DaikinCloudPlatform(new Logger(), config, new HomebridgeAPI());
+        const platform = new DaikinCloudPlatform(new Logger(), new MockPlatformConfig(true), new HomebridgeAPI());
 
         service = new HotWaterTankService(platform, accessory, EMBEDDED_ID);
     });
